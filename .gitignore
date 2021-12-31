@@ -1,0 +1,12 @@
+.gradle
+.env
+.settings
+bin/
+build/
+config.toml
+.project
+.classpath
+tricks.json
+
+# ignore all databases
+*.db

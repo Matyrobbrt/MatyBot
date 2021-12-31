@@ -1,0 +1,67 @@
+plugins {
+	id 'java-library'
+	id 'com.github.johnrengelman.shadow' version '7.1.1'
+}
+
+apply plugin: 'java'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+
+repositories {
+	jcenter()
+	mavenCentral()
+
+	maven {
+		name 'm2-dv8tion'
+		url 'https://m2.dv8tion.net/releases'
+	}
+	maven {
+		name 'jda-chewtils'
+		url 'https://m2.chew.pro/releases'
+	}
+}
+
+dependencies {
+	testImplementation 'junit:junit:latest.release'
+
+	implementation group: 'pw.chew', name: 'jda-chewtils', version: 'latest.release'
+	implementation group: 'net.dv8tion', name: 'JDA', version: '4.4.0_351'
+	// implementation group: 'com.typesafe', name: 'config', version: 'latest.release'
+	implementation group: 'io.vavr', name: 'vavr', version: 'latest.release'
+	// implementation group: 'org.eclipse.mylyn.github', name: 'org.eclipse.egit.github.core', version: 'latest.release'
+	implementation group: 'io.github.cdimascio', name:'dotenv-java', version: 'latest.release'
+	implementation group: 'com.vdurmont', name: 'emoji-java', version: 'latest.release'
+	// implementation group: 'com.sedmelluq', name: 'lavaplayer', version: 'latest.release'
+	implementation group: 'com.github.natanbc', name: 'lavadsp', version: 'latest.release'
+	implementation group: 'net.dean.jraw', name: 'JRAW', version: 'latest.release'
+	implementation group: 'com.graphql-java', name: 'graphql-java', version: 'latest.release'
+	implementation group: 'org.reflections', name: 'reflections', version: 'latest.release'
+	// implementation group: 'org.jfree', name: 'jfreechart', version: 'latest.release'
+	implementation group: 'com.jhlabs', name: 'filters', version: 'latest.release'
+	implementation group: 'com.object-refinery', name: 'orsoncharts', version: 'latest.release'
+	implementation group: 'org.jetbrains', name: 'annotations', version: 'latest.release'
+	implementation group: 'org.slf4j', name: 'slf4j-simple', version: 'latest.release'
+	implementation group: 'org.xerial', name: 'sqlite-jdbc', version: 'latest.release'
+	implementation group: 'com.electronwill.night-config', name: 'toml', version: 'latest.release'
+
+	// Apache
+	implementation group: 'org.apache.commons', name: 'commons-io', version: 'latest.release'
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: 'latest.release'
+
+	// Google
+	implementation group: 'com.google.guava', name:'guava', version: 'latest.release'
+	implementation group: 'com.google.code.gson', name: 'gson', version: 'latest.release'
+
+	// Jdbi
+	implementation group: 'org.jdbi', name: 'jdbi3-core', version: 'latest.release'
+	implementation group: 'org.jdbi', name: 'jdbi3-sqlobject', version: 'latest.release'
+	implementation group: 'org.flywaydb', name: 'flyway-core', version: 'latest.release'
+}
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': "matyrobbrt.matybot.MatyBot"
+				)
+	}
+}
