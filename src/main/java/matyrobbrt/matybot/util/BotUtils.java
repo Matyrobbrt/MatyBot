@@ -45,12 +45,13 @@ public class BotUtils {
 	 */
 	@NotNull
 	public static List<Role> getOldUserRoles(final Guild guild, final Long userID) {
-		return MatyBot.database().withExtension(StickyRoles.class, roles -> roles.getRoles(userID)).stream()
+		return MatyBot.database().withExtension(StickyRoles.class, roles -> roles.getRoles(userID, guild.getIdLong()))
+				.stream()
 				.map(guild::getRoleById).filter(Objects::nonNull).toList();
 	}
 
-	public static void clearOldUserRoles(final long userID) {
-		MatyBot.database().useExtension(StickyRoles.class, roles -> roles.clear(userID));
+	public static void clearOldUserRoles(final long userID, final long guildId) {
+		MatyBot.database().useExtension(StickyRoles.class, roles -> roles.clear(userID, guildId));
 	}
 
 	/**

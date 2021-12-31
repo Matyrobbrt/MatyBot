@@ -73,8 +73,9 @@ public class StickyRolesEvents extends AnnotationEventListener {
 		if (member != null) {
 			roles = member.getRoles();
 			final List<Long> roleIds = roles.stream().map(ISnowflake::getIdLong).toList();
-			BotUtils.clearOldUserRoles(member.getIdLong());
-			MatyBot.database().useExtension(StickyRoles.class, data -> data.insert(member.getIdLong(), roleIds));
+			BotUtils.clearOldUserRoles(member.getIdLong(), event.getGuild().getOwnerIdLong());
+			MatyBot.database().useExtension(StickyRoles.class,
+					data -> data.insert(member.getIdLong(), event.getGuild().getIdLong(), roleIds));
 		}
 
 		User user = event.getUser();

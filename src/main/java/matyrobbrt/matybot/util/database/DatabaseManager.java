@@ -68,16 +68,17 @@ public class DatabaseManager {
 		handle.execute("""
 				create table if not exists sticky_roles (
 				    user_id unsigned big int not null,
+					guild_id unsigned big int not null,
 				    role_id unsigned big int not null,
-				    primary key (user_id, role_id)
+				    primary key (user_id, guild_id, role_id)
 				);""");
 
-		handle.execute("create table if not exists tricks (names text [] primary key not null, trick text not null);");
-
 		handle.execute("""
-				CREATE TABLE IF NOT EXISTS warnings (
-								user_id NUMERIC PRIMARY KEY,
-								warnings TEXT NOT NULL
+				create table if not exists warnings (
+					user_id unsigned big int not null,
+					guild_id unsigned big int not null,
+					warnings text not null,
+					primary key (user_id, guild_id)
 				)""");
 	}
 

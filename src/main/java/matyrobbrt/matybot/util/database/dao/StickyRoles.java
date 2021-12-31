@@ -17,8 +17,8 @@ public interface StickyRoles extends Transactional<StickyRoles> {
 	 * @param userId the snowflake ID of the user
 	 * @param roleId the snowflake ID of the role
 	 */
-	@SqlUpdate("insert into sticky_roles values (:user, :role)")
-	void insert(@Bind("user") long userId, @Bind("role") long roleId);
+	@SqlUpdate("insert into sticky_roles values (:user, :guild, :role)")
+	void insert(@Bind("user") long userId, @Bind("guild") long guildId, @Bind("role") long roleId);
 
 	/**
 	 * Inserts an entry for each role in the given iterable with the given user into
@@ -27,8 +27,8 @@ public interface StickyRoles extends Transactional<StickyRoles> {
 	 * @param userId the snowflake ID of the user
 	 * @param roles  an iterable of snowflake IDs of roles
 	 */
-	default void insert(long userId, Iterable<Long> roles) {
-		roles.forEach(roleId -> insert(userId, roleId));
+	default void insert(long userId, long guildId, Iterable<Long> roles) {
+		roles.forEach(roleId -> insert(userId, guildId, roleId));
 	}
 
 	/// Query methods ///
@@ -39,8 +39,8 @@ public interface StickyRoles extends Transactional<StickyRoles> {
 	 * @param userId the snowflake ID of the user
 	 * @return the list of role snowflake IDs which are associated with the user
 	 */
-	@SqlQuery("select role_id from sticky_roles where user_id = :user")
-	List<Long> getRoles(@Bind("user") long userId);
+	@SqlQuery("select role_id from sticky_roles where user_id = :user and guild_id = :guild")
+	List<Long> getRoles(@Bind("user") long userId, @Bind("guild") long guildId);
 
 	/// Deletion methods ///
 
@@ -50,15 +50,15 @@ public interface StickyRoles extends Transactional<StickyRoles> {
 	 * @param userId the snowflake ID of the user
 	 * @param roleId the snowflake ID of the role
 	 */
-	@SqlUpdate("delete from sticky_roles where user_id = :user and role_id = :role")
-	void delete(@Bind("user") long userId, @Bind("role") long roleId);
+	@SqlUpdate("delete from sticky_roles where user_id = :user and role_id = :role and guild_id = :guild")
+	void delete(@Bind("user") long userId, @Bind("guild") long guildId, @Bind("role") long roleId);
 
 	/**
 	 * Clears all entries for the given user from the table.
 	 *
 	 * @param userId the snowflake ID of the user
 	 */
-	@SqlUpdate("delete from sticky_roles where user_id = :user")
-	void clear(@Bind("user") long userId);
+	@SqlUpdate("delete from sticky_roles where user_id = :user and guild_id = :guild")
+	void clear(@Bind("user") long userId, @Bind("guild") long guildId);
 
 }

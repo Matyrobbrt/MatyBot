@@ -66,7 +66,8 @@ public class WarnsSlashCommand extends SlashCommand {
 			final var warn = new Warnings.WarningDocument(reason, event.getUser().getIdLong(),
 					Date.from(Instant.now()).getTime());
 
-			MatyBot.database().useExtension(Warnings.class, data -> data.addWarn(userToWarn.getIdLong(), warn));
+			MatyBot.database().useExtension(Warnings.class,
+					data -> data.addWarn(userToWarn.getIdLong(), event.getGuild().getIdLong(), warn));
 
 			userToWarn.openPrivateChannel().queue(channel -> {
 				//@formatter:off
@@ -115,14 +116,14 @@ public class WarnsSlashCommand extends SlashCommand {
 
 		@Override
 		protected void execute(SlashCommandEvent event) {
-			boolean publicPunishment = event.getOption("public").getAsBoolean();
+			boolean publicPunishment = event.getOption("public") == null || event.getOption("public").getAsBoolean();
 			User userToWarn = event.getOption("user").getAsUser();
 			int warnIndex = (event.getOption("index") == null ? -1 : (int) event.getOption("index").getAsDouble());
 			Member member = event.getMember();
 
 			//@formatter:off
 			if (warnIndex == -1) {
-				MatyBot.database().useExtension(Warnings.class, data -> data.clear(userToWarn.getIdLong()));
+				MatyBot.database().useExtension(Warnings.class, data -> data.clear(userToWarn.getIdLong(), event.getGuild().getIdLong()));
 				
 				userToWarn.openPrivateChannel().queue(channel -> {
 					final var dmEmbed = new EmbedBuilder()
@@ -150,7 +151,7 @@ public class WarnsSlashCommand extends SlashCommand {
 				event.getInteraction().reply(new MessageBuilder().append("Warnings cleared!").build()).setEphemeral(true).queue();
 			} else {
 				int currentWarns = MatyBot.database().withExtension(Warnings.class, data -> {
-					WarningsDocument warns = data.getWarnings(userToWarn.getIdLong());
+					WarningsDocument warns = data.getWarnings(userToWarn.getIdLong(), event.getGuild().getIdLong());
 					return warns == null ? 0 : warns.getWarns().size();
 				});
 				if (warnIndex >= currentWarns) {
@@ -159,7 +160,7 @@ public class WarnsSlashCommand extends SlashCommand {
 				}
 				
 				WarningDocument warnDoc = MatyBot.database().withExtension(Warnings.class, data -> 
-					data.removeWarn(userToWarn.getIdLong(), warnIndex));
+					data.removeWarn(userToWarn.getIdLong(), event.getGuild().getIdLong(), warnIndex));
 				
 				userToWarn.openPrivateChannel().queue(channel -> {
 					final var dmEmbed = new EmbedBuilder()
@@ -210,7 +211,7 @@ public class WarnsSlashCommand extends SlashCommand {
 			final long userID = userToSee.getIdLong();
 
 			final WarningsDocument warns = MatyBot.database().withExtension(Warnings.class, data -> {
-				WarningsDocument doc = data.getWarnings(userID);
+				WarningsDocument doc = data.getWarnings(userID, event.getGuild().getIdLong());
 				return doc == null ? new WarningsDocument() : doc;
 			});
 
