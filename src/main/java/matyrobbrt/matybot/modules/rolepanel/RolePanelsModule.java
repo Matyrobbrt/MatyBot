@@ -26,11 +26,16 @@ public class RolePanelsModule {
 		if (!PANELS_FILE.exists()) {
 			try {
 				Files.createFile(PANELS_FILE.toPath());
-			} catch (IOException e) {}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		try {
-			FileWatcher.defaultInstance().addWatch(PANELS_FILE, RolePanelsModule::loadPanels);
+			FileWatcher.defaultInstance().addWatch(PANELS_FILE, () -> {
+				MatyBot.LOGGER.info("Role panels file has been changed! Updating...");
+				loadPanels();
+			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

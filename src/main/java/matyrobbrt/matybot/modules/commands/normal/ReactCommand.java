@@ -1,5 +1,6 @@
 package matyrobbrt.matybot.modules.commands.normal;
 
+import com.google.common.collect.Lists;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
@@ -21,9 +22,11 @@ public class ReactCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		final String[] args = event.getArgs().split(" ");
-		final long msgId = Long.parseLong(args[0]);
-		final var emote = args[1].replace("<", "").replace(">", "");
+		final var args = Lists.newArrayList(event.getArgs().split(" "));
+		final long msgId = event.getMessage().getMessageReference() == null ? Long.parseLong(args.get(0))
+				: Long.parseLong(event.getMessage().getMessageReference().getMessageId());
+		final var emote = args.get(event.getMessage().getMessageReference() == null ? 1 : 0).replace("<", "")
+				.replace(">", "");
 		event.getChannel().getHistory().getChannel().addReactionById(msgId, emote).queue();
 	}
 

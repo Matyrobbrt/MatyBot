@@ -1,11 +1,19 @@
 [
 	{
-		"channelID": 0,
-		"messageID": 0,
+		"channelID": 926211387569606656,
+		"messageID": 926607216813932574,
 		"emojis": [
 			{
-				"emoji": "U+1F52E",
-				"roleID": 0
+				"emoji": "U+2642U+fe0f",
+				"roleID": 926606549596643408
+			},
+			{
+				"emoji": "U+2640U+fe0f",
+				"roleID": 926606580030537728
+			},
+			{
+				"emoji": "U+2B1C",
+				"roleID": 926606609394827344
 			}
 		]
 	}
