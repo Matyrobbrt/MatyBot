@@ -22,7 +22,6 @@ public final class AddTrickCommand extends SlashCommand {
 	@RegisterSlashCommand
 	private static final AddTrickCommand CMD = new AddTrickCommand();
 
-	@SuppressWarnings("deprecation")
 	public AddTrickCommand() {
 		name = "addtrick";
 		help = "Adds a new trick, either a string or an embed, if a string you only need the <names> and <body>.";
@@ -33,8 +32,9 @@ public final class AddTrickCommand extends SlashCommand {
 		};
 		enabledRoles = MatyBot.config().trickManagerRoles.stream().map(String::valueOf).toArray(String[]::new);
 		guildOnly = true;
+
 		// used by the non-slash version
-		guildId = Long.toString(MatyBot.config().getGuildID());
+		// guildId = Long.toString(MatyBot.config().getGuildID());
 
 		children = TrickManager.getTrickTypes().entrySet().stream()
 				.map(entry -> new TypeSubCmd(entry.getKey(), entry.getValue())).toArray(SlashCommand[]::new);

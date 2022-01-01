@@ -15,6 +15,7 @@ import matyrobbrt.matybot.modules.logging.LoggingModule;
 import matyrobbrt.matybot.modules.rolepanel.RolePanelsModule;
 import matyrobbrt.matybot.util.BotConfig;
 import matyrobbrt.matybot.util.BotUtils;
+import matyrobbrt.matybot.util.Emotes;
 import matyrobbrt.matybot.util.ReflectionUtils;
 import matyrobbrt.matybot.util.database.DatabaseManager;
 import net.dv8tion.jda.api.JDA;
@@ -36,6 +37,7 @@ public class MatyBot {
 	public static void main(String[] args) {
 		config = new BotConfig(Paths.get("config.toml"));
 		instance = create(BotUtils.getBotToken());
+		Emotes.register();
 		database = DatabaseManager.connectSQLite("jdbc:sqlite:" + config().getDatabaseName());
 
 		CommandsModule.setupCommandModule();
@@ -88,7 +90,7 @@ public class MatyBot {
 		try {
 			return new MatyBot(JDABuilder.createDefault(token)
 					.enableIntents(GatewayIntent.DIRECT_MESSAGE_REACTIONS, GatewayIntent.values())
-					.setMemberCachePolicy(MemberCachePolicy.ALL).enableCache(CacheFlag.ONLINE_STATUS)
+					.setMemberCachePolicy(MemberCachePolicy.ALL).enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.EMOTE)
 					.setChunkingFilter(ChunkingFilter.ALL).build().awaitReady());
 		} catch (final Exception e) {
 			throw new IllegalArgumentException(e);

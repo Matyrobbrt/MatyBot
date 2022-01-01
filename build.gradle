@@ -43,6 +43,7 @@ dependencies {
 	implementation group: 'org.slf4j', name: 'slf4j-simple', version: 'latest.release'
 	implementation group: 'org.xerial', name: 'sqlite-jdbc', version: 'latest.release'
 	implementation group: 'com.electronwill.night-config', name: 'toml', version: 'latest.release'
+	implementation group: 'org.jooq', name: 'joor', version: 'latest.release'
 
 	// Apache
 	implementation group: 'org.apache.commons', name: 'commons-io', version: 'latest.release'
