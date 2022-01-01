@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,6 +64,10 @@ public class BotUtils {
 	 */
 	public static String getOptionOrEmpty(@Nullable OptionMapping option) {
 		return Optional.ofNullable(option).map(OptionMapping::getAsString).orElse("");
+	}
+
+	public static <T> T getOptionOr(@Nullable OptionMapping option, Function<OptionMapping, T> getter, T orElse) {
+		return Optional.ofNullable(option).map(getter::apply).orElse(orElse);
 	}
 
 	/**

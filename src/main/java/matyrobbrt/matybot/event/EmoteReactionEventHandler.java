@@ -27,7 +27,7 @@ public class EmoteReactionEventHandler extends AnnotationEventListener {
 	public static void registerEmotes() {
 		atHereEmotes.addAll(Lists.newArrayList(Emotes.STABOLB, Emotes.CONCERN));
 
-		atEveryoneEmotes.addAll(Lists.newArrayList(Emotes.ANIMATED_FAST_BAN));
+		atEveryoneEmotes.addAll(Lists.newArrayList(Emotes.ANIMATED_BAN_BOLB));
 	}
 
 	@SubscribeEvent

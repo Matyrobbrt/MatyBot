@@ -1,4 +1,4 @@
-package matyrobbrt.matybot.modules.commands.normal;
+package matyrobbrt.matybot.modules.commands.normal.moderation;
 
 import com.google.common.collect.Lists;
 import com.jagrosh.jdautilities.command.Command;
