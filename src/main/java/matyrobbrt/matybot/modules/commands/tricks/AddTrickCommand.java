@@ -4,7 +4,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.annotation.RegisterCommand;
 import matyrobbrt.matybot.annotation.RegisterSlashCommand;
 import matyrobbrt.matybot.tricks.ITrick.TrickType;
 import matyrobbrt.matybot.tricks.TrickManager;
@@ -18,18 +17,19 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
  */
 public final class AddTrickCommand extends SlashCommand {
 
-	@RegisterCommand
+	// @RegisterCommand
 	@RegisterSlashCommand
 	private static final AddTrickCommand CMD = new AddTrickCommand();
 
 	public AddTrickCommand() {
-		name = "addtrick";
+		name = "add-trick";
 		help = "Adds a new trick, either a string or an embed, if a string you only need the <names> and <body>.";
 		category = new Category("Info");
 		arguments = "(<string> <trick content body> (or) <embed> <title> " + "<description> <colour-as-hex-code>";
 		aliases = new String[] {
-				"add-trick"
+				"addtrick"
 		};
+		defaultEnabled = false;
 		enabledRoles = MatyBot.config().trickManagerRoles.stream().map(String::valueOf).toArray(String[]::new);
 		guildOnly = true;
 

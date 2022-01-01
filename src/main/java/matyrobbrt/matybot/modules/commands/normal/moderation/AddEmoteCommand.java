@@ -1,5 +1,7 @@
 package matyrobbrt.matybot.modules.commands.normal.moderation;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -22,7 +24,12 @@ public class AddEmoteCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		final var args = Lists.newArrayList(event.getArgs().split(" "));
+		final List<String> args = event.getArgs().isEmpty() ? Lists.newArrayList()
+				: Lists.newArrayList(event.getArgs().split(" "));
+		if (args.isEmpty()) {
+			event.getMessage().reply("Please give a name for the emote!").mentionRepliedUser(false).queue();
+			return;
+		}
 		final String emoteName = args.get(0);
 		if (event.getMessage().getMessageReference() == null) {
 			event.getMessage().reply("Please reply to a message containing an attachement!").mentionRepliedUser(false)

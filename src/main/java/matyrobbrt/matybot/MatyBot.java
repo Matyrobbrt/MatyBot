@@ -20,6 +20,7 @@ import matyrobbrt.matybot.util.ReflectionUtils;
 import matyrobbrt.matybot.util.database.DatabaseManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -64,7 +65,6 @@ public class MatyBot {
 		}
 
 		bot.setEventManager(new AnnotatedEventManager());
-
 		ReflectionUtils.getClassesAnnotatedWith(EventSubscriber.class).forEach(clazz -> {
 			EventSubscriber ann = clazz.getAnnotation(EventSubscriber.class);
 			if (ann.createInstance()) {
@@ -91,7 +91,8 @@ public class MatyBot {
 			return new MatyBot(JDABuilder.createDefault(token)
 					.enableIntents(GatewayIntent.DIRECT_MESSAGE_REACTIONS, GatewayIntent.values())
 					.setMemberCachePolicy(MemberCachePolicy.ALL).enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.EMOTE)
-					.setChunkingFilter(ChunkingFilter.ALL).build().awaitReady());
+					.setChunkingFilter(ChunkingFilter.ALL)
+					.setActivity(Activity.of(config().getActivityType(), config().activityName)).build().awaitReady());
 		} catch (final Exception e) {
 			throw new IllegalArgumentException(e);
 		}

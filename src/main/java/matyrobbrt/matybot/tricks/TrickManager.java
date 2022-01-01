@@ -37,7 +37,7 @@ import matyrobbrt.matybot.tricks.ITrick.TrickType;
  */
 public final class TrickManager {
 
-	private static final String TRICK_STORAGE_PATH = "tricks.json";
+	private static final String TRICK_STORAGE_PATH = "storage/tricks.json";
 
 	private static final Gson GSON;
 
@@ -77,6 +77,9 @@ public final class TrickManager {
 			MatyBot.LOGGER.error("Exception while setting up the tricks file watcher! The bot will be shut down.", e);
 			System.exit(1);
 		}
+
+		registerTrickType("string", new StringTrick.Type());
+		registerTrickType("embed", new EmbedTrick.Type());
 	}
 
 	/**

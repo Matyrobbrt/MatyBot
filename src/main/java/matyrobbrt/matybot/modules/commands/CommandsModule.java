@@ -3,7 +3,10 @@ package matyrobbrt.matybot.modules.commands;
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -16,6 +19,7 @@ import matyrobbrt.matybot.annotation.RegisterSlashCommand;
 import matyrobbrt.matybot.event.api.EventListenerWrapper;
 import matyrobbrt.matybot.tricks.TrickManager;
 import matyrobbrt.matybot.util.ReflectionUtils;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.hooks.EventListener;
 
 public class CommandsModule {
@@ -126,12 +130,17 @@ public class CommandsModule {
 		}
 	}
 
-	public static void clearCommands() {
-		var guild = MatyBot.instance.getBot().getGuildById(MatyBot.config().getGuildID());
-		if (guild == null) { throw new NullPointerException("No Guild found!"); }
-		guild.retrieveCommands().queue(cmds -> cmds.forEach(cmd -> guild.deleteCommandById(cmd.getIdLong()).queue()));
-		MatyBot.instance.getBot().retrieveCommands()
-				.queue(cmds -> cmds.forEach(cmd -> MatyBot.instance.getBot().deleteCommandById(cmd.getId()).queue()));
+	public static void clearCommands(final @Nonnull Guild guild, final Runnable... after) {
+		guild.retrieveCommands().queue(cmds -> {
+			for (int i = 0; i < cmds.size(); i++) {
+				try {
+					guild.deleteCommandById(cmds.get(i).getIdLong()).submit().get();
+				} catch (InterruptedException | ExecutionException e) {}
+			}
+			for (var toRun : after) {
+				toRun.run();
+			}
+		});
 	}
 
 }

@@ -41,6 +41,19 @@ public class EmoteReactionEventHandler extends AnnotationEventListener {
 		if (event.isWebhookMessage() || !event.isFromGuild()) { return; }
 		final Message message = event.getMessage();
 		final Member member = event.getMember();
+
+		final var contentRawLowerCase = message.getContentRaw().toLowerCase();
+
+		if (contentRawLowerCase.startsWith("pogchamp")) {
+			message.addReaction(Emotes.POGCHAMP).queue();
+		} else if (contentRawLowerCase.startsWith("pog")) {
+			message.addReaction(Emotes.POG).queue();
+		}
+
+		if (contentRawLowerCase.startsWith("<:concern:")) {
+			message.addReaction(Emotes.CONCERN).queue();
+		}
+
 		if (message.getContentRaw().contains("@here") && !member.hasPermission(Permission.MESSAGE_MENTION_EVERYONE)) {
 			Emote reaction = atHereEmotes.get(RAND.nextInt(atHereEmotes.size()));
 			message.addReaction(reaction).queue();

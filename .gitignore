@@ -3,6 +3,7 @@
 .settings
 bin/
 build/
+storage/
 config.toml
 .project
 .classpath

@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 import matyrobbrt.matybot.MatyBot;
+import net.dv8tion.jda.api.entities.Activity.ActivityType;
 
 public final class BotConfig {
 
@@ -200,7 +201,7 @@ public final class BotConfig {
 	public long getGuildID() { return guildID; }
 
 	@ConfigEntry(name = "databaseName", category = "general", comments = "The name of the database")
-	private String databaseName = "database.db";
+	private String databaseName = "storage/database.db";
 
 	public String getDatabaseName() { return databaseName; }
 
@@ -208,6 +209,14 @@ public final class BotConfig {
 			"The main prefix of the bot", "Any other prefix should be an alternative one"
 	})
 	public String mainPrefix = "!";
+
+	@ConfigEntry(name = "type", category = "general.activity", comments = "The type of activity the bot has.")
+	private String activityType = "WATCHING";
+
+	public ActivityType getActivityType() { return ActivityType.valueOf(activityType); }
+
+	@ConfigEntry(name = "name", category = "general.activity", comments = "The name of the activity the bot has.")
+	public String activityName = "naughty people!";
 
 	@ConfigEntry(name = "alternative", category = "general.prefixes", comments = "The alternative prefixes of the bot")
 	public List<String> alternativePrefixes = Lists.newArrayList();
@@ -236,5 +245,11 @@ public final class BotConfig {
 
 	@ConfigEntry(name = "trick_manager", category = "roles", comments = "The roles that can manage tricks.", commentDefaultValue = false)
 	public List<Long> trickManagerRoles = Lists.newArrayList();
+
+	@ConfigEntry(name = "muted", category = "roles", comments = {
+			"The role which will be added to muted people.",
+			"NOTE: We will switch to using timing out for handling mutes after JDA implements that and discord makes the timing out better."
+	}, commentDefaultValue = false)
+	public long mutedRole;
 
 }

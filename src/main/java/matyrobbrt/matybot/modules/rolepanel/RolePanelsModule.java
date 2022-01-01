@@ -20,7 +20,7 @@ public class RolePanelsModule {
 	public static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
 			.excludeFieldsWithoutExposeAnnotation().create();
 
-	private static final File PANELS_FILE = new File("role_panels.json");
+	private static final File PANELS_FILE = new File("storage/role_panels.json");
 
 	static {
 		if (!PANELS_FILE.exists()) {
