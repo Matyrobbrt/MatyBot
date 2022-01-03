@@ -233,6 +233,11 @@ public final class BotConfig {
 
 	public boolean isLoggingModuleEnabled() { return loggingModuleEnabled; }
 
+	@ConfigEntry(name = "enabled", category = "modules.levelling", comments = "If the levelling module should be enabled.")
+	private boolean levellingModuleEnabled = true;
+
+	public boolean isLevellingModuleEnabled() { return levellingModuleEnabled; }
+
 	/// CHANNELS ///
 
 	@ConfigEntry(name = "logging", category = "channels", comments = "The channel in which logs will be sent", commentDefaultValue = false)

@@ -35,7 +35,7 @@ public interface ITrick {
 		 * @return the argument argument names
 		 * @deprecated use slash commands where possible
 		 */
-		@Deprecated
+		@Deprecated(forRemoval = false)
 		default List<String> getArgNames() { return getArgs().stream().map(OptionData::getName).toList(); }
 
 		/**
@@ -45,7 +45,7 @@ public interface ITrick {
 		 * @return the trick
 		 * @deprecated use slash commands when possible
 		 */
-		@Deprecated
+		@Deprecated(forRemoval = false)
 		T createFromArgs(String args);
 
 		/**

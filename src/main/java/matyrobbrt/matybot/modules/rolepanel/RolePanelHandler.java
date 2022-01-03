@@ -2,7 +2,7 @@ package matyrobbrt.matybot.modules.rolepanel;
 
 import static matyrobbrt.matybot.modules.rolepanel.RolePanelsModule.getPanelForChannelAndMessage;
 
-import matyrobbrt.matybot.event.api.AnnotationEventListener;
+import matyrobbrt.matybot.api.event.AnnotationEventListener;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.GenericEvent;

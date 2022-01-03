@@ -14,8 +14,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import matyrobbrt.matybot.MatyBot;
+import net.dv8tion.jda.api.JDA;
 
-public class RolePanelsModule {
+public class RolePanelsModule extends matyrobbrt.matybot.api.modules.Module {
 
 	public static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
 			.excludeFieldsWithoutExposeAnnotation().create();
@@ -43,11 +44,15 @@ public class RolePanelsModule {
 
 	public static final List<RolePanel> PANELS = new ArrayList<>();
 
-	public static void setupRolePanelsModule() {
-		loadPanels();
+	public RolePanelsModule(final JDA bot) {
+		super(() -> true, bot);
+	}
 
-		MatyBot.instance.getBot().addEventListener(new RolePanelHandler());
-		MatyBot.LOGGER.warn("Role Panels module enabled and loaded.");
+	@Override
+	public void register() {
+		super.register();
+
+		bot.addEventListener(new RolePanelHandler());
 	}
 
 	public static RolePanel getPanelForChannelAndMessage(long channelId, long messageId) {

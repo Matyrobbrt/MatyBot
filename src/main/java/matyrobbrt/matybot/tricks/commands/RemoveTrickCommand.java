@@ -1,4 +1,4 @@
-package matyrobbrt.matybot.modules.commands.tricks;
+package matyrobbrt.matybot.tricks.commands;
 
 import java.util.List;
 

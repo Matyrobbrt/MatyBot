@@ -29,8 +29,8 @@ import com.google.gson.stream.JsonWriter;
 
 import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.modules.commands.CommandsModule;
-import matyrobbrt.matybot.modules.commands.tricks.RunTrickCommand;
 import matyrobbrt.matybot.tricks.ITrick.TrickType;
+import matyrobbrt.matybot.tricks.commands.RunTrickCommand;
 
 /**
  * TODO: Migrate to a the database
@@ -129,7 +129,7 @@ public final class TrickManager {
 	public static void removeTrick(final ITrick trick) {
 		getTricks().remove(trick);
 		write();
-		CommandsModule.getCommandClient().removeCommand(trick.getNames().get(0));
+		CommandsModule.getInstance().getCommandClient().removeCommand(trick.getNames().get(0));
 	}
 
 	/**
@@ -157,7 +157,7 @@ public final class TrickManager {
 	 * @param trick the trick
 	 */
 	private static void addOrRestoreCommand(final ITrick trick) {
-		CommandsModule.getCommandClient().addCommand(new RunTrickCommand(trick));
+		CommandsModule.getInstance().getCommandClient().addCommand(new RunTrickCommand(trick));
 	}
 
 	static {

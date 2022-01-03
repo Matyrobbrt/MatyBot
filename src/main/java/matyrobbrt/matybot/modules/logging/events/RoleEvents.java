@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import matyrobbrt.matybot.event.api.AnnotationEventListener;
+import matyrobbrt.matybot.api.event.AnnotationEventListener;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.IMentionable;

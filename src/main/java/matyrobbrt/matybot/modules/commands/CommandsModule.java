@@ -16,27 +16,29 @@ import com.jagrosh.jdautilities.command.SlashCommand;
 import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.annotation.RegisterCommand;
 import matyrobbrt.matybot.annotation.RegisterSlashCommand;
-import matyrobbrt.matybot.event.api.EventListenerWrapper;
+import matyrobbrt.matybot.api.event.EventListenerWrapper;
 import matyrobbrt.matybot.tricks.TrickManager;
 import matyrobbrt.matybot.util.ReflectionUtils;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.hooks.EventListener;
 
-public class CommandsModule {
+public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module {
 
-	/**
-	 * The constant commandClient.
-	 */
-	private static CommandClient commandClient;
+	private static CommandsModule instance;
 
-	/**
-	 * Gets command client.
-	 *
-	 * @return the command client
-	 */
-	public static CommandClient getCommandClient() { return commandClient; }
+	public static CommandsModule getInstance() { return instance; }
 
-	public static void setupCommandModule() {
+	public static CommandsModule setUpInstance(final JDA bot) {
+		if (instance == null) {
+			instance = new CommandsModule(bot);
+		}
+		return instance;
+	}
+
+	public CommandsModule(final JDA bot) {
+		super(MatyBot.config()::isCommandsModuleEnabled, bot);
+
 		var builder = new CommandClientBuilder().setOwnerId(MatyBot.config().getBotOwner()).useHelpBuilder(false)
 				.setPrefix(MatyBot.config().mainPrefix)
 				.setPrefixes(MatyBot.config().alternativePrefixes.toArray(new String[] {}));
@@ -51,14 +53,21 @@ public class CommandsModule {
 
 		TrickManager.createTrickCommands().forEach(builder::addCommand);
 
-		commandClient = builder.build();
+		this.commandClient = builder.build();
+	}
 
-		if (MatyBot.config().isCommandsModuleEnabled()) {
-			MatyBot.instance.getBot().addEventListener(new EventListenerWrapper((EventListener) commandClient));
-			MatyBot.LOGGER.warn("Command module enabled and loaded.");
-		} else {
-			MatyBot.LOGGER.warn("Command module disabled via config, commands will not work at this time!");
+	private final CommandClient commandClient;
+
+	public CommandClient getCommandClient() { return commandClient; }
+
+	@Override
+	public void register() {
+		super.register();
+
+		if (isEnabled()) {
+			bot.addEventListener(new EventListenerWrapper((EventListener) commandClient));
 		}
+
 	}
 
 	private static Set<SlashCommand> collectSlashCommands() {
@@ -114,7 +123,7 @@ public class CommandsModule {
 	 *
 	 * @param cmd the command
 	 */
-	public static void upsertCommand(final SlashCommand cmd) {
+	public void upsertCommand(final SlashCommand cmd) {
 		if (cmd.isGuildOnly()) {
 			var guild = MatyBot.instance.getBot().getGuildById(MatyBot.config().getGuildID());
 			if (guild == null) { throw new NullPointerException("No Guild found!"); }

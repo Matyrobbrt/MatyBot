@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import matyrobbrt.matybot.annotation.EventSubscriber;
+import matyrobbrt.matybot.api.modules.ModuleManager;
 import matyrobbrt.matybot.modules.commands.CommandsModule;
+import matyrobbrt.matybot.modules.levelling.LevellingModule;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
 import matyrobbrt.matybot.modules.rolepanel.RolePanelsModule;
 import matyrobbrt.matybot.util.BotConfig;
@@ -34,6 +36,7 @@ public class MatyBot {
 	public static MatyBot instance;
 	private static DatabaseManager database;
 	private static BotConfig config;
+	private static ModuleManager moduleManager;
 
 	public static void main(String[] args) {
 		config = new BotConfig(Paths.get("config.toml"));
@@ -41,9 +44,13 @@ public class MatyBot {
 		Emotes.register();
 		database = DatabaseManager.connectSQLite("jdbc:sqlite:" + config().getDatabaseName());
 
-		CommandsModule.setupCommandModule();
-		LoggingModule.setupLoggingModule();
-		RolePanelsModule.setupRolePanelsModule();
+		final JDA bot = instance.getBot();
+		moduleManager.addModule(new LevellingModule(bot));
+		moduleManager.addModule(CommandsModule.setUpInstance(bot));
+		moduleManager.addModule(new LoggingModule(bot));
+		moduleManager.addModule(new RolePanelsModule(bot));
+
+		moduleManager.register();
 	}
 
 	public static Jdbi database() {

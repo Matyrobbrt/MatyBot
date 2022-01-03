@@ -1,4 +1,4 @@
-package matyrobbrt.matybot.event.api;
+package matyrobbrt.matybot.api.event;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

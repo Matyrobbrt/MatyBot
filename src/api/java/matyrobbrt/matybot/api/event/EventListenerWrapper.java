@@ -1,4 +1,4 @@
-package matyrobbrt.matybot.event.api;
+package matyrobbrt.matybot.api.event;
 
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.event.api.AnnotationEventListener;
+import matyrobbrt.matybot.api.event.AnnotationEventListener;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
 import matyrobbrt.matybot.util.BotUtils;
 import matyrobbrt.matybot.util.database.dao.StickyRoles;

@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.time.Instant;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.event.api.AnnotationEventListener;
+import matyrobbrt.matybot.api.event.AnnotationEventListener;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
 import matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
