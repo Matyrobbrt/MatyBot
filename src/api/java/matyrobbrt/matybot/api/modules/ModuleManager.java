@@ -30,9 +30,10 @@ public class ModuleManager {
 		modules.forEach((clz, module) -> {
 			if (module.isEnabled()) {
 				module.register();
-				MatyBot.LOGGER.info("The module {} is now up and running!", module);
+				MatyBot.LOGGER.info("The module {} is now up and running!", module.getClass().getSimpleName());
 			} else {
-				MatyBot.LOGGER.info("The module {} disabled! Its features will not be available.", module);
+				MatyBot.LOGGER.warn("The module {} disabled! Its features will not be available.",
+						module.getClass().getSimpleName());
 			}
 		});
 	}

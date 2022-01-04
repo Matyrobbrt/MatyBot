@@ -45,6 +45,9 @@ public class MatyBot {
 		database = DatabaseManager.connectSQLite("jdbc:sqlite:" + config().getDatabaseName());
 
 		final JDA bot = instance.getBot();
+
+		moduleManager = new ModuleManager(bot);
+
 		moduleManager.addModule(new LevellingModule(bot));
 		moduleManager.addModule(CommandsModule.setUpInstance(bot));
 		moduleManager.addModule(new LoggingModule(bot));

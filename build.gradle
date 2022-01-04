@@ -50,13 +50,20 @@ repositories {
 		name 'jda-chewtils'
 		url 'https://m2.chew.pro/releases'
 	}
+	flatDir {
+		dirs 'libs'
+	}
 }
 
 dependencies {
+	// shade fileTree(include: ['*.jar'], dir: 'libs')
+	
 	testImplementation 'junit:junit:latest.release'
 
-	shade group: 'pw.chew', name: 'jda-chewtils', version: 'latest.release'
-	shade group: 'net.dv8tion', name: 'JDA', version: '4.4.0_351'
+	// shade group: 'pw.chew', name: 'jda-chewtils', version: 'latest.release'
+	// chewtils for JDA 5.0 is not published on the maven
+	shade ":jda-chewtils-2.0-SNAPSHOT"
+	shade group: 'net.dv8tion', name: 'JDA', version: 'latest.release'
 	
 	shade group: 'io.vavr', name: 'vavr', version: 'latest.release'
 	shade group: 'io.github.cdimascio', name:'dotenv-java', version: 'latest.release'

@@ -12,8 +12,6 @@ import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.ReconnectedEvent;
-import net.dv8tion.jda.api.events.ResumedEvent;
 import net.dv8tion.jda.api.events.UpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
@@ -23,7 +21,7 @@ import net.dv8tion.jda.internal.utils.ClassWalker;
  * For a class extending this to work, you <b>HAVE TO</b> override
  * {@link #onEventHandleAnnotation(GenericEvent)}, call the super and annotate
  * the method with {@link SubscribeEvent}
- * 
+ *
  * @author matyrobbrt
  *
  */
@@ -41,18 +39,10 @@ public class AnnotationEventListener extends ListenerAdapter {
 		);
 	}
 
-	@SuppressWarnings("deprecation")
 	public void onEventHandleAnnotation(@Nonnull GenericEvent event) {
 		onGenericEvent(event);
 		if (event instanceof UpdateEvent) {
 			onGenericUpdate((UpdateEvent<?, ?>) event);
-		}
-
-		// TODO: Remove once deprecated methods are removed
-		if (event instanceof ResumedEvent resEvent) {
-			onResume(resEvent);
-		} else if (event instanceof ReconnectedEvent recEvent) {
-			onReconnect(recEvent);
 		}
 
 		for (Class<?> clazz : ClassWalker.range(event.getClass(), GenericEvent.class)) {
@@ -68,7 +58,7 @@ public class AnnotationEventListener extends ListenerAdapter {
 			try {
 				mh.invoke(this, event);
 			} catch (Throwable throwable) {
-				if (throwable instanceof RuntimeException re) { throw re; }
+				if (throwable instanceof RuntimeException runtime) { throw runtime; }
 				if (throwable instanceof Error e) { throw e; }
 				throw new IllegalStateException(throwable);
 			}

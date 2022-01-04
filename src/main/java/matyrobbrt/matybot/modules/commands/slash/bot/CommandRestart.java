@@ -36,13 +36,19 @@ public class CommandRestart extends SlashCommand {
 			try {
 				AtomicReference<InteractionHook> msg = new AtomicReference<>(
 						event.getInteraction().reply("Waiting for command deletion...").submit().get());
-				CommandsModule.clearCommands(event.getGuild(), () -> {
-					msg.get().editOriginal("Restarting the bot!").queue();
-					event.getJDA().shutdown();
-					MatyBot.LOGGER.warn("Restarting the bot by request of {} via Discord!", event.getUser().getName());
-					// Restart the JDA instance
-					BotUtils.scheduleTask(() -> MatyBot.main(new String[] {}), 1000);
-				});
+				MatyBot.LOGGER.warn(
+						"Deleting the guild commands of the guild with the id {} at the request of {} via Discord!",
+						event.getGuild().getIdLong(), event.getUser().getName());
+				new Thread(() -> {
+					CommandsModule.clearCommands(event.getGuild(), () -> {
+						msg.get().editOriginal("Restarting the bot!").queue();
+						event.getJDA().shutdown();
+						MatyBot.LOGGER.warn("Restarting the bot by request of {} via Discord!",
+								event.getUser().getName());
+						// Restart the JDA instance
+						BotUtils.scheduleTask(() -> MatyBot.main(new String[] {}), 1000);
+					});
+				}, "Guild command clearing").start();
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 				event.getInteraction().reply("Error! Restart cancelled!");

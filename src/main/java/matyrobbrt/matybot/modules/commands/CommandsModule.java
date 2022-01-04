@@ -17,6 +17,7 @@ import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.annotation.RegisterCommand;
 import matyrobbrt.matybot.annotation.RegisterSlashCommand;
 import matyrobbrt.matybot.api.event.EventListenerWrapper;
+import matyrobbrt.matybot.quotes.QuoteCommand;
 import matyrobbrt.matybot.tricks.TrickManager;
 import matyrobbrt.matybot.util.ReflectionUtils;
 import net.dv8tion.jda.api.JDA;
@@ -66,6 +67,7 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 
 		if (isEnabled()) {
 			bot.addEventListener(new EventListenerWrapper((EventListener) commandClient));
+			bot.addEventListener(QuoteCommand.ListQuotes.getWrappedListener());
 		}
 
 	}

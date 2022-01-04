@@ -6,8 +6,8 @@ import matyrobbrt.matybot.api.event.AnnotationEventListener;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 public class RolePanelHandler extends AnnotationEventListener {
@@ -19,7 +19,7 @@ public class RolePanelHandler extends AnnotationEventListener {
 	}
 
 	@Override
-	public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
+	public void onMessageReactionAdd(MessageReactionAddEvent event) {
 		Member member = event.retrieveMember().complete();
 		if ((member == null) || member.getUser().isBot()) { return; }
 		RolePanel panel = getPanelForChannelAndMessage(event.getChannel().getIdLong(), event.getMessageIdLong());
@@ -36,7 +36,7 @@ public class RolePanelHandler extends AnnotationEventListener {
 	}
 
 	@Override
-	public void onGuildMessageReactionRemove(GuildMessageReactionRemoveEvent event) {
+	public void onMessageReactionRemove(MessageReactionRemoveEvent event) {
 		Member member = event.retrieveMember().complete();
 		if ((member == null) || member.getUser().isBot()) { return; }
 		RolePanel panel = getPanelForChannelAndMessage(event.getChannel().getIdLong(), event.getMessageIdLong());
