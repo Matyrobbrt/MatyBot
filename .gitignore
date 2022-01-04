@@ -3,11 +3,7 @@
 .settings
 bin/
 build/
-storage/
-config.toml
+run/
 .project
 .classpath
-tricks.json
-
-# ignore all databases
-*.db
+*.launch
