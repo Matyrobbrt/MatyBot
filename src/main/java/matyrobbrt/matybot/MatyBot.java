@@ -9,7 +9,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import matyrobbrt.matybot.annotation.EventSubscriber;
+import matyrobbrt.matybot.api.annotation.EventSubscriber;
 import matyrobbrt.matybot.api.modules.ModuleManager;
 import matyrobbrt.matybot.modules.commands.CommandsModule;
 import matyrobbrt.matybot.modules.levelling.LevellingModule;

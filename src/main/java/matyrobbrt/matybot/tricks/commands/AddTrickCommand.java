@@ -2,12 +2,12 @@ package matyrobbrt.matybot.tricks.commands;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import matyrobbrt.matybot.tricks.ITrick.TrickType;
 import matyrobbrt.matybot.tricks.TrickManager;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  * Double command (both slash and normal)

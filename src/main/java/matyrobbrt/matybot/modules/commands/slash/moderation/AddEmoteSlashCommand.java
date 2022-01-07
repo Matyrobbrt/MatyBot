@@ -6,12 +6,12 @@ import java.net.URLConnection;
 import java.util.List;
 
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
-import matyrobbrt.matybot.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.Icon.IconType;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;

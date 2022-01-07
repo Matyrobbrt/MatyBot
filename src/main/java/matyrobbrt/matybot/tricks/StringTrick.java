@@ -6,9 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 

@@ -188,10 +188,7 @@ public final class TrickManager {
 
 				@Override
 				public void write(final JsonWriter out, final T value) throws IOException {
-					out.beginObject();
-					out.name("$type");
-					out.value(type.toString());
-					out.name("value");
+					out.beginObject().name("$type").value(type.toString()).name("value");
 					delegate.write(out, value);
 					out.endObject();
 				}

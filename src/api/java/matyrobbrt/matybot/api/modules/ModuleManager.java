@@ -1,8 +1,7 @@
 package matyrobbrt.matybot.api.modules;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.collections4.map.HashedMap;
 
 import matyrobbrt.matybot.MatyBot;
 import net.dv8tion.jda.api.JDA;
@@ -10,7 +9,7 @@ import net.dv8tion.jda.api.JDA;
 public class ModuleManager {
 
 	private final JDA bot;
-	private final Map<Class<?>, Module> modules = new HashedMap<>();
+	private final Map<Class<?>, Module> modules = new HashMap<>();
 
 	public ModuleManager(final JDA bot) {
 		this.bot = bot;

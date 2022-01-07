@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import matyrobbrt.matybot.annotation.RegisterCommand;
+import matyrobbrt.matybot.api.annotation.RegisterCommand;
 import net.dv8tion.jda.api.Permission;
 
 public class AddEmoteCommand extends Command {

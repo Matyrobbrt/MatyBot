@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Random;
 
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import matyrobbrt.matybot.api.command.slash.PaginatedCommand;
 import matyrobbrt.matybot.api.event.EventListenerWrapper;
 import matyrobbrt.matybot.util.BotUtils;
@@ -18,7 +19,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 

@@ -9,11 +9,11 @@ import java.util.Locale;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.annotation.RegisterCommand;
-import matyrobbrt.matybot.annotation.RegisterSlashCommand;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import matyrobbrt.matybot.api.annotation.RegisterCommand;
+import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -49,6 +49,7 @@ public final class SearchCommand extends SlashCommand {
 		List<OptionData> dataList = new ArrayList<>();
 		dataList.add(data);
 		this.options = dataList;
+		guildOnly = false;
 	}
 
 	@Override

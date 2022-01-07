@@ -15,13 +15,13 @@ import org.slf4j.MarkerFactory;
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.util.database.dao.StickyRoles;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class BotUtils {

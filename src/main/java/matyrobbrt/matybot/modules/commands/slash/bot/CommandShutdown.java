@@ -1,11 +1,11 @@
 package matyrobbrt.matybot.modules.commands.slash.bot;
 
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import matyrobbrt.matybot.util.BotUtils;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 public final class CommandShutdown extends SlashCommand {
 
@@ -16,7 +16,7 @@ public final class CommandShutdown extends SlashCommand {
 		name = "shutdown";
 		help = "Shuts the bot down without restarting it. (Only usable by the bot owner)";
 		ownerCommand = true;
-		guildOnly = true;
+		guildOnly = false;
 	}
 
 	@Override

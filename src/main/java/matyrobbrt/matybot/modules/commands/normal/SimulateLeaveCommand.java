@@ -3,7 +3,7 @@ package matyrobbrt.matybot.modules.commands.normal;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import matyrobbrt.matybot.annotation.RegisterCommand;
+import matyrobbrt.matybot.api.annotation.RegisterCommand;
 import matyrobbrt.matybot.modules.logging.events.StickyRolesEvents;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.MentionType;

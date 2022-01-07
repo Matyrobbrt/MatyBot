@@ -14,8 +14,10 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.SlashCommand;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.annotation.RegisterCommand;
-import matyrobbrt.matybot.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.annotation.RegisterCommand;
+import matyrobbrt.matybot.api.annotation.RegisterContextMenu;
+import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.command.slash.ContextMenu;
 import matyrobbrt.matybot.api.event.EventListenerWrapper;
 import matyrobbrt.matybot.quotes.QuoteCommand;
 import matyrobbrt.matybot.tricks.TrickManager;
@@ -49,6 +51,11 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 			upsertCommand(c);
 		});
 		collectPrefixCommands().stream().filter(Objects::nonNull).forEach(builder::addCommand);
+
+		collectContextMenus().forEach(menu -> {
+			upsertContextMenu(menu);
+			bot.addEventListener(new EventListenerWrapper(menu));
+		});
 
 		builder.forceGuildOnly(MatyBot.config().getGuildID());
 
@@ -84,6 +91,25 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 		}).map(field -> {
 			try {
 				return (SlashCommand) field.get(null);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}).collect(Collectors.toSet());
+	}
+
+	private static Set<ContextMenu> collectContextMenus() {
+		return ReflectionUtils.getFieldsAnnotatedWith(RegisterContextMenu.class).stream().filter(field -> {
+			field.setAccessible(true);
+			try {
+				return field.get(null) instanceof ContextMenu;
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}).map(field -> {
+			try {
+				return (ContextMenu) field.get(null);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -138,6 +164,27 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 			}
 		} else {
 			MatyBot.instance.getBot().upsertCommand(cmd.buildCommandData()).queue();
+		}
+	}
+
+	/**
+	 * Upserts a context menu.
+	 *
+	 * @param menu the menu
+	 */
+	public static void upsertContextMenu(final ContextMenu menu) {
+		if (menu.isGuildOnly()) {
+			var guild = MatyBot.instance.getBot().getGuildById(MatyBot.config().getGuildID());
+			if (guild == null) { throw new NullPointerException("No Guild found!"); }
+
+			try {
+				guild.upsertCommand(menu.buildCommandData())
+						.queue(cmd1 -> cmd1.updatePrivileges(guild, menu.buildPrivileges()).queue());
+			} catch (Exception e) {
+				MatyBot.LOGGER.error("Error while upserting guild context menu!", e);
+			}
+		} else {
+			MatyBot.instance.getBot().upsertCommand(menu.buildCommandData()).queue();
 		}
 	}
 

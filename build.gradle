@@ -63,7 +63,9 @@ dependencies {
 	// shade group: 'pw.chew', name: 'jda-chewtils', version: 'latest.release'
 	// chewtils for JDA 5.0 is not published on the maven
 	shade ":jda-chewtils-2.0-SNAPSHOT"
-	shade group: 'net.dv8tion', name: 'JDA', version: 'latest.release'
+	// JDA is not published anywhere, as it is a dev branch
+	// shade group: 'net.dv8tion', name: 'JDA', version: 'latest.release'
+	shade ":JDA-5.0.0-alpha.3_DEV"
 	
 	shade group: 'io.vavr', name: 'vavr', version: 'latest.release'
 	shade group: 'io.github.cdimascio', name:'dotenv-java', version: 'latest.release'
@@ -75,7 +77,7 @@ dependencies {
 	shade group: 'com.jhlabs', name: 'filters', version: 'latest.release'
 	shade group: 'com.object-refinery', name: 'orsoncharts', version: 'latest.release'
 	shade group: 'org.jetbrains', name: 'annotations', version: 'latest.release'
-	shade group: 'org.slf4j', name: 'slf4j-simple', version: 'latest.release'
+	shade group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 	shade group: 'org.xerial', name: 'sqlite-jdbc', version: 'latest.release'
 	shade group: 'com.electronwill.night-config', name: 'toml', version: 'latest.release'
 	shade group: 'org.jooq', name: 'joor', version: 'latest.release'

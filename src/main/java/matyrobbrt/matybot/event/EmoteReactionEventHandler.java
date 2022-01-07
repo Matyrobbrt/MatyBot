@@ -5,7 +5,7 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
-import matyrobbrt.matybot.annotation.EventSubscriber;
+import matyrobbrt.matybot.api.annotation.EventSubscriber;
 import matyrobbrt.matybot.api.event.AnnotationEventListener;
 import matyrobbrt.matybot.util.Emotes;
 import net.dv8tion.jda.api.Permission;

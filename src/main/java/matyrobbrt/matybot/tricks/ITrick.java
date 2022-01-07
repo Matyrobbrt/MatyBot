@@ -2,8 +2,9 @@ package matyrobbrt.matybot.tricks;
 
 import java.util.List;
 
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public interface ITrick {

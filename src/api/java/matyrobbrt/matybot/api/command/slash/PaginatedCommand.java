@@ -1,21 +1,21 @@
 package matyrobbrt.matybot.api.command.slash;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.Button;
-import net.dv8tion.jda.api.interactions.components.Component;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 /**
  * A wrapper for Slash Commands which require a paginated embed. It handles the
@@ -74,10 +74,10 @@ public abstract class PaginatedCommand extends SlashCommand {
 	 * @param event the active SlashCommandEvent.
 	 */
 	protected void sendPaginatedMessage(SlashCommandEvent event) {
-		ReplyAction reply = event.replyEmbeds(getEmbed(0, event.getGuild()).build());
-		Component[] buttons = createScrollButtons(0);
+		var reply = event.replyEmbeds(getEmbed(0, event.getGuild()).build());
+		Button[] buttons = createScrollButtons(0);
 		if (buttons.length > 0) {
-			reply.addActionRow(buttons);
+			reply.addActionRows(ActionRow.of(Arrays.asList(buttons)));
 		}
 		reply.queue();
 	}
@@ -91,7 +91,7 @@ public abstract class PaginatedCommand extends SlashCommand {
 	 * @param  start The quote number at the start of the current page.
 	 * @return       A row of buttons to go back and forth by one page.
 	 */
-	private Component[] createScrollButtons(int start) {
+	private Button[] createScrollButtons(int start) {
 		Button backward = Button.primary(getName() + "-" + start + "-prev", Emoji.fromUnicode("U+25C0")).asDisabled();
 		Button forward = Button.primary(getName() + "-" + start + "-next", Emoji.fromUnicode("U+25B6")).asDisabled();
 
@@ -103,7 +103,7 @@ public abstract class PaginatedCommand extends SlashCommand {
 			forward = forward.asEnabled();
 		}
 
-		return new Component[] {
+		return new Button[] {
 				backward, forward
 		};
 	}
@@ -121,9 +121,9 @@ public abstract class PaginatedCommand extends SlashCommand {
 		public abstract String getButtonID();
 
 		@Override
-		public void onButtonClick(@NotNull final ButtonClickEvent event) {
+		public void onButtonInteraction(@NotNull final ButtonInteractionEvent event) {
 			var button = event.getButton();
-			if (button == null || button.getId() == null) { return; }
+			if (button.getId() == null) { return; }
 
 			String[] idParts = button.getId().split("-");
 			if (idParts.length != 3) { return; }
