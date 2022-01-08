@@ -1,9 +1,13 @@
 package matyrobbrt.matybot;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
@@ -15,10 +19,11 @@ import matyrobbrt.matybot.modules.commands.CommandsModule;
 import matyrobbrt.matybot.modules.levelling.LevellingModule;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
 import matyrobbrt.matybot.modules.rolepanel.RolePanelsModule;
-import matyrobbrt.matybot.util.BotConfig;
 import matyrobbrt.matybot.util.BotUtils;
 import matyrobbrt.matybot.util.Emotes;
 import matyrobbrt.matybot.util.ReflectionUtils;
+import matyrobbrt.matybot.util.config.GeneralConfig;
+import matyrobbrt.matybot.util.config.GuildConfig;
 import matyrobbrt.matybot.util.database.DatabaseManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -35,14 +40,19 @@ public class MatyBot {
 
 	public static MatyBot instance;
 	private static DatabaseManager database;
-	private static BotConfig config;
+	private static GeneralConfig generalConfig;
 	private static ModuleManager moduleManager;
+	private static final Map<Long, GuildConfig> GUILD_CONFIGS = new HashMap<>();
 
 	public static void main(String[] args) {
-		config = new BotConfig(Paths.get("config.toml"));
+		try {
+			generateFolders();
+		} catch (IOException e) {}
+
+		generalConfig = new GeneralConfig(Paths.get("configs/general.toml"));
 		instance = create(BotUtils.getBotToken());
 		Emotes.register();
-		database = DatabaseManager.connectSQLite("jdbc:sqlite:" + config().getDatabaseName());
+		database = DatabaseManager.connectSQLite("jdbc:sqlite:" + generalConfig().getDatabaseName());
 
 		final JDA bot = instance.getBot();
 
@@ -60,8 +70,18 @@ public class MatyBot {
 		return database.jdbi();
 	}
 
-	public static BotConfig config() {
-		return config;
+	public static GeneralConfig generalConfig() {
+		return generalConfig;
+	}
+
+	public static GuildConfig getConfigForGuild(final long guildId) {
+		return GUILD_CONFIGS.computeIfAbsent(guildId,
+				k -> new GuildConfig(Paths.get("configs/server/" + guildId + ".toml"), guildId));
+	}
+
+	private static void generateFolders() throws IOException {
+		Files.createDirectories(Paths.get("configs"));
+		Files.createDirectories(Paths.get("configs/server"));
 	}
 
 	private final JDA bot;
@@ -69,7 +89,7 @@ public class MatyBot {
 	private MatyBot(final JDA bot) {
 		this.bot = bot;
 
-		if (config().isNewlyGenerated()) {
+		if (generalConfig().isNewlyGenerated()) {
 			LOGGER.warn("A new config file has been generated! Please configure it.");
 			System.exit(0);
 		}
@@ -102,7 +122,8 @@ public class MatyBot {
 					.enableIntents(GatewayIntent.DIRECT_MESSAGE_REACTIONS, GatewayIntent.values())
 					.setMemberCachePolicy(MemberCachePolicy.ALL).enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.EMOTE)
 					.setChunkingFilter(ChunkingFilter.ALL)
-					.setActivity(Activity.of(config().getActivityType(), config().activityName)).build().awaitReady());
+					.setActivity(Activity.of(generalConfig().getActivityType(), generalConfig().activityName)).build()
+					.awaitReady());
 		} catch (final Exception e) {
 			throw new IllegalArgumentException(e);
 		}

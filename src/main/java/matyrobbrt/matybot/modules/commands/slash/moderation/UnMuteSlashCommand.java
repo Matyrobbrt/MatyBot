@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.time.Instant;
 import java.util.List;
 
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -17,22 +17,23 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public class UnMuteSlashCommand extends SlashCommand {
+public class UnMuteSlashCommand extends GuildSpecificSlashCommand {
 
 	@RegisterSlashCommand
 	private static final UnMuteSlashCommand CMD = new UnMuteSlashCommand();
 
 	public UnMuteSlashCommand() {
+		super("");
 		name = "unmute";
-		defaultEnabled = false;
-		enabledRoles = MatyBot.config().moderatorRoles.stream().map(String::valueOf).toArray(String[]::new);
 		help = "Unmutes a member";
+		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
+				.toArray(String[]::new);
 		options = List.of(new OptionData(OptionType.USER, "user", "User to unmute", true));
 	}
 
 	public static MessageEmbed unmuteMember(final Guild guild, final Member unmuter, final Member member) {
 		final var loggingChannel = LoggingModule.getLoggingChannel(guild);
-		final var mutedRole = guild.getRoleById(MatyBot.config().mutedRole);
+		final var mutedRole = guild.getRoleById(MatyBot.getConfigForGuild(guild.getIdLong()).mutedRole);
 
 		guild.removeRoleFromMember(member, mutedRole).queue();
 
@@ -72,7 +73,8 @@ public class UnMuteSlashCommand extends SlashCommand {
 			return;
 		}
 
-		if (!toMute.getRoles().contains(event.getGuild().getRoleById(MatyBot.config().mutedRole))) {
+		if (!toMute.getRoles().contains(
+				event.getGuild().getRoleById(MatyBot.getConfigForGuild(event.getGuild().getIdLong()).mutedRole))) {
 			event.deferReply(true).setContent("This user is not muted!").mentionRepliedUser(false).queue();
 			return;
 		}

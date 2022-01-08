@@ -18,9 +18,9 @@ import matyrobbrt.matybot.api.annotation.RegisterCommand;
 import matyrobbrt.matybot.api.annotation.RegisterContextMenu;
 import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import matyrobbrt.matybot.api.command.slash.ContextMenu;
+import matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import matyrobbrt.matybot.api.event.EventListenerWrapper;
 import matyrobbrt.matybot.quotes.QuoteCommand;
-import matyrobbrt.matybot.tricks.TrickManager;
 import matyrobbrt.matybot.util.ReflectionUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -40,15 +40,24 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 	}
 
 	public CommandsModule(final JDA bot) {
-		super(MatyBot.config()::isCommandsModuleEnabled, bot);
+		super(MatyBot.generalConfig()::isCommandsModuleEnabled, bot);
 
-		var builder = new CommandClientBuilder().setOwnerId(MatyBot.config().getBotOwner()).useHelpBuilder(false)
-				.setPrefix(MatyBot.config().mainPrefix)
-				.setPrefixes(MatyBot.config().alternativePrefixes.toArray(new String[] {}));
+		var builder = new CommandClientBuilder().setOwnerId(MatyBot.generalConfig().getBotOwner()).useHelpBuilder(false)
+				.setPrefix(MatyBot.generalConfig().mainPrefix)
+				.setPrefixes(MatyBot.generalConfig().alternativePrefixes.toArray(new String[] {}));
+
+		builder.setPrefixFunction(event -> {
+			if (!event.isFromGuild()) { return MatyBot.generalConfig().mainPrefix; }
+			return MatyBot.getConfigForGuild(event.getGuild().getIdLong()).prefix;
+		});
 
 		collectSlashCommands().stream().filter(Objects::nonNull).forEach(c -> {
 			builder.addSlashCommand(c);
-			upsertCommand(c);
+			if (c instanceof GuildSpecificSlashCommand guildCmd) {
+				guildCmd.buildAndUpsert(bot);
+			} else {
+				upsertCommand(c);
+			}
 		});
 		collectPrefixCommands().stream().filter(Objects::nonNull).forEach(builder::addCommand);
 
@@ -57,9 +66,11 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 			bot.addEventListener(new EventListenerWrapper(menu));
 		});
 
-		builder.forceGuildOnly(MatyBot.config().getGuildID());
-
-		TrickManager.createTrickCommands().forEach(builder::addCommand);
+		/*
+		 * TODO fix this, make it be guild specific for (var guild : bot.getGuilds()) {
+		 * TrickManager.createTrickCommands(guild.getIdLong()).forEach(cmd -> {
+		 * builder.addCommand(cmd); }); }
+		 */
 
 		this.commandClient = builder.build();
 	}
@@ -153,14 +164,13 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 	 */
 	public void upsertCommand(final SlashCommand cmd) {
 		if (cmd.isGuildOnly()) {
-			var guild = MatyBot.instance.getBot().getGuildById(MatyBot.config().getGuildID());
-			if (guild == null) { throw new NullPointerException("No Guild found!"); }
-
-			try {
-				guild.upsertCommand(cmd.buildCommandData())
-						.queue(cmd1 -> cmd1.updatePrivileges(guild, cmd.buildPrivileges(commandClient)).queue());
-			} catch (Exception e) {
-				MatyBot.LOGGER.error("Error while upserting guild command!", e);
+			for (var guild : bot.getGuilds()) {
+				try {
+					guild.upsertCommand(cmd.buildCommandData())
+							.queue(cmd1 -> cmd1.updatePrivileges(guild, cmd.buildPrivileges(commandClient)).queue());
+				} catch (Exception e) {
+					MatyBot.LOGGER.error("Error while upserting guild command!", e);
+				}
 			}
 		} else {
 			MatyBot.instance.getBot().upsertCommand(cmd.buildCommandData()).queue();
@@ -174,14 +184,13 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 	 */
 	public static void upsertContextMenu(final ContextMenu menu) {
 		if (menu.isGuildOnly()) {
-			var guild = MatyBot.instance.getBot().getGuildById(MatyBot.config().getGuildID());
-			if (guild == null) { throw new NullPointerException("No Guild found!"); }
-
-			try {
-				guild.upsertCommand(menu.buildCommandData())
-						.queue(cmd1 -> cmd1.updatePrivileges(guild, menu.buildPrivileges()).queue());
-			} catch (Exception e) {
-				MatyBot.LOGGER.error("Error while upserting guild context menu!", e);
+			for (var guild : MatyBot.instance.getBot().getGuilds()) {
+				try {
+					guild.upsertCommand(menu.buildCommandData())
+							.queue(cmd1 -> cmd1.updatePrivileges(guild, menu.buildPrivileges()).queue());
+				} catch (Exception e) {
+					MatyBot.LOGGER.error("Error while upserting guild context menu!", e);
+				}
 			}
 		} else {
 			MatyBot.instance.getBot().upsertCommand(menu.buildCommandData()).queue();

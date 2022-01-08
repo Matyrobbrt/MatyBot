@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class LoggingModule extends matyrobbrt.matybot.api.modules.Module {
 
 	public LoggingModule(final JDA bot) {
-		super(MatyBot.config()::isLoggingModuleEnabled, bot);
+		super(MatyBot.generalConfig()::isLoggingModuleEnabled, bot);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class LoggingModule extends matyrobbrt.matybot.api.modules.Module {
 	}
 
 	public static TextChannel getLoggingChannel(final Guild guild) {
-		return guild.getTextChannelById(MatyBot.config().loggingChannel);
+		return guild.getTextChannelById(MatyBot.getConfigForGuild(guild.getIdLong()).loggingChannel);
 	}
 
 }

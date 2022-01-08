@@ -1,16 +1,13 @@
 package matyrobbrt.matybot.api.config;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.ConfigFormat;
-import com.electronwill.nightconfig.core.conversion.Converter;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import com.electronwill.nightconfig.core.file.FileWatcher;
@@ -77,7 +74,6 @@ public abstract class Config {
 			Utils.createDefault(configFile, getClass(), defaultConfig, this::addExtraData);
 			return toRet;
 		}).preserveInsertionOrder().build();
-		System.out.println(FieldUtils.getFieldsWithAnnotation(getClass(), ConfigEntry.class).length);
 		loadData();
 		Utils.addNotExistingEntries(config, getClass(), defaultConfig, this::addExtraData);
 		try {
@@ -96,16 +92,14 @@ public abstract class Config {
 
 	}
 
-	private void loadData() {
+	public void loadData() {
 		config.load();
 		FieldUtils.getFieldsListWithAnnotation(getClass(), ConfigEntry.class).forEach(field -> {
 			field.setAccessible(true);
 			try {
 				Object obj = config.get(Utils.getEntryName(field.getAnnotation(ConfigEntry.class)));
-				System.out.println(Utils.convertObject(field, obj));
-				field.set(this, Utils.convertObject(field, obj));
-			} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
-					| InstantiationException | InvocationTargetException e) {
+				FieldUtils.writeField(field, this, obj);
+			} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
 				e.printStackTrace();
 			}
 		});
@@ -128,80 +122,49 @@ public abstract class Config {
 
 	static final class Utils {
 
-		private static void createDefault(final Path configFile, final Class<?> clazz, final Object defaultConfig,
-				Runnable... beforeSave) {
+		private static void createDefault(final Path configFile, final Class<?> configClass, final Object defaultConfig,
+				final Runnable... beforeSave) {
 			try {
 				Files.createParentDirs(configFile.toFile());
 				java.nio.file.Files.createFile(configFile);
 			} catch (IOException e) {}
 			final var config = CommentedFileConfig.builder(configFile).build();
-			FieldUtils.getFieldsListWithAnnotation(clazz, ConfigEntry.class).forEach(field -> {
+			FieldUtils.getFieldsListWithAnnotation(configClass, ConfigEntry.class).forEach(field -> {
 				field.setAccessible(true);
 				ConfigEntry entry = field.getAnnotation(ConfigEntry.class);
 				String entryName = getEntryName(entry);
 				try {
-					config.set(entryName, getObjectConverted(field, defaultConfig));
-				} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
-						| InstantiationException | InvocationTargetException e) {}
+					config.set(entryName, field.get(defaultConfig));
+				} catch (IllegalArgumentException | IllegalAccessException e) {}
 				String comment = getComment(field, defaultConfig);
 				if (!comment.isEmpty()) {
 					config.setComment(entryName, comment);
 				}
 			});
-			for (var runnable : beforeSave) {
-				runnable.run();
+			for (var toRun : beforeSave) {
+				toRun.run();
 			}
 			config.save();
 		}
 
-		@SuppressWarnings("unchecked")
-		public static Object getObjectConverted(Field field, Object configInstance)
-				throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException,
-				InstantiationException, InvocationTargetException {
-			Object configVal = field.get(configInstance);
-			if (field.getAnnotation(ConfigEntry.class).converter() != ConfigEntry.GenericConverter.class) {
-				Class<? extends Converter<?, ?>> converterClazz = field.getAnnotation(ConfigEntry.class).converter();
-				Constructor<? extends Converter<?, ?>> constr = converterClazz.getConstructor();
-				Converter<Object, Object> converter = (Converter<Object, Object>) constr.newInstance();
-				return converter.convertFromField(configVal);
-			}
-			return configVal;
-		}
-
-		@SuppressWarnings("unchecked")
-		public static Object convertObject(Field field, Object toConvert)
-				throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException,
-				InstantiationException, InvocationTargetException {
-			if (field.getAnnotation(ConfigEntry.class).converter() != ConfigEntry.GenericConverter.class) {
-				Class<? extends Converter<?, ?>> converterClazz = field.getAnnotation(ConfigEntry.class).converter();
-				Constructor<? extends Converter<?, ?>> constr = converterClazz.getConstructor();
-				Converter<Object, Object> converter = (Converter<Object, Object>) constr.newInstance();
-				Object toRet = converter.convertToField(toConvert);
-				System.out.println(toRet);
-				return toRet;
-			}
-			return toConvert;
-		}
-
-		private static void addNotExistingEntries(final CommentedFileConfig config, final Class<?> clazz,
-				final Object defaultConfig, Runnable... beforeSave) {
-			FieldUtils.getFieldsListWithAnnotation(clazz, ConfigEntry.class).forEach(field -> {
+		private static void addNotExistingEntries(final CommentedFileConfig config, final Class<?> configClass,
+				final Object defaultConfig, final Runnable... beforeSave) {
+			FieldUtils.getFieldsListWithAnnotation(configClass, ConfigEntry.class).forEach(field -> {
 				field.setAccessible(true);
 				ConfigEntry entry = field.getAnnotation(ConfigEntry.class);
 				String entryName = getEntryName(entry);
 				if (!config.contains(entryName)) {
 					try {
-						config.set(entryName, getObjectConverted(field, defaultConfig));
-					} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException
-							| SecurityException | InstantiationException | InvocationTargetException e) {}
+						config.set(entryName, field.get(defaultConfig));
+					} catch (IllegalArgumentException | IllegalAccessException e) {}
 					String comment = getComment(field, defaultConfig);
 					if (!comment.isEmpty()) {
 						config.setComment(entryName, comment);
 					}
 				}
 			});
-			for (var runnable : beforeSave) {
-				runnable.run();
+			for (var toRun : beforeSave) {
+				toRun.run();
 			}
 			config.save();
 		}
@@ -222,9 +185,8 @@ public abstract class Config {
 					comment.append(System.getProperty("line.separator"));
 				}
 				try {
-					comment.append("default: " + getObjectConverted(field, defaultConfig));
-				} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
-						| InstantiationException | InvocationTargetException e) {}
+					comment.append("default: " + field.get(defaultConfig));
+				} catch (IllegalArgumentException | IllegalAccessException e) {}
 			}
 			return comment.toString();
 		}

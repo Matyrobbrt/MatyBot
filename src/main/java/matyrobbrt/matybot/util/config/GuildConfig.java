@@ -1,4 +1,4 @@
-package matyrobbrt.matybot.util;
+package matyrobbrt.matybot.util.config;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -23,9 +23,9 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 import matyrobbrt.matybot.MatyBot;
-import net.dv8tion.jda.api.entities.Activity.ActivityType;
+import matyrobbrt.matybot.util.BotUtils;
 
-public final class BotConfig {
+public final class GuildConfig {
 
 	/**
 	 * The Config.
@@ -37,11 +37,14 @@ public final class BotConfig {
 	 */
 	private boolean newlyGenerated;
 
-	private static final BotConfig DEFAULT = new BotConfig();
+	private final long guildId;
 
-	private BotConfig() {
+	private static final GuildConfig DEFAULT = new GuildConfig();
+
+	private GuildConfig() {
 		this.config = null;
 		this.newlyGenerated = false;
+		this.guildId = 0;
 	}
 
 	/**
@@ -49,8 +52,8 @@ public final class BotConfig {
 	 *
 	 * @param configFile the config file
 	 */
-	public BotConfig(final Path configFile) {
-		this(configFile, TomlFormat.instance());
+	public GuildConfig(final Path configFile, final long guildId) {
+		this(configFile, TomlFormat.instance(), guildId);
 	}
 
 	/**
@@ -59,8 +62,10 @@ public final class BotConfig {
 	 * @param configFile   the config file
 	 * @param configFormat the config format
 	 */
-	public BotConfig(final Path configFile, final ConfigFormat<? extends CommentedConfig> configFormat) {
+	public GuildConfig(final Path configFile, final ConfigFormat<? extends CommentedConfig> configFormat,
+			final long guildId) {
 		this.newlyGenerated = false;
+		this.guildId = guildId;
 		this.config = CommentedFileConfig.builder(configFile, configFormat).onFileNotFound((file, format) -> {
 			this.newlyGenerated = true;
 			var toRet = FileNotFoundAction.CREATE_EMPTY.run(configFile, configFormat);
@@ -71,11 +76,11 @@ public final class BotConfig {
 		Utils.addNotExistingEntries(config);
 		try {
 			FileWatcher.defaultInstance().addWatch(configFile, () -> {
-				MatyBot.LOGGER.info("Config file changed! Updating values...");
+				MatyBot.LOGGER.info("Config file for guild {} changed! Updating values...", guildId);
 				loadData();
 			});
 		} catch (IOException e) {
-			MatyBot.LOGGER.error("Config file cannot be watched! The bot will be stopped!", e);
+			MatyBot.LOGGER.error("Config file for guild {} cannot be watched! The bot will be stopped!", e, guildId);
 			System.exit(1);
 		}
 
@@ -83,7 +88,7 @@ public final class BotConfig {
 
 	private void loadData() {
 		config.load();
-		FieldUtils.getFieldsListWithAnnotation(getClass(), ConfigEntry.class).forEach(field -> {
+		FieldUtils.getFieldsListWithAnnotation(GuildConfig.class, ConfigEntry.class).forEach(field -> {
 			field.setAccessible(true);
 			try {
 				field.set(this, config.get(Utils.getEntryName(field.getAnnotation(ConfigEntry.class))));
@@ -106,6 +111,8 @@ public final class BotConfig {
 	 */
 	public CommentedFileConfig getConfig() { return config; }
 
+	public long getGuildID() { return guildId; }
+
 	/// UTIL STUFF ///
 
 	private static final class Utils {
@@ -116,7 +123,7 @@ public final class BotConfig {
 				java.nio.file.Files.createFile(configFile);
 			} catch (IOException e) {}
 			final var config = CommentedFileConfig.builder(configFile).build();
-			FieldUtils.getFieldsListWithAnnotation(BotConfig.class, ConfigEntry.class).forEach(field -> {
+			FieldUtils.getFieldsListWithAnnotation(GuildConfig.class, ConfigEntry.class).forEach(field -> {
 				field.setAccessible(true);
 				ConfigEntry entry = field.getAnnotation(ConfigEntry.class);
 				String entryName = getEntryName(entry);
@@ -134,7 +141,7 @@ public final class BotConfig {
 		}
 
 		private static void addNotExistingEntries(final CommentedFileConfig config) {
-			FieldUtils.getFieldsListWithAnnotation(BotConfig.class, ConfigEntry.class).forEach(field -> {
+			FieldUtils.getFieldsListWithAnnotation(GuildConfig.class, ConfigEntry.class).forEach(field -> {
 				field.setAccessible(true);
 				ConfigEntry entry = field.getAnnotation(ConfigEntry.class);
 				String entryName = getEntryName(entry);
@@ -188,55 +195,10 @@ public final class BotConfig {
 		boolean commentDefaultValue() default true;
 	}
 
-	/// GENERAL CONFIG ///
+	// GENERAL STUFF //
 
-	@ConfigEntry(name = "botOwner", category = "general", comments = "The owner of the bot", commentDefaultValue = false)
-	private long botOwner;
-
-	public long getBotOwner() { return botOwner; }
-
-	@ConfigEntry(name = "guildID", category = "general", comments = "The main guild of the bot", commentDefaultValue = false)
-	private long guildID;
-
-	public long getGuildID() { return guildID; }
-
-	@ConfigEntry(name = "databaseName", category = "general", comments = "The name of the database")
-	private String databaseName = "storage/database.db";
-
-	public String getDatabaseName() { return databaseName; }
-
-	@ConfigEntry(name = "main", category = "general.prefixes", comments = {
-			"The main prefix of the bot", "Any other prefix should be an alternative one"
-	})
-	public String mainPrefix = "!";
-
-	@ConfigEntry(name = "type", category = "general.activity", comments = "The type of activity the bot has.")
-	private String activityType = "WATCHING";
-
-	public ActivityType getActivityType() { return ActivityType.valueOf(activityType); }
-
-	@ConfigEntry(name = "name", category = "general.activity", comments = "The name of the activity the bot has.")
-	public String activityName = "naughty people!";
-
-	@ConfigEntry(name = "alternative", category = "general.prefixes", comments = "The alternative prefixes of the bot")
-	public List<String> alternativePrefixes = Lists.newArrayList();
-
-	/// MODULES ///
-
-	@ConfigEntry(name = "enabled", category = "modules.commands", comments = "If the commands module should be enabled.")
-	private boolean commandsModuleEnabled = true;
-
-	public boolean isCommandsModuleEnabled() { return commandsModuleEnabled; }
-
-	@ConfigEntry(name = "enabled", category = "modules.logging", comments = "If the logging module should be enabled.")
-	private boolean loggingModuleEnabled = true;
-
-	public boolean isLoggingModuleEnabled() { return loggingModuleEnabled; }
-
-	@ConfigEntry(name = "enabled", category = "modules.levelling", comments = "If the levelling module should be enabled.")
-	private boolean levellingModuleEnabled = true;
-
-	public boolean isLevellingModuleEnabled() { return levellingModuleEnabled; }
+	@ConfigEntry(name = "main", category = "general.prefixes", comments = "The prefix of the bot in the guild.")
+	public String prefix = "!";
 
 	/// CHANNELS ///
 

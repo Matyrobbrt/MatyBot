@@ -10,6 +10,7 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
 import matyrobbrt.matybot.util.database.dao.Warnings;
 import matyrobbrt.matybot.util.database.dao.Warnings.WarningDocument;
@@ -23,16 +24,16 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import net.dv8tion.jda.api.utils.Timestamp;
 
-public class WarnsSlashCommand extends SlashCommand {
+public class WarnsSlashCommand extends GuildSpecificSlashCommand {
 
 	@RegisterSlashCommand
 	private static final WarnsSlashCommand COMMAND = new WarnsSlashCommand();
 
 	public WarnsSlashCommand() {
+		super("");
 		this.name = "warning";
-		defaultEnabled = false;
-		enabledRoles = MatyBot.config().moderatorRoles.stream().map(String::valueOf).toList().toArray(new String[] {});
-		guildOnly = true;
+		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
+				.toArray(String[]::new);
 
 		help = "Things regarding warns";
 
@@ -58,8 +59,7 @@ public class WarnsSlashCommand extends SlashCommand {
 		@Override
 		protected void execute(SlashCommandEvent event) {
 			String reason = event.getOption("reason").getAsString();
-			boolean publicPunishment = event.getOption("public") == null ? true
-					: event.getOption("public").getAsBoolean();
+			boolean publicPunishment = event.getOption("public") == null || event.getOption("public").getAsBoolean();
 			User userToWarn = event.getOption("user").getAsUser();
 			Member member = event.getMember();
 

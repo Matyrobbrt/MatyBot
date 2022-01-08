@@ -5,10 +5,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
+import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.Icon.IconType;
@@ -16,14 +17,17 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public class AddEmoteSlashCommand extends SlashCommand {
+public class AddEmoteSlashCommand extends GuildSpecificSlashCommand {
 
 	@RegisterSlashCommand
 	private static final AddEmoteSlashCommand CMD = new AddEmoteSlashCommand();
 
 	public AddEmoteSlashCommand() {
+		super("");
 		name = "add-emote";
 		help = "Adds an emote from the uuid of an already-exising emote ID";
+		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
+				.toArray(String[]::new);
 		options = List.of(
 				new OptionData(OptionType.STRING, "name", "The name of the emote to add", true),
 				new OptionData(OptionType.STRING, "emote_id", "The ID of the emote to add", true),

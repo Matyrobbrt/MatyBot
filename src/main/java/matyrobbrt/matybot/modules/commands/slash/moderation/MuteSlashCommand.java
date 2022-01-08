@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -20,15 +20,16 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public class MuteSlashCommand extends SlashCommand {
+public class MuteSlashCommand extends GuildSpecificSlashCommand {
 
 	@RegisterSlashCommand
 	private static final MuteSlashCommand CMD = new MuteSlashCommand();
 
 	public MuteSlashCommand() {
+		super("");
 		name = "mute";
-		defaultEnabled = false;
-		enabledRoles = MatyBot.config().moderatorRoles.stream().map(String::valueOf).toArray(String[]::new);
+		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
+				.toArray(String[]::new);
 		help = "Mutes a member";
 		OptionData time = new OptionData(OptionType.INTEGER, "time",
 				"The amount of time to mute for. Indefinitely if not specified.").setRequired(false);
@@ -42,7 +43,7 @@ public class MuteSlashCommand extends SlashCommand {
 	public static MessageEmbed muteMember(final Guild guild, final Member muter, final Member member,
 			final String reason, final long time, final TimeUnit timeUnit) {
 		final var loggingChannel = LoggingModule.getLoggingChannel(guild);
-		final var mutedRole = guild.getRoleById(MatyBot.config().mutedRole);
+		final var mutedRole = guild.getRoleById(MatyBot.getConfigForGuild(guild.getIdLong()).mutedRole);
 
 		guild.addRoleToMember(member, mutedRole).queue();
 
@@ -99,7 +100,8 @@ public class MuteSlashCommand extends SlashCommand {
 			return;
 		}
 
-		if (toMute.getRoles().contains(event.getGuild().getRoleById(MatyBot.config().mutedRole))) {
+		if (toMute.getRoles().contains(
+				event.getGuild().getRoleById(MatyBot.getConfigForGuild(event.getGuild().getIdLong()).mutedRole))) {
 			event.deferReply(true).setContent("This user is already muted!").mentionRepliedUser(false).queue();
 			return;
 		}

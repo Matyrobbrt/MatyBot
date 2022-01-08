@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
@@ -43,30 +45,44 @@ public final class TrickManager {
 
 	private static final Map<String, ITrick.TrickType<?>> TRICK_TYPES = new HashMap<>();
 
-	private static @Nullable List<ITrick> iTricks = null;
+	private static @Nullable Map<Long, List<ITrick>> tricks = null;
 
-	public static Optional<ITrick> getTrick(final String name) {
-		return getTricks().stream().filter(trick -> trick.getNames().contains(name)).findAny();
-	}
-
-	public static List<ITrick> getTricks() {
-		if (iTricks == null) {
+	public static Map<Long, List<ITrick>> getAllTricks() {
+		if (tricks == null) {
 			loadTricks();
 		}
-		return iTricks;
+		return tricks;
+	}
+
+	public static Optional<ITrick> getTrick(final long guildId, final String name) {
+		return getTricksForGuild(guildId).stream().filter(trick -> trick.getNames().contains(name)).findAny();
+	}
+
+	public static List<ITrick> getTricksForGuild(long guildId) {
+		if (tricks == null) {
+			loadTricks();
+		}
+		return tricks.computeIfAbsent(guildId, g -> new ArrayList<>());
 	}
 
 	public static void loadTricks() {
 		final File file = new File(TRICK_STORAGE_PATH);
 		if (!file.exists()) {
-			iTricks = new ArrayList<>();
+			tricks = new HashMap<>();
 		}
 		try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
 			Type typeOfList = new TypeToken<List<ITrick>>() {}.getType();
-			iTricks = GSON.fromJson(reader, typeOfList);
+			JsonObject json = GSON.fromJson(reader, JsonObject.class);
+			if (json == null) {
+				json = new JsonObject();
+			}
+			tricks = new HashMap<>();
+			json.entrySet().forEach(entry -> {
+				tricks.put(Long.parseLong(entry.getKey()), GSON.fromJson(entry.getValue(), typeOfList));
+			});
 		} catch (final IOException exception) {
 			MatyBot.LOGGER.trace("Failed to read tricks file...", exception);
-			iTricks = new ArrayList<>();
+			tricks = new HashMap<>();
 		}
 	}
 
@@ -115,8 +131,8 @@ public final class TrickManager {
 	 *
 	 * @param iTrick the trick to add.
 	 */
-	public static void addTrick(final ITrick iTrick) {
-		getTricks().add(iTrick);
+	public static void addTrick(final long guildId, final ITrick iTrick) {
+		getTricksForGuild(guildId).add(iTrick);
 		write();
 		addOrRestoreCommand(iTrick);
 	}
@@ -126,8 +142,8 @@ public final class TrickManager {
 	 *
 	 * @param trick the trick
 	 */
-	public static void removeTrick(final ITrick trick) {
-		getTricks().remove(trick);
+	public static void removeTrick(final long guildId, final ITrick trick) {
+		getTricksForGuild(guildId).remove(trick);
 		write();
 		CommandsModule.getInstance().getCommandClient().removeCommand(trick.getNames().get(0));
 	}
@@ -137,9 +153,14 @@ public final class TrickManager {
 	 */
 	private static void write() {
 		final var tricksFile = new File(TRICK_STORAGE_PATH);
-		List<ITrick> iTricks = getTricks();
+		var tricks = getAllTricks();
 		try (var writer = new OutputStreamWriter(new FileOutputStream(tricksFile), StandardCharsets.UTF_8)) {
-			GSON.toJson(iTricks, writer);
+			JsonObject json = new JsonObject();
+			for (var trick : tricks.entrySet()) {
+				json.add(String.valueOf(trick.getValue()),
+						GSON.fromJson(GSON.toJson(trick.getValue()), JsonArray.class));
+			}
+			GSON.toJson(tricks, writer);
 		} catch (final FileNotFoundException exception) {
 			MatyBot.LOGGER.error("An FileNotFoundException occurred saving tricks...", exception);
 		} catch (final IOException exception) {
@@ -147,8 +168,8 @@ public final class TrickManager {
 		}
 	}
 
-	public static List<RunTrickCommand> createTrickCommands() {
-		return getTricks().stream().map(RunTrickCommand::new).toList();
+	public static List<RunTrickCommand> createTrickCommands(final long guildId) {
+		return getTricksForGuild(guildId).stream().map(RunTrickCommand::new).toList();
 	}
 
 	/**

@@ -6,6 +6,7 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
+import matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import matyrobbrt.matybot.tricks.ITrick.TrickType;
 import matyrobbrt.matybot.tricks.TrickManager;
 
@@ -15,13 +16,14 @@ import matyrobbrt.matybot.tricks.TrickManager;
  * @author matyrobbrt
  *
  */
-public final class AddTrickCommand extends SlashCommand {
+public final class AddTrickCommand extends GuildSpecificSlashCommand {
 
 	// @RegisterCommand
 	@RegisterSlashCommand
 	private static final AddTrickCommand CMD = new AddTrickCommand();
 
 	public AddTrickCommand() {
+		super("");
 		name = "add-trick";
 		help = "Adds a new trick, either a string or an embed, if a string you only need the <names> and <body>.";
 		category = new Category("Info");
@@ -29,9 +31,8 @@ public final class AddTrickCommand extends SlashCommand {
 		aliases = new String[] {
 				"addtrick"
 		};
-		defaultEnabled = false;
-		enabledRoles = MatyBot.config().trickManagerRoles.stream().map(String::valueOf).toArray(String[]::new);
-		guildOnly = true;
+		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).trickManagerRoles.stream()
+				.map(String::valueOf).toArray(String[]::new);
 
 		// used by the non-slash version
 		// guildId = Long.toString(MatyBot.config().getGuildID());
@@ -55,7 +56,7 @@ public final class AddTrickCommand extends SlashCommand {
 		@Override
 		protected void execute(final SlashCommandEvent event) {
 			try {
-				TrickManager.addTrick(trickType.createFromCommand(event));
+				TrickManager.addTrick(event.getGuild().getIdLong(), trickType.createFromCommand(event));
 				event.reply("Added trick!").mentionRepliedUser(false).setEphemeral(true).queue();
 			} catch (IllegalArgumentException e) {
 				event.reply("A command with that name already exists!").mentionRepliedUser(false).setEphemeral(true)
@@ -78,7 +79,7 @@ public final class AddTrickCommand extends SlashCommand {
 		var firstSpace = args.indexOf(" ");
 
 		try {
-			TrickManager.addTrick(TrickManager.getTrickType(args.substring(0, firstSpace))
+			TrickManager.addTrick(event.getGuild().getIdLong(), TrickManager.getTrickType(args.substring(0, firstSpace))
 					.createFromArgs(args.substring(firstSpace + 1)));
 			channel.reply("Added trick!").mentionRepliedUser(false).queue();
 		} catch (IllegalArgumentException e) {

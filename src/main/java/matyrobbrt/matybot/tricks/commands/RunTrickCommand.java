@@ -52,7 +52,7 @@ public final class RunTrickCommand extends Command {
 		@Override
 		protected void execute(SlashCommandEvent event) {
 			final String args = BotUtils.getArgumentOrEmpty(event, "args");
-			TrickManager.getTrick(event.getOption("name").getAsString()).ifPresentOrElse(
+			TrickManager.getTrick(event.getGuild().getIdLong(), event.getOption("name").getAsString()).ifPresentOrElse(
 					trick -> event.reply(trick.getMessage(args.split(" "))).setEphemeral(false).queue(),
 					() -> event.reply("A trick with that name could not be found.").setEphemeral(true).queue());
 		}
