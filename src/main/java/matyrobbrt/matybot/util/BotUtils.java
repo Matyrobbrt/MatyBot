@@ -82,6 +82,10 @@ public class BotUtils {
 		return getOptionOrEmpty(event.getOption(name));
 	}
 
+	public static int getIntArgumentOr(SlashCommandEvent event, String name, int orElse) {
+		return getOptionOr(event.getOption(name), m -> (int) m.getAsDouble(), orElse);
+	}
+
 	public static void scheduleTask(Runnable task, long delay) {
 		new Timer().schedule(new TimerTask() {
 

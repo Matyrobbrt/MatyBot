@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -28,8 +29,10 @@ import matyrobbrt.matybot.util.database.DatabaseManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.AllowedMentions;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -42,13 +45,14 @@ public class MatyBot {
 	private static DatabaseManager database;
 	private static GeneralConfig generalConfig;
 	private static ModuleManager moduleManager;
-	private static final Map<Long, GuildConfig> GUILD_CONFIGS = new HashMap<>();
+	private static final Map<Long, GuildConfig> GUILD_CONFIGS = Collections.synchronizedMap(new HashMap<>());
 
 	public static void main(String[] args) {
 		try {
 			generateFolders();
 		} catch (IOException e) {}
 
+		AllowedMentions.setDefaultMentionRepliedUser(false);
 		generalConfig = new GeneralConfig(Paths.get("configs/general.toml"));
 		instance = create(BotUtils.getBotToken());
 		Emotes.register();
@@ -77,6 +81,10 @@ public class MatyBot {
 	public static GuildConfig getConfigForGuild(final long guildId) {
 		return GUILD_CONFIGS.computeIfAbsent(guildId,
 				k -> new GuildConfig(Paths.get("configs/server/" + guildId + ".toml"), guildId));
+	}
+
+	public static GuildConfig getConfigForGuild(final Guild guild) {
+		return getConfigForGuild(guild.getIdLong());
 	}
 
 	private static void generateFolders() throws IOException {

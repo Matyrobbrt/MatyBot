@@ -131,6 +131,8 @@ public final class GeneralConfig {
 			});
 			config.setComment("modules.logging",
 					"This module controls logging in the logging channel, as well as sticky roles.");
+			config.setComment("emotes",
+					"For the bot to be able to find an emote with the ID specified here, it has to be in the server where that emote is from.");
 			config.save();
 		}
 
@@ -233,5 +235,22 @@ public final class GeneralConfig {
 	private boolean levellingModuleEnabled = true;
 
 	public boolean isLevellingModuleEnabled() { return levellingModuleEnabled; }
+
+	/// EMOTES ///
+
+	@ConfigEntry(name = "pog", category = "emotes", commentDefaultValue = false)
+	public long pogEmoteID = 0l;
+
+	@ConfigEntry(name = "stabolb", category = "emotes", commentDefaultValue = false)
+	public long stabolbEmoteID = 0l;
+
+	@ConfigEntry(name = "concern", category = "emotes", commentDefaultValue = false)
+	public long concernEmoteID = 0l;
+
+	@ConfigEntry(name = "pogchamp", category = "emotes", commentDefaultValue = false)
+	public long pogchampEmoteID = 0l;
+
+	@ConfigEntry(name = "animated_ban_bolb", category = "emotes", commentDefaultValue = false)
+	public long animatedBanBolbEmoteID = 0l;
 
 }

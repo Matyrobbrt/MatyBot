@@ -69,18 +69,19 @@ public final class GuildConfig {
 		this.config = CommentedFileConfig.builder(configFile, configFormat).onFileNotFound((file, format) -> {
 			this.newlyGenerated = true;
 			var toRet = FileNotFoundAction.CREATE_EMPTY.run(configFile, configFormat);
-			Utils.createDefault(configFile);
+			Utils.createDefault(configFile, guildId);
 			return toRet;
 		}).preserveInsertionOrder().build();
 		loadData();
-		Utils.addNotExistingEntries(config);
+		Utils.addNotExistingEntries(config, guildId);
+		addExtraData(config, guildId);
 		try {
 			FileWatcher.defaultInstance().addWatch(configFile, () -> {
 				MatyBot.LOGGER.info("Config file for guild {} changed! Updating values...", guildId);
 				loadData();
 			});
 		} catch (IOException e) {
-			MatyBot.LOGGER.error("Config file for guild {} cannot be watched! The bot will be stopped!", e, guildId);
+			MatyBot.LOGGER.error("Config file for guild {} cannot be watched! The bot will be stopped! {}", guildId, e);
 			System.exit(1);
 		}
 
@@ -117,7 +118,7 @@ public final class GuildConfig {
 
 	private static final class Utils {
 
-		private static void createDefault(final Path configFile) {
+		private static void createDefault(final Path configFile, final long guildId) {
 			try {
 				Files.createParentDirs(configFile.toFile());
 				java.nio.file.Files.createFile(configFile);
@@ -135,12 +136,11 @@ public final class GuildConfig {
 					config.setComment(entryName, comment);
 				}
 			});
-			config.setComment("modules.logging",
-					"This module controls logging in the logging channel, as well as sticky roles.");
+			addExtraData(config, guildId);
 			config.save();
 		}
 
-		private static void addNotExistingEntries(final CommentedFileConfig config) {
+		private static void addNotExistingEntries(final CommentedFileConfig config, final long guildId) {
 			FieldUtils.getFieldsListWithAnnotation(GuildConfig.class, ConfigEntry.class).forEach(field -> {
 				field.setAccessible(true);
 				ConfigEntry entry = field.getAnnotation(ConfigEntry.class);
@@ -155,6 +155,7 @@ public final class GuildConfig {
 					}
 				}
 			});
+			addExtraData(config, guildId);
 			config.save();
 		}
 
@@ -193,6 +194,14 @@ public final class GuildConfig {
 		String[] comments() default {};
 
 		boolean commentDefaultValue() default true;
+	}
+
+	public static void addExtraData(final CommentedFileConfig config, final long longGuildId) {
+		config.add("guild_name", MatyBot.instance.getBot().getGuildById(longGuildId).getName());
+		config.setComment("guild_name",
+				"""
+						This is modified automatically in order to indicate the name of the guild, so it is easier to differentiate between multiple guild configs.
+						This value does NOTHING if changed, it is purely visual!""");
 	}
 
 	// GENERAL STUFF //

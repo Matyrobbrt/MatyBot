@@ -1,31 +1,71 @@
 package matyrobbrt.matybot.util;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
+
 import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.event.EmoteReactionEventHandler;
 import net.dv8tion.jda.api.entities.Emote;
+import net.dv8tion.jda.api.entities.Message;
 
 public class Emotes {
 
-	public static Emote STABOLB = null;
-	public static Emote CONCERN = null;
-	public static Emote POG = null;
-	public static Emote POGCHAMP = null;
+	// Normal
+	private static Emote stabolb = null;
+	private static Emote concern = null;
+	private static Emote pog = null;
+	private static Emote pogchamp = null;
 
-	public static Emote ANIMATED_BAN_BOLB = null;
+	// Animated
+	private static Emote animatedBanBolb = null;
 
 	public static void register() {
-		STABOLB = MatyBot.instance.getBot().getEmoteById(926590733887107123l);
-		CONCERN = getEmoteById(926611796519952454l);
-		POG = getEmoteById(926860008791101500l);
-		POGCHAMP = getEmoteById(926916466702438432l);
+		stabolb = getEmoteById(MatyBot.generalConfig().stabolbEmoteID);
+		concern = getEmoteById(MatyBot.generalConfig().concernEmoteID);
+		pog = getEmoteById(MatyBot.generalConfig().pogEmoteID);
+		pogchamp = getEmoteById(MatyBot.generalConfig().pogchampEmoteID);
 
-		ANIMATED_BAN_BOLB = getEmoteById(926841394809688095l);
+		animatedBanBolb = getEmoteById(MatyBot.generalConfig().animatedBanBolbEmoteID);
 
 		EmoteReactionEventHandler.registerEmotes();
 	}
 
 	private static Emote getEmoteById(long id) {
 		return MatyBot.instance.getBot().getEmoteById(id);
+	}
+
+	public static CompletableFuture<Void> reactNoComplete(@Nonnull final Message message,
+			@Nonnull final EmoteType emoteType) {
+		final Emote emote = emoteType.get();
+		if (emote != null) { return message.addReaction(emote).submit(); }
+		return CompletableFuture.failedFuture(new NullPointerException());
+	}
+
+	public static void react(@Nonnull final Message message, @Nonnull final EmoteType emoteType) {
+		try {
+			reactNoComplete(message, emoteType).get();
+		} catch (InterruptedException | ExecutionException e) {}
+	}
+
+	public enum EmoteType implements Supplier<Emote> {
+
+		STABOLB(() -> stabolb), CONCERN(() -> concern), POG(() -> pog), POGCHAMP(() -> pogchamp),
+		ANIMATED_BAN_BOLB(() -> animatedBanBolb);
+
+		private final Supplier<Emote> emote;
+
+		private EmoteType(Supplier<Emote> emote) {
+			this.emote = emote;
+		}
+
+		@Override
+		public Emote get() {
+			return emote.get();
+		}
+
 	}
 
 }
