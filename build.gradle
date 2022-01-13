@@ -53,6 +53,9 @@ repositories {
 	flatDir {
 		dirs 'libs'
 	}
+	maven {
+		url "https://dl.cloudsmith.io/public/matyrobbrt/javanbt/maven/"
+	}
 }
 
 dependencies {
@@ -81,6 +84,7 @@ dependencies {
 	shade group: 'org.xerial', name: 'sqlite-jdbc', version: 'latest.release'
 	shade group: 'com.electronwill.night-config', name: 'toml', version: 'latest.release'
 	shade group: 'org.jooq', name: 'joor', version: 'latest.release'
+	shade group: 'com.matyrobbrt', name: 'javanbt', version: 'latest.release'
 
 	// Apache
 	shade group: 'org.apache.commons', name: 'commons-io', version: 'latest.release'

@@ -201,7 +201,12 @@ public final class GeneralConfig {
 	@ConfigEntry(name = "databaseName", category = "general", comments = "The name of the database")
 	private String databaseName = "storage/database.db";
 
+	@ConfigEntry(name = "nbtDatabaseName", category = "general", comments = "The name of the nbt database")
+	private String nbtDatabaseName = "storage/database.dat";
+
 	public String getDatabaseName() { return databaseName; }
+
+	public String getNBTDatabaseName() { return nbtDatabaseName; }
 
 	@ConfigEntry(name = "main", category = "general.prefixes", comments = {
 			"The main prefix of the bot", "Any other prefix should be an alternative one"

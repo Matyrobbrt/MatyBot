@@ -20,6 +20,11 @@ public class DatabaseManager {
 	private final DataSource dataSource;
 
 	/**
+	 * The NBT database used by the application
+	 */
+	private final MatyBotNBTDatabase nbtDatabase;
+
+	/**
 	 * The JDBI instance linked to the {@linkplain #dataSource database}.
 	 */
 	private final Jdbi jdbi;
@@ -33,14 +38,14 @@ public class DatabaseManager {
 	 * @throws IllegalArgumentException if the URL does not start with the
 	 *                                  {@code jdbc:sqlite:} prefix
 	 */
-	public static DatabaseManager connectSQLite(final String url) {
+	public static DataSource connectSQLite(final String url) {
 		checkArgument(url.startsWith("jdbc:sqlite:"), "SQLite DB URL does not start with 'jdbc:sqlite:': %s", url);
 
 		SQLiteDataSource dataSource = new SQLiteDataSource();
 		dataSource.setUrl(url);
 		dataSource.setDatabaseName("matybot");
 
-		return new DatabaseManager(dataSource);
+		return dataSource;
 	}
 
 	/**
@@ -50,9 +55,10 @@ public class DatabaseManager {
 	 *
 	 * @param dataSource the SQL data source
 	 */
-	public DatabaseManager(final DataSource dataSource) {
+	public DatabaseManager(final DataSource dataSource, final MatyBotNBTDatabase nbtDatabase) {
 		this.dataSource = dataSource;
 		this.jdbi = Jdbi.create(dataSource);
+		this.nbtDatabase = nbtDatabase;
 
 		// Install the SQL Objects and Guava plugins
 		jdbi.installPlugin(new SqlObjectPlugin());
@@ -86,6 +92,8 @@ public class DatabaseManager {
 	 * {@return the SQL data source}
 	 */
 	public DataSource getDataSource() { return dataSource; }
+
+	public MatyBotNBTDatabase getNbtDatabase() { return nbtDatabase; }
 
 	/**
 	 * {@return the JDBI instance linked to the database this manager is connected

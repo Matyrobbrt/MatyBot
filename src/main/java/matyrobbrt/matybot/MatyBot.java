@@ -1,5 +1,6 @@
 package matyrobbrt.matybot;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +15,8 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.matyrobbrt.javanbt.db.NBTDatabaseManager;
+
 import matyrobbrt.matybot.api.annotation.EventSubscriber;
 import matyrobbrt.matybot.api.modules.ModuleManager;
 import matyrobbrt.matybot.modules.commands.CommandsModule;
@@ -26,6 +29,7 @@ import matyrobbrt.matybot.util.ReflectionUtils;
 import matyrobbrt.matybot.util.config.GeneralConfig;
 import matyrobbrt.matybot.util.config.GuildConfig;
 import matyrobbrt.matybot.util.database.DatabaseManager;
+import matyrobbrt.matybot.util.database.MatyBotNBTDatabase;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -56,7 +60,10 @@ public class MatyBot {
 		generalConfig = new GeneralConfig(Paths.get("configs/general.toml"));
 		instance = create(BotUtils.getBotToken());
 		Emotes.register();
-		database = DatabaseManager.connectSQLite("jdbc:sqlite:" + generalConfig().getDatabaseName());
+		database = new DatabaseManager(
+				DatabaseManager.connectSQLite("jdbc:sqlite:" + generalConfig().getDatabaseName()),
+				NBTDatabaseManager.DEFAULT.computeIfAbsent(MatyBotNBTDatabase::new,
+						new File(generalConfig().getNBTDatabaseName())));
 
 		final JDA bot = instance.getBot();
 
@@ -68,10 +75,19 @@ public class MatyBot {
 		moduleManager.addModule(new RolePanelsModule(bot));
 
 		moduleManager.register();
+
+		nbtDatabase().getGuilds().clear();
+		nbtDatabase().getGuilds().addAll(bot.getGuilds().stream().map(Guild::getIdLong).toList());
+		nbtDatabase().setDirty(true);
+		nbtDatabase().saveToDisk();
 	}
 
 	public static Jdbi database() {
 		return database.jdbi();
+	}
+
+	public static MatyBotNBTDatabase nbtDatabase() {
+		return database.getNbtDatabase();
 	}
 
 	public static GeneralConfig generalConfig() {
