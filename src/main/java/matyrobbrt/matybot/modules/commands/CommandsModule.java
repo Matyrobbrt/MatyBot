@@ -20,11 +20,13 @@ import matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import matyrobbrt.matybot.api.command.slash.ContextMenu;
 import matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import matyrobbrt.matybot.api.event.EventListenerWrapper;
+import matyrobbrt.matybot.modules.commands.menu.CreateGistContextMenu;
 import matyrobbrt.matybot.quotes.QuoteCommand;
 import matyrobbrt.matybot.util.ReflectionUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.hooks.EventListener;
+import ssynx.gist.GistUtils;
 
 public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module {
 
@@ -43,7 +45,7 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 		super(MatyBot.generalConfig()::isCommandsModuleEnabled, bot);
 
 		var builder = new CommandClientBuilder().setOwnerId(MatyBot.generalConfig().getBotOwner()).useHelpBuilder(false)
-				.setPrefix(MatyBot.generalConfig().mainPrefix)
+				.setManualUpsert(true).setPrefix(MatyBot.generalConfig().mainPrefix)
 				.setPrefixes(MatyBot.generalConfig().alternativePrefixes.toArray(new String[] {}));
 
 		builder.setPrefixFunction(event -> {
@@ -65,6 +67,14 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 			upsertContextMenu(menu);
 			bot.addEventListener(new EventListenerWrapper(menu));
 		});
+
+		if (GistUtils.hasToken()) {
+			final var gistMenu = new CreateGistContextMenu();
+			upsertContextMenu(gistMenu);
+			bot.addEventListener(new EventListenerWrapper(gistMenu));
+		} else {
+			MatyBot.LOGGER.warn("A Github token has not been configured! I will not be able to create gists.");
+		}
 
 		/*
 		 * TODO fix this, make it be guild specific for (var guild : bot.getGuilds()) {

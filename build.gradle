@@ -50,6 +50,10 @@ repositories {
 		name 'jda-chewtils'
 		url 'https://m2.chew.pro/releases'
 	}
+	maven {
+		name 'jda-chewtils-shapshots'
+		url 'https://m2.chew.pro/snapshots/'
+	}
 	flatDir {
 		dirs 'libs'
 	}
@@ -63,12 +67,12 @@ dependencies {
 	
 	testImplementation 'junit:junit:latest.release'
 
-	// shade group: 'pw.chew', name: 'jda-chewtils', version: 'latest.release'
+	shade group: 'pw.chew', name: 'jda-chewtils', version: '2.0-interactions-SNAPSHOT'
 	// chewtils for JDA 5.0 is not published on the maven
-	shade ":jda-chewtils-2.0-SNAPSHOT"
+	// shade ":jda-chewtils-2.0-SNAPSHOT"
 	// JDA is not published anywhere, as it is a dev branch
 	// shade group: 'net.dv8tion', name: 'JDA', version: 'latest.release'
-	shade ":JDA-5.0.0-alpha.3_DEV"
+	shade ":JDA-5.0.0-alpha.4_DEV"
 	
 	shade group: 'io.vavr', name: 'vavr', version: 'latest.release'
 	shade group: 'io.github.cdimascio', name:'dotenv-java', version: 'latest.release'
@@ -84,7 +88,11 @@ dependencies {
 	shade group: 'org.xerial', name: 'sqlite-jdbc', version: 'latest.release'
 	shade group: 'com.electronwill.night-config', name: 'toml', version: 'latest.release'
 	shade group: 'org.jooq', name: 'joor', version: 'latest.release'
-	shade group: 'com.matyrobbrt', name: 'javanbt', version: 'latest.release'
+	
+	// https://github.com/StefanoBelli/JaGist
+	shade ":jsgist-0.4.1"
+	
+	shade group: 'io.github.matyrobbrt', name: 'javanbt', version: 'latest.release'
 
 	// Apache
 	shade group: 'org.apache.commons', name: 'commons-io', version: 'latest.release'

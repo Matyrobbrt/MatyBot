@@ -15,15 +15,17 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.matyrobbrt.javanbt.db.NBTDatabaseManager;
-
+import io.github.matyrobbrt.javanbt.db.NBTDatabaseManager;
 import matyrobbrt.matybot.api.annotation.EventSubscriber;
+import matyrobbrt.matybot.api.event.EventListenerWrapper;
 import matyrobbrt.matybot.api.modules.ModuleManager;
+import matyrobbrt.matybot.event.MiscEvents;
 import matyrobbrt.matybot.modules.commands.CommandsModule;
 import matyrobbrt.matybot.modules.levelling.LevellingModule;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
 import matyrobbrt.matybot.modules.rolepanel.RolePanelsModule;
 import matyrobbrt.matybot.util.BotUtils;
+import matyrobbrt.matybot.util.Constants;
 import matyrobbrt.matybot.util.Emotes;
 import matyrobbrt.matybot.util.ReflectionUtils;
 import matyrobbrt.matybot.util.config.GeneralConfig;
@@ -66,6 +68,7 @@ public class MatyBot {
 						new File(generalConfig().getNBTDatabaseName())));
 
 		final JDA bot = instance.getBot();
+		bot.addEventListener(new EventListenerWrapper(Constants.EVENT_WAITER));
 
 		moduleManager = new ModuleManager(bot);
 
@@ -76,8 +79,8 @@ public class MatyBot {
 
 		moduleManager.register();
 
-		nbtDatabase().getGuilds().clear();
-		nbtDatabase().getGuilds().addAll(bot.getGuilds().stream().map(Guild::getIdLong).toList());
+		nbtDatabase().getGuildCache().clear();
+		nbtDatabase().getGuildCache().addAll(bot.getGuilds().stream().map(Guild::getIdLong).toList());
 		nbtDatabase().setDirty(true);
 		nbtDatabase().saveToDisk();
 	}
@@ -118,7 +121,6 @@ public class MatyBot {
 			System.exit(0);
 		}
 
-		bot.setEventManager(new AnnotatedEventManager());
 		ReflectionUtils.getClassesAnnotatedWith(EventSubscriber.class).forEach(clazz -> {
 			EventSubscriber ann = clazz.getAnnotation(EventSubscriber.class);
 			if (ann.createInstance()) {
@@ -135,7 +137,6 @@ public class MatyBot {
 			}
 		});
 		Locale.setDefault(Locale.UK);
-		LOGGER.info("I am ready to start. Logged in as " + bot.getSelfUser().getAsTag());
 	}
 
 	public JDA getBot() { return bot; }
@@ -145,7 +146,8 @@ public class MatyBot {
 			return new MatyBot(JDABuilder.createDefault(token)
 					.enableIntents(GatewayIntent.DIRECT_MESSAGE_REACTIONS, GatewayIntent.values())
 					.setMemberCachePolicy(MemberCachePolicy.ALL).enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.EMOTE)
-					.setChunkingFilter(ChunkingFilter.ALL)
+					.setChunkingFilter(ChunkingFilter.ALL).setEventManager(new AnnotatedEventManager())
+					.addEventListeners(new EventListenerWrapper(new MiscEvents()))
 					.setActivity(Activity.of(generalConfig().getActivityType(), generalConfig().activityName)).build()
 					.awaitReady());
 		} catch (final Exception e) {

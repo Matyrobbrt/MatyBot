@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import com.matyrobbrt.javanbt.nbt.ListNBT;
-import com.matyrobbrt.javanbt.nbt.NBT;
-import com.matyrobbrt.javanbt.serialization.NBTSerializable;
+import io.github.matyrobbrt.javanbt.nbt.ListNBT;
+import io.github.matyrobbrt.javanbt.nbt.NBT;
+import io.github.matyrobbrt.javanbt.serialization.NBTSerializable;
 
 public class NBTList<O, ONBT extends NBT> extends ArrayList<O> implements NBTSerializable<ListNBT> {
 
@@ -37,6 +37,7 @@ public class NBTList<O, ONBT extends NBT> extends ArrayList<O> implements NBTSer
 	@SuppressWarnings("unchecked")
 	@Override
 	public void deserializeNBT(ListNBT list) {
+		clear();
 		list.forEach(nbt -> add(deserializer.apply((ONBT) nbt)));
 	}
 

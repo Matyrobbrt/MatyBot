@@ -4,10 +4,12 @@ import java.util.List;
 
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
+import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
+import io.github.matyrobbrt.javanbt.serialization.NBTSerializable;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public interface ITrick {
+public interface ITrick extends NBTSerializable<CompoundNBT> {
 
 	/**
 	 * @return the trick names, including aliases
@@ -19,6 +21,16 @@ public interface ITrick {
 	 * @return the message to send
 	 */
 	Message getMessage(String[] args);
+
+	/**
+	 * @return the type of this trick
+	 */
+	TrickType<?> getType();
+
+	@Override
+	default void deserializeNBT(CompoundNBT nbt) {
+		throw new UnsupportedOperationException("Cannot deserialize an existing trick!");
+	}
 
 	/**
 	 * The TrickType interface. Every trick requires a trick type to be registered
@@ -61,5 +73,9 @@ public interface ITrick {
 		 * @return the trick
 		 */
 		T createFromCommand(SlashCommandEvent event);
+
+		T fromNBT(CompoundNBT nbt);
+
+		CompoundNBT toNBT(T trick);
 	}
 }

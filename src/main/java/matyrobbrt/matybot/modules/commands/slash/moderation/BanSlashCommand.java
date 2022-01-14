@@ -72,7 +72,7 @@ public class BanSlashCommand extends GuildSpecificSlashCommand {
 		guild.ban(member, deleteDaysCount, reason).queue();
 
 		if (time != -1) {
-			guild.unban(member).queueAfter(time, timeUnit, v -> {
+			guild.unban(member).reason("Automatically unbanned").queueAfter(time, timeUnit, v -> {
 				final var unbanEmbed = new EmbedBuilder().setColor(Color.MAGENTA)
 						.setTitle(member.getName() + " has been automatically unbanned.").setTimestamp(Instant.now());
 				loggingChannel.sendMessageEmbeds(unbanEmbed.build()).queue();
@@ -105,6 +105,12 @@ public class BanSlashCommand extends GuildSpecificSlashCommand {
 		if (toBanMemeber != null && !event.getMember().canInteract(toBanMemeber)) {
 			event.deferReply(true).setContent("You do not have permission to ban this user!").mentionRepliedUser(false)
 					.queue();
+			return;
+		}
+
+		final var botUser = event.getGuild().getMember(event.getJDA().getSelfUser());
+		if (!botUser.canInteract(toBanMemeber)) {
+			event.deferReply(true).setContent("I cannot ban this member!").mentionRepliedUser(false).queue();
 			return;
 		}
 

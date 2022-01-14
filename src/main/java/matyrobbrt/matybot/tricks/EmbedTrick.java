@@ -8,6 +8,9 @@ import java.util.Set;
 
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
+import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
+import matyrobbrt.matybot.util.helper.NBTHelper;
+import matyrobbrt.matybot.util.nbt.OrderedNBTList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -17,6 +20,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class EmbedTrick implements ITrick {
 
+	public static final Type TYPE = new Type();
+
     private final List<String> names;
 
     private final String title;
@@ -25,15 +30,20 @@ public class EmbedTrick implements ITrick {
 
     private final int color;
 
-    private final List<MessageEmbed.Field> fields;
+	private final OrderedNBTList<MessageEmbed.Field, CompoundNBT> fields;
 
     public EmbedTrick(final List<String> names, final String title, final String description, final int color,
-                      final MessageEmbed.Field... fields) {
+			final List<MessageEmbed.Field> fields) {
         this.names = names;
         this.title = title;
         this.description = description;
         this.color = color;
-        this.fields = Arrays.asList(fields);
+		this.fields = new OrderedNBTList<>(NBTHelper::serializeEmbedField, NBTHelper::deserializeEmbedField, fields);
+	}
+
+	public EmbedTrick(final List<String> names, final String title, final String description, final int color,
+			final MessageEmbed.Field... fields) {
+		this(names, title, description, color, Arrays.asList(fields));
     }
 
     @Override
@@ -105,5 +115,40 @@ public class EmbedTrick implements ITrick {
 					Integer.parseInt(getArgumentOrEmpty(event, "color").replaceAll("#", ""), 16)
             );
         }
+
+		@Override
+		public EmbedTrick fromNBT(CompoundNBT nbt) {
+			final var names = NBTHelper.deserializeStringList(nbt.getList("names", 8));
+			final String title = nbt.getString("title");
+			final String description = nbt.getString("description");
+			final int colour = nbt.getInt("color");
+			final EmbedTrick trick = new EmbedTrick(names, title, description, colour);
+			trick.fields.deserializeNBT(nbt.getCompound("fields"));
+			return trick;
+		}
+
+		@Override
+		public CompoundNBT toNBT(EmbedTrick trick) {
+			CompoundNBT nbt = new CompoundNBT();
+			nbt.put("names", NBTHelper.serializeStringList(trick.getNames()));
+			nbt.putString("title", trick.getTitle());
+			nbt.putString("description", trick.getDescription());
+			nbt.putInt("color", trick.getColor());
+			nbt.put("fields", trick.fields);
+			return nbt;
+		}
     }
+
+	@Override
+	public CompoundNBT serializeNBT() {
+		return TYPE.toNBT(this);
+	}
+
+	@Override
+	public void deserializeNBT(CompoundNBT nbt) {
+		fields.deserializeNBT(nbt.getCompound("fields"));
+	}
+
+	@Override
+	public TrickType<?> getType() { return TYPE; }
 }

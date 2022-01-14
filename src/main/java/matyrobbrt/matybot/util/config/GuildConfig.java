@@ -74,7 +74,6 @@ public final class GuildConfig {
 		}).preserveInsertionOrder().build();
 		loadData();
 		Utils.addNotExistingEntries(config, guildId);
-		addExtraData(config, guildId);
 		try {
 			FileWatcher.defaultInstance().addWatch(configFile, () -> {
 				MatyBot.LOGGER.info("Config file for guild {} changed! Updating values...", guildId);
@@ -224,8 +223,21 @@ public final class GuildConfig {
 
 	@ConfigEntry(name = "muted", category = "roles", comments = {
 			"The role which will be added to muted people.",
-			"NOTE: We will switch to using timing out for handling mutes after JDA implements that and discord makes the timing out better."
+			"NOTE: We will switch to using timing out for handling mutes after JDA implements that and discord makes the timing out better.",
+			"NOTE 2: Timeing out is now an option when muting, which is turned on by default."
 	}, commentDefaultValue = false)
 	public long mutedRole;
+
+	@ConfigEntry(name = "enabled", category = "levels", comments = "If the levelling should be enabled in this guild.")
+	private boolean levellingEnabled = true;
+
+	public boolean isLevellingEnabled() { return levellingEnabled; }
+
+	@ConfigEntry(name = "multiplier", category = "levels", comments = {
+			"The multiplier applied to the amount of XP needed per level.",
+			"The formula for calculating the multiplier is:",
+			"xpForLevel = multiplier * Math.pow(level, 2) + (multiplier * 10) * level + multiplier"
+	})
+	public int xpMultiplier = 5;
 
 }

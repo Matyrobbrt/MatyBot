@@ -1,12 +1,12 @@
 package matyrobbrt.matybot.quotes;
 
 import com.google.gson.annotations.Expose;
-import com.matyrobbrt.javanbt.nbt.CompoundNBT;
-import com.matyrobbrt.javanbt.serialization.Deserializer;
-import com.matyrobbrt.javanbt.serialization.NBTSerializable;
-import com.matyrobbrt.javanbt.serialization.Serializers;
-import com.matyrobbrt.javanbt.util.NBTBuilder;
 
+import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
+import io.github.matyrobbrt.javanbt.serialization.Deserializer;
+import io.github.matyrobbrt.javanbt.serialization.NBTSerializable;
+import io.github.matyrobbrt.javanbt.serialization.Serializers;
+import io.github.matyrobbrt.javanbt.util.NBTBuilder;
 import matyrobbrt.matybot.util.helper.MentionHelper;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
