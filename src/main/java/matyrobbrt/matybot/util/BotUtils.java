@@ -1,9 +1,9 @@
 package matyrobbrt.matybot.util;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -25,6 +25,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.internal.requests.restaction.MessageActionImpl;
 
 public class BotUtils {
 
@@ -104,14 +107,33 @@ public class BotUtils {
 		}
 	}
 
+	/**
+	 * Creates a message that should be sent in the provided {@code channel}
+	 * 
+	 * @param  channel the channel in which the message will be sent when
+	 *                 {@link RestAction#queue()} will be called
+	 * 
+	 * @return         the created message
+	 */
+	public static MessageAction createMessage(final TextChannel channel) {
+		return new MessageActionImpl(MatyBot.getJDA(), null, channel);
+	}
+
 	public static void scheduleTask(Runnable task, long delay) {
-		new Timer().schedule(new TimerTask() {
+		Constants.TIMER.schedule(new TimerTask() {
 
 			@Override
 			public void run() {
 				task.run();
 			}
 		}, delay);
+	}
+
+	public static Color generateRandomColor() {
+		final var red = Constants.RANDOM.nextFloat();
+		final var green = Constants.RANDOM.nextFloat();
+		final var blue = Constants.RANDOM.nextFloat();
+		return new Color(red, green, blue);
 	}
 
 	public static final Joiner LINE_JOINER = Joiner.on("\n");

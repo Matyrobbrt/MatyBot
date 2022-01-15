@@ -258,4 +258,7 @@ public final class GeneralConfig {
 	@ConfigEntry(name = "animated_ban_bolb", category = "emotes", commentDefaultValue = false)
 	public long animatedBanBolbEmoteID = 0l;
 
+	@ConfigEntry(name = "stabby", category = "emotes", commentDefaultValue = false)
+	public long stabbyEmoteID = 0l;
+
 }

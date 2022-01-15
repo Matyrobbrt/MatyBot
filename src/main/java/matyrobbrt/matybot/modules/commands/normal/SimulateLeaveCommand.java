@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import matyrobbrt.matybot.api.annotation.RegisterCommand;
-import matyrobbrt.matybot.modules.logging.events.StickyRolesEvents;
+import matyrobbrt.matybot.modules.logging.events.JoinLeaveEvents;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -31,7 +31,7 @@ public class SimulateLeaveCommand extends Command {
 			member = event.getMessage().getMentions(MentionType.USER).isEmpty() ? event.getMember()
 					: event.getMessage().getMentionedMembers().get(0);
 		}
-		StickyRolesEvents.INSTANCE.onGuildMemberRemove(new GuildMemberRemoveEvent(event.getJDA(),
+		JoinLeaveEvents.INSTANCE.onGuildMemberRemove(new GuildMemberRemoveEvent(event.getJDA(),
 				event.getResponseNumber(), event.getGuild(), member.getUser(), member));
 	}
 

@@ -50,7 +50,7 @@ public class QuoteCommand extends SlashCommand {
 
 		@Override
 		protected void execute(SlashCommandEvent event) {
-			final int index = (int) event.getOption("index").getAsDouble() + 1;
+			final int index = (int) event.getOption("index").getAsDouble() - 1;
 			final long guildId = event.getGuild().getIdLong();
 			if (index >= QuoteManager.getQuotesForGuild(guildId).size()) {
 				event.getInteraction().reply("This quote does not exist!").queue();
@@ -177,7 +177,7 @@ public class QuoteCommand extends SlashCommand {
 		public class ButtonListener extends PaginatedCommand.ButtonListener {
 
 			@Override
-			public String getButtonID() { return "list"; }
+			public String getButtonID() { return "quote_list"; }
 		}
 
 	}

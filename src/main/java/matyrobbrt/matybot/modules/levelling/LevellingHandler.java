@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.util.Constants;
 import matyrobbrt.matybot.util.Emotes;
 import net.dv8tion.jda.api.entities.Member;
@@ -61,10 +62,15 @@ public class LevellingHandler extends ListenerAdapter {
 
 		final int oldXp = getUserXP(member);
 		final int oldLevel = getLevelForXP(oldXp, guild);
-		setUserXP(member, oldXp + Math.round((RANDOM.nextInt(25) + 5) * boostMultiplier * messageMultiplier));
+		setUserXP(member, oldXp + Math.round((RANDOM.nextInt(10) + 5) * boostMultiplier * messageMultiplier));
 		final int newLevel = getLevelForXP(getUserXP(member), guild);
 		if (newLevel > oldLevel) {
 			message.getChannel().sendMessage(getLevelupMessage(member, message.getTextChannel(), newLevel)).queue();
+
+			final var role = guild.getRoleById(MatyBot.getConfigForGuild(guild).getRoleForLevel(newLevel));
+			if (role != null) {
+				guild.addRoleToMember(member, role).reason("The member reached level " + newLevel).queue();
+			}
 		}
 
 		cooldowns.add(member.getIdLong());

@@ -3,6 +3,8 @@ package matyrobbrt.matybot.util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Random;
+import java.util.Timer;
 
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 
@@ -27,5 +29,9 @@ public class Constants {
 	public static final long YEAR_TO_MILLI = (long) 3.154e+10;
 
 	public static final EventWaiter EVENT_WAITER = new EventWaiter();
+
+	public static final Random RANDOM = new Random();
+
+	public static final Timer TIMER = new Timer();
 
 }

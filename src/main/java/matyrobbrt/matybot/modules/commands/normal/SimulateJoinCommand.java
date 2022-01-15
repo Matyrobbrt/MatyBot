@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import matyrobbrt.matybot.api.annotation.RegisterCommand;
-import matyrobbrt.matybot.modules.logging.events.StickyRolesEvents;
+import matyrobbrt.matybot.modules.logging.events.JoinLeaveEvents;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -31,7 +31,7 @@ public class SimulateJoinCommand extends Command {
 			member = event.getMessage().getMentions(MentionType.USER).isEmpty() ? event.getMember()
 					: event.getMessage().getMentionedMembers().get(0);
 		}
-		StickyRolesEvents.INSTANCE
+		JoinLeaveEvents.INSTANCE
 				.onGuildMemberJoin(new GuildMemberJoinEvent(event.getJDA(), event.getResponseNumber(), member));
 	}
 

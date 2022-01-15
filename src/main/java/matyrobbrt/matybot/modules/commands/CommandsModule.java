@@ -21,7 +21,9 @@ import matyrobbrt.matybot.api.command.slash.ContextMenu;
 import matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import matyrobbrt.matybot.api.event.EventListenerWrapper;
 import matyrobbrt.matybot.modules.commands.menu.CreateGistContextMenu;
+import matyrobbrt.matybot.modules.levelling.LeaderboardCommand;
 import matyrobbrt.matybot.quotes.QuoteCommand;
+import matyrobbrt.matybot.tricks.TrickListener;
 import matyrobbrt.matybot.util.ReflectionUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -76,11 +78,9 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 			MatyBot.LOGGER.warn("A Github token has not been configured! I will not be able to create gists.");
 		}
 
-		/*
-		 * TODO fix this, make it be guild specific for (var guild : bot.getGuilds()) {
-		 * TrickManager.createTrickCommands(guild.getIdLong()).forEach(cmd -> {
-		 * builder.addCommand(cmd); }); }
-		 */
+		for (var guild : bot.getGuilds()) {
+			bot.addEventListener(new EventListenerWrapper(new TrickListener(guild.getIdLong())));
+		}
 
 		this.commandClient = builder.build();
 	}
@@ -96,6 +96,7 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 		if (isEnabled()) {
 			bot.addEventListener(new EventListenerWrapper((EventListener) commandClient));
 			bot.addEventListener(QuoteCommand.ListQuotes.getWrappedListener());
+			bot.addEventListener(LeaderboardCommand.getWrappedListener());
 		}
 
 	}

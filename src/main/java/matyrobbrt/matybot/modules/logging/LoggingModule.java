@@ -4,7 +4,7 @@ import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.api.event.EventListenerWrapper;
 import matyrobbrt.matybot.modules.logging.events.RoleEvents;
 import matyrobbrt.matybot.modules.logging.events.ScamDetector;
-import matyrobbrt.matybot.modules.logging.events.StickyRolesEvents;
+import matyrobbrt.matybot.modules.logging.events.JoinLeaveEvents;
 import matyrobbrt.matybot.modules.logging.events.UserEvents;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -19,7 +19,7 @@ public class LoggingModule extends matyrobbrt.matybot.api.modules.Module {
 	@Override
 	public void register() {
 		super.register();
-		bot.addEventListener(StickyRolesEvents.INSTANCE, new RoleEvents(), new UserEvents(),
+		bot.addEventListener(JoinLeaveEvents.INSTANCE, new RoleEvents(), new UserEvents(),
 				new EventListenerWrapper(new ScamDetector()));
 	}
 

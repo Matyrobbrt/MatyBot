@@ -21,6 +21,7 @@ public class Emotes {
 
 	// Animated
 	private static Emote animatedBanBolb = null;
+	private static Emote stabby = null;
 
 	public static void register() {
 		stabolb = getEmoteById(MatyBot.generalConfig().stabolbEmoteID);
@@ -29,6 +30,7 @@ public class Emotes {
 		pogchamp = getEmoteById(MatyBot.generalConfig().pogchampEmoteID);
 
 		animatedBanBolb = getEmoteById(MatyBot.generalConfig().animatedBanBolbEmoteID);
+		stabby = getEmoteById(MatyBot.generalConfig().stabbyEmoteID);
 
 		EmoteReactionEventHandler.registerEmotes();
 	}
@@ -53,7 +55,7 @@ public class Emotes {
 	public enum EmoteType implements Supplier<Emote> {
 
 		STABOLB(() -> stabolb), CONCERN(() -> concern), POG(() -> pog), POGCHAMP(() -> pogchamp),
-		ANIMATED_BAN_BOLB(() -> animatedBanBolb);
+		ANIMATED_BAN_BOLB(() -> animatedBanBolb), STABBY(() -> stabby);
 
 		private final Supplier<Emote> emote;
 

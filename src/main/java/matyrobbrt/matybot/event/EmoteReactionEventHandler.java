@@ -54,6 +54,10 @@ public class EmoteReactionEventHandler extends AnnotationEventListener {
 			Emotes.react(message, EmoteType.CONCERN);
 		}
 
+		if (contentRawLowerCase.startsWith("<:stabolb:") || contentRawLowerCase.contains("stabby")) {
+			Emotes.react(message, EmoteType.STABBY);
+		}
+
 		if (message.getContentRaw().contains("@here") && !member.hasPermission(Permission.MESSAGE_MENTION_EVERYONE)) {
 			Emotes.react(message, atHereEmotes.get(RAND.nextInt(atHereEmotes.size())));
 		}

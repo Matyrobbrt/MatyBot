@@ -10,9 +10,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.modules.commands.CommandsModule;
 import matyrobbrt.matybot.tricks.ITrick.TrickType;
-import matyrobbrt.matybot.tricks.commands.RunTrickCommand;
 
 /**
  * TODO: Migrate to a the database
@@ -81,7 +79,7 @@ public final class TrickManager {
 	public static void addTrick(final long guildId, final ITrick trick) {
 		getTricksForGuild(guildId).add(trick);
 		MatyBot.nbtDatabase().setDirtyAndSave();
-		addOrRestoreCommand(trick);
+		// addOrRestoreCommand(trick, guildId);
 	}
 
 	/**
@@ -92,20 +90,25 @@ public final class TrickManager {
 	public static void removeTrick(final long guildId, final ITrick trick) {
 		getTricksForGuild(guildId).remove(trick);
 		MatyBot.nbtDatabase().setDirtyAndSave();
-		CommandsModule.getInstance().getCommandClient().removeCommand(trick.getNames().get(0));
+		// CommandsModule.getInstance().getCommandClient().removeCommand(trick.getNames().get(0));
 	}
 
-	public static List<RunTrickCommand> createTrickCommands(final long guildId) {
-		return getTricksForGuild(guildId).stream().map(RunTrickCommand::new).toList();
-	}
+	/*
+	 * public static List<RunTrickCommand> createTrickCommands(final long guildId) {
+	 * return getTricksForGuild(guildId).stream().map(trick ->
+	 * RunTrickCommand.createGuild(trick, guildId)).toList(); }
+	 */
 
 	/**
 	 * Adds or restores the command for a trick.
 	 *
 	 * @param trick the trick
 	 */
-	private static void addOrRestoreCommand(final ITrick trick) {
-		CommandsModule.getInstance().getCommandClient().addCommand(new RunTrickCommand(trick));
-	}
+	/*
+	 * private static void addOrRestoreCommand(final ITrick trick, final long
+	 * guildId) {
+	 * CommandsModule.getInstance().getCommandClient().addCommand(RunTrickCommand.
+	 * createGuild(trick, guildId)); }
+	 */
 
 }

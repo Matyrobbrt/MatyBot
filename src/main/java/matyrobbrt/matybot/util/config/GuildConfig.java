@@ -213,6 +213,11 @@ public final class GuildConfig {
 	@ConfigEntry(name = "logging", category = "channels", comments = "The channel in which logs will be sent", commentDefaultValue = false)
 	public long loggingChannel;
 
+	@ConfigEntry(name = "welcome", category = "channels", comments = {
+			"The channel in which welcome messages will be sent.", "Supply 0 in order to disable welcome messages."
+	}, commentDefaultValue = false)
+	public long welcomeChannel;
+
 	/// ROLES ///
 
 	@ConfigEntry(name = "moderator", category = "roles", comments = "The moderator roles", commentDefaultValue = false)
@@ -228,6 +233,9 @@ public final class GuildConfig {
 	}, commentDefaultValue = false)
 	public long mutedRole;
 
+	@ConfigEntry(name = "join", category = "roles", comments = "The roles which will to members when they join.", commentDefaultValue = false)
+	public List<Long> joinRoles = Lists.newArrayList();
+
 	@ConfigEntry(name = "enabled", category = "levels", comments = "If the levelling should be enabled in this guild.")
 	private boolean levellingEnabled = true;
 
@@ -235,9 +243,12 @@ public final class GuildConfig {
 
 	@ConfigEntry(name = "multiplier", category = "levels", comments = {
 			"The multiplier applied to the amount of XP needed per level.",
-			"The formula for calculating the multiplier is:",
-			"xpForLevel = multiplier * Math.pow(level, 2) + (multiplier * 10) * level + multiplier"
+			"The formula for calculating the multiplier is:", "xpForLevel = (multiplier * level ^ 2 + 15 * multiplier)"
 	})
-	public int xpMultiplier = 5;
+	public int xpMultiplier = 8;
+
+	public long getRoleForLevel(final int level) {
+		return config.getLongOrElse("levels.level_roles." + level, () -> 0);
+	}
 
 }

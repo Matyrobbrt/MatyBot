@@ -20,6 +20,7 @@ import matyrobbrt.matybot.api.annotation.EventSubscriber;
 import matyrobbrt.matybot.api.event.EventListenerWrapper;
 import matyrobbrt.matybot.api.modules.ModuleManager;
 import matyrobbrt.matybot.event.MiscEvents;
+import matyrobbrt.matybot.event.QuotingListener;
 import matyrobbrt.matybot.modules.commands.CommandsModule;
 import matyrobbrt.matybot.modules.levelling.LevellingModule;
 import matyrobbrt.matybot.modules.logging.LoggingModule;
@@ -36,6 +37,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.AllowedMentions;
@@ -68,7 +70,8 @@ public class MatyBot {
 						new File(generalConfig().getNBTDatabaseName())));
 
 		final JDA bot = instance.getBot();
-		bot.addEventListener(new EventListenerWrapper(Constants.EVENT_WAITER));
+		bot.addEventListener(new EventListenerWrapper(Constants.EVENT_WAITER),
+				new EventListenerWrapper(new QuotingListener()));
 
 		moduleManager = new ModuleManager(bot);
 
@@ -105,6 +108,12 @@ public class MatyBot {
 	public static GuildConfig getConfigForGuild(final Guild guild) {
 		return getConfigForGuild(guild.getIdLong());
 	}
+
+	public static GuildConfig getConfigForGuild(final GenericGuildEvent guildEvent) {
+		return getConfigForGuild(guildEvent.getGuild());
+	}
+
+	public static JDA getJDA() { return instance.getBot(); }
 
 	private static void generateFolders() throws IOException {
 		Files.createDirectories(Paths.get("configs"));

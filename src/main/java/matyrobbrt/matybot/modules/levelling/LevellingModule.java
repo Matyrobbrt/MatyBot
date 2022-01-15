@@ -23,7 +23,7 @@ public class LevellingModule extends matyrobbrt.matybot.api.modules.Module {
 	}
 
 	public static int getLevelForXP(final int xp, final int multiplier) {
-		return (int) ((-(multiplier * 5) + Math.sqrt(multiplier * (120 + xp))) / multiplier);
+		return (int) Math.sqrt((xp - 15 * multiplier) / multiplier);
 	}
 
 	public static int getLevelForXP(final int xp, final Guild guild) {
@@ -31,7 +31,7 @@ public class LevellingModule extends matyrobbrt.matybot.api.modules.Module {
 	}
 
 	public static int getXPForLevel(final int level, final int multiplier) {
-		return (int) (multiplier * Math.pow(level, 2) + (multiplier * 10) * level + multiplier);
+		return (int) (multiplier * Math.pow(level, 2) + 15 * multiplier);
 	}
 
 	public static int getXPForLevel(final int level, final Guild guild) {

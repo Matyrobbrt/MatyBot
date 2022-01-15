@@ -6,9 +6,13 @@ import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
 import io.github.matyrobbrt.javanbt.serialization.Deserializer;
 import io.github.matyrobbrt.javanbt.serialization.NBTSerializable;
 import io.github.matyrobbrt.javanbt.serialization.Serializers;
-import io.github.matyrobbrt.javanbt.util.NBTBuilder;
+import matyrobbrt.matybot.modules.levelling.LevellingModule;
+import matyrobbrt.matybot.util.nbt.NBTBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 
 public class LevelData implements NBTSerializable<CompoundNBT> {
+
+	public static final RankCard DEFAULT_RANK_CARD = new RankCard();
 
 	public static final Deserializer<CompoundNBT, LevelData> DESERIALIZER = Serializers
 			.registerDeserializer(LevelData.class, nbt -> {
@@ -19,35 +23,19 @@ public class LevelData implements NBTSerializable<CompoundNBT> {
 
 	@Override
 	public CompoundNBT serializeNBT() {
-		return new NBTBuilder().putInt("xp", xp).build();
+		return new NBTBuilder().putInt("xp", xp).put("rankCard", rankCard).build();
 	}
 
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
 		xp = nbt.getInt("xp");
+		if (nbt.contains("rankCard")) {
+			rankCard.deserializeNBT(nbt.getCompound("rankCard"));
+		}
 	}
 
 	private int xp;
-	private float outlineOpacity = 0.5f;
-
-	private String backgroundImage = "";
-	private String outlineImage = "";
-	private String xpOutlineImage = "";
-	private String xpEmptyImage = "";
-	private String xpFillImage = "";
-	private String avatarOutlineImage = "";
-
-	private Color backgroundColour = Color.BLACK;
-	private Color outlineColour = Color.WHITE;
-	private Color rankTextColour = Color.RED;
-	private Color levelTextColour = Color.GREEN;
-	private Color xpOutlineColour = Color.BLUE;
-	private Color xpEmptyColour = Color.YELLOW;
-	private Color xpFillColour = Color.CYAN;
-	private Color avatarOutlineColour = Color.MAGENTA;
-	private Color percentTextColour = Color.ORANGE;
-	private Color xpTextColour = Color.PINK;
-	private Color nameTextColour = Color.DARK_GRAY;
+	private RankCard rankCard = new RankCard();
 
 	public int addXp(final int amount) {
 		xp += amount;
@@ -58,75 +46,153 @@ public class LevelData implements NBTSerializable<CompoundNBT> {
 
 	public void setXp(int xp) { this.xp = xp; }
 
-	public String getBackgroundImage() { return backgroundImage; }
+	public RankCard getRankCard() { return rankCard; }
 
-	public void setBackgroundImage(String backgroundImage) { this.backgroundImage = backgroundImage; }
+	public void setRankCard(final RankCard rankCard) { this.rankCard = rankCard; }
 
-	public String getOutlineImage() { return outlineImage; }
+	public int getXpInGuild(final Guild guild) {
+		return LevellingModule.getLevelForXP(xp, guild);
+	}
 
-	public void setOutlineImage(String outlineImage) { this.outlineImage = outlineImage; }
+	public static class RankCard implements NBTSerializable<CompoundNBT> {
 
-	public Color getBackgroundColour() { return backgroundColour; }
+		private float outlineOpacity = 0.5f;
 
-	public void setBackgroundColour(Color backgroundColour) { this.backgroundColour = backgroundColour; }
+		private String backgroundImage = "";
+		private String outlineImage = "";
+		private String xpOutlineImage = "";
+		private String xpEmptyImage = "";
+		private String xpFillImage = "";
+		private String avatarOutlineImage = "";
 
-	public Color getOutlineColour() { return outlineColour; }
+		private Color backgroundColour = Color.BLACK;
+		private Color outlineColour = Color.WHITE;
+		private Color rankTextColour = Color.RED;
+		private Color levelTextColour = Color.GREEN;
+		private Color xpOutlineColour = Color.BLUE;
+		private Color xpEmptyColour = Color.YELLOW;
+		private Color xpFillColour = Color.CYAN;
+		private Color avatarOutlineColour = Color.MAGENTA;
+		private Color percentTextColour = Color.ORANGE;
+		private Color xpTextColour = Color.PINK;
+		private Color nameTextColour = Color.DARK_GRAY;
 
-	public void setOutlineColour(Color outlineColour) { this.outlineColour = outlineColour; }
+		@Override
+		public CompoundNBT serializeNBT() {
+			final CompoundNBT stringsNBT = new NBTBuilder().putFloat("outlineOpacity", outlineOpacity)
+					.putString("backgroundImage", backgroundImage)
+					.putString("outlineImage", outlineImage).putString("xpOutlineImage", xpOutlineImage)
+					.putString("xpEmptyImage", xpEmptyImage).putString("xpFillImage", xpFillImage)
+					.putString("avatarOutlineImage", avatarOutlineImage).build();
 
-	public Color getLevelTextColour() { return levelTextColour; }
+			return NBTBuilder.of(stringsNBT).putColor("backgroundColour", backgroundColour)
+					.putColor("outlineColour", outlineColour).putColor("rankTextColour", rankTextColour)
+					.putColor("levelTextColour", levelTextColour).putColor("xpOutlineColour", xpOutlineColour)
+					.putColor("xpEmptyColour", xpEmptyColour).putColor("xpFillColour", xpFillColour)
+					.putColor("avatarOutlineColour", avatarOutlineColour)
+					.putColor("percentTextColour", percentTextColour).putColor("xpTextColour", xpTextColour)
+					.putColor("nameTextColour", nameTextColour).build();
+		}
 
-	public void setLevelTextColour(Color levelTextColour) { this.levelTextColour = levelTextColour; }
+		@Override
+		public void deserializeNBT(CompoundNBT nbt) {
+			outlineOpacity = nbt.getFloat("outlineOpacity");
 
-	public Color getRankTextColour() { return rankTextColour; }
+			backgroundImage = nbt.getString("backgroundImage");
+			outlineImage = nbt.getString("outlineImage");
+			xpOutlineImage = nbt.getString("xpOutlineImage");
+			xpEmptyImage = nbt.getString("xpEmptyImage");
+			xpFillImage = nbt.getString("xpFillImage");
 
-	public void setRankTextColour(Color rankTextColour) { this.rankTextColour = rankTextColour; }
+			backgroundColour = readColour("backgroundColour", nbt);
+			outlineColour = readColour("outlineColour", nbt);
+			rankTextColour = readColour("rankTextColour", nbt);
+			levelTextColour = readColour("levelTextColour", nbt);
+			xpOutlineColour = readColour("xpOutlineColour", nbt);
+			xpEmptyColour = readColour("xpEmptyColour", nbt);
+			xpFillColour = readColour("xpFillColour", nbt);
+			avatarOutlineColour = readColour("avatarOutlineColour", nbt);
+			percentTextColour = readColour("percentTextColour", nbt);
+			xpTextColour = readColour("xpTextColour", nbt);
+			nameTextColour = readColour("nameTextColour", nbt);
+		}
 
-	public Color getXpFillColour() { return xpFillColour; }
+		private static Color readColour(String key, CompoundNBT nbt) {
+			return new Color(nbt.getInt(key));
+		}
 
-	public void setXpFillColour(Color xpFillColour) { this.xpFillColour = xpFillColour; }
+		public String getBackgroundImage() { return backgroundImage; }
 
-	public Color getPercentTextColour() { return percentTextColour; }
+		public void setBackgroundImage(String backgroundImage) { this.backgroundImage = backgroundImage; }
 
-	public void setPercentTextColour(Color percentTextColour) { this.percentTextColour = percentTextColour; }
+		public String getOutlineImage() { return outlineImage; }
 
-	public Color getAvatarOutlineColour() { return avatarOutlineColour; }
+		public void setOutlineImage(String outlineImage) { this.outlineImage = outlineImage; }
 
-	public void setAvatarOutlineColour(Color avatarOutlineColour) { this.avatarOutlineColour = avatarOutlineColour; }
+		public Color getBackgroundColour() { return backgroundColour; }
 
-	public Color getXpOutlineColour() { return xpOutlineColour; }
+		public void setBackgroundColour(Color backgroundColour) { this.backgroundColour = backgroundColour; }
 
-	public void setXpOutlineColour(Color xpOutlineColour) { this.xpOutlineColour = xpOutlineColour; }
+		public Color getOutlineColour() { return outlineColour; }
 
-	public Color getXpEmptyColour() { return xpEmptyColour; }
+		public void setOutlineColour(Color outlineColour) { this.outlineColour = outlineColour; }
 
-	public void setXpEmptyColour(Color xpEmptyColour) { this.xpEmptyColour = xpEmptyColour; }
+		public Color getLevelTextColour() { return levelTextColour; }
 
-	public Color getXpTextColour() { return xpTextColour; }
+		public void setLevelTextColour(Color levelTextColour) { this.levelTextColour = levelTextColour; }
 
-	public void setXpTextColour(Color xpTextColour) { this.xpTextColour = xpTextColour; }
+		public Color getRankTextColour() { return rankTextColour; }
 
-	public Color getNameTextColour() { return nameTextColour; }
+		public void setRankTextColour(Color rankTextColour) { this.rankTextColour = rankTextColour; }
 
-	public void setNameTextColour(Color nameTextColour) { this.nameTextColour = nameTextColour; }
+		public Color getXpFillColour() { return xpFillColour; }
 
-	public String getXpEmptyImage() { return xpEmptyImage; }
+		public void setXpFillColour(Color xpFillColour) { this.xpFillColour = xpFillColour; }
 
-	public void setXpEmptyImage(String xpEmptyImage) { this.xpEmptyImage = xpEmptyImage; }
+		public Color getPercentTextColour() { return percentTextColour; }
 
-	public String getXpOutlineImage() { return xpOutlineImage; }
+		public void setPercentTextColour(Color percentTextColour) { this.percentTextColour = percentTextColour; }
 
-	public void setXpOutlineImage(String xpOutlineImage) { this.xpOutlineImage = xpOutlineImage; }
+		public Color getAvatarOutlineColour() { return avatarOutlineColour; }
 
-	public String getAvatarOutlineImage() { return avatarOutlineImage; }
+		public void setAvatarOutlineColour(Color avatarOutlineColour) {
+			this.avatarOutlineColour = avatarOutlineColour;
+		}
 
-	public void setAvatarOutlineImage(String avatarOutlineImage) { this.avatarOutlineImage = avatarOutlineImage; }
+		public Color getXpOutlineColour() { return xpOutlineColour; }
 
-	public String getXpFillImage() { return xpFillImage; }
+		public void setXpOutlineColour(Color xpOutlineColour) { this.xpOutlineColour = xpOutlineColour; }
 
-	public void setXpFillImage(String xpFillImage) { this.xpFillImage = xpFillImage; }
+		public Color getXpEmptyColour() { return xpEmptyColour; }
 
-	public float getOutlineOpacity() { return outlineOpacity; }
+		public void setXpEmptyColour(Color xpEmptyColour) { this.xpEmptyColour = xpEmptyColour; }
 
-	public void setOutlineOpacity(float outlineOpacity) { this.outlineOpacity = outlineOpacity; }
+		public Color getXpTextColour() { return xpTextColour; }
+
+		public void setXpTextColour(Color xpTextColour) { this.xpTextColour = xpTextColour; }
+
+		public Color getNameTextColour() { return nameTextColour; }
+
+		public void setNameTextColour(Color nameTextColour) { this.nameTextColour = nameTextColour; }
+
+		public String getXpEmptyImage() { return xpEmptyImage; }
+
+		public void setXpEmptyImage(String xpEmptyImage) { this.xpEmptyImage = xpEmptyImage; }
+
+		public String getXpOutlineImage() { return xpOutlineImage; }
+
+		public void setXpOutlineImage(String xpOutlineImage) { this.xpOutlineImage = xpOutlineImage; }
+
+		public String getAvatarOutlineImage() { return avatarOutlineImage; }
+
+		public void setAvatarOutlineImage(String avatarOutlineImage) { this.avatarOutlineImage = avatarOutlineImage; }
+
+		public String getXpFillImage() { return xpFillImage; }
+
+		public void setXpFillImage(String xpFillImage) { this.xpFillImage = xpFillImage; }
+
+		public float getOutlineOpacity() { return outlineOpacity; }
+
+		public void setOutlineOpacity(float outlineOpacity) { this.outlineOpacity = outlineOpacity; }
+	}
 }

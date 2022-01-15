@@ -5,7 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -71,7 +71,7 @@ public class CreateGistContextMenu extends matyrobbrt.matybot.api.command.slash.
 
 	private static String readInputStream(InputStream is) throws IOException {
 		StringBuilder content = new StringBuilder();
-		InputStreamReader reader = new InputStreamReader(is, Charset.forName("UTF-8"));
+		InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
 		try (BufferedReader buffer = new BufferedReader(reader)) {
 			String line;
 			while ((line = buffer.readLine()) != null)

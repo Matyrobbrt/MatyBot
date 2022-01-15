@@ -17,9 +17,21 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 public final class RunTrickCommand extends Command {
 
 	private final ITrick trick;
+	private final long guild;
+	private final boolean isGlobal;
 
-	public RunTrickCommand(final ITrick trick) {
+	public static RunTrickCommand createGlobal(final ITrick trick) {
+		return new RunTrickCommand(trick, true, 0);
+	}
+
+	public static RunTrickCommand createGuild(final ITrick trick, final long guild) {
+		return new RunTrickCommand(trick, false, guild);
+	}
+
+	private RunTrickCommand(final ITrick trick, final boolean isGlobal, final long guild) {
 		this.trick = trick;
+		this.isGlobal = isGlobal;
+		this.guild = guild;
 		List<String> trickNames = trick.getNames();
 		name = trickNames.get(0);
 		aliases = trickNames.size() > 1 ? trickNames.subList(1, trickNames.size()).toArray(new String[0])
@@ -29,8 +41,10 @@ public final class RunTrickCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		final var channel = event.getTextChannel();
-		channel.sendMessage(trick.getMessage(event.getArgs().split(" "))).queue();
+		if (isGlobal || event.getGuild().getIdLong() == guild) {
+			final var channel = event.getTextChannel();
+			channel.sendMessage(trick.getMessage(event.getArgs().split(" "))).queue();
+		}
 	}
 
 	public static final class Slash extends SlashCommand {

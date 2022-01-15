@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+
 import io.github.matyrobbrt.javanbt.db.NBTDatabase;
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
 import io.github.matyrobbrt.javanbt.nbt.LongNBT;
@@ -57,6 +59,10 @@ public class MatyBotNBTDatabase extends NBTDatabase {
 
 	public GuildData getDataForGuild(final Guild guild) {
 		return getDataForGuild(guild.getIdLong());
+	}
+
+	public GuildData getDataForGuild(final SlashCommandEvent event) {
+		return getDataForGuild(event.getGuild());
 	}
 
 	@Override
