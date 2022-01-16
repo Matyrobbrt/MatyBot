@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.matyrobbrt.javanbt.db.NBTDatabaseManager;
+import io.github.matyrobbrt.jdautils.JDABot;
 import matyrobbrt.matybot.api.annotation.EventSubscriber;
 import matyrobbrt.matybot.api.event.EventListenerWrapper;
 import matyrobbrt.matybot.api.modules.ModuleManager;
@@ -45,11 +46,11 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
-public class MatyBot {
+public class MatyBot extends JDABot {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("MatyBot");
 
-	public static MatyBot instance;
+	private static MatyBot instance;
 	private static DatabaseManager database;
 	private static GeneralConfig generalConfig;
 	private static ModuleManager moduleManager;
@@ -69,7 +70,7 @@ public class MatyBot {
 				NBTDatabaseManager.DEFAULT.computeIfAbsent(MatyBotNBTDatabase::new,
 						new File(generalConfig().getNBTDatabaseName())));
 
-		final JDA bot = instance.getBot();
+		final var bot = getInstance();
 		bot.addEventListener(new EventListenerWrapper(Constants.EVENT_WAITER),
 				new EventListenerWrapper(new QuotingListener()));
 
@@ -113,17 +114,13 @@ public class MatyBot {
 		return getConfigForGuild(guildEvent.getGuild());
 	}
 
-	public static JDA getJDA() { return instance.getBot(); }
-
 	private static void generateFolders() throws IOException {
 		Files.createDirectories(Paths.get("configs"));
 		Files.createDirectories(Paths.get("configs/server"));
 	}
 
-	private final JDA bot;
-
 	private MatyBot(final JDA bot) {
-		this.bot = bot;
+		super(bot);
 
 		if (generalConfig().isNewlyGenerated()) {
 			LOGGER.warn("A new config file has been generated! Please configure it.");
@@ -148,8 +145,6 @@ public class MatyBot {
 		Locale.setDefault(Locale.UK);
 	}
 
-	public JDA getBot() { return bot; }
-
 	private static MatyBot create(final String token) {
 		try {
 			return new MatyBot(JDABuilder.createDefault(token)
@@ -162,6 +157,13 @@ public class MatyBot {
 		} catch (final Exception e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	/**
+	 * @return the instance
+	 */
+	public static MatyBot getInstance() {
+		return instance;
 	}
 
 }

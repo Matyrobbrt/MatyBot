@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 
 import matyrobbrt.matybot.MatyBot;
@@ -100,11 +101,11 @@ public class JoinLeaveEvents extends AnnotationEventListener {
 
 		loggingChannel.sendMessageEmbeds(embed.build()).queue();
 
-		BotUtils.getChannelIfPresent(MatyBot.getConfigForGuild(event.getGuild()).welcomeChannel, welcomeChannel -> {
-			BotUtils.createMessage(welcomeChannel).addFile(makeJoinImage(member, font), "welcome.png")
-					.append(String.format("Everyone welcome %s!", member.getAsMention())).mention(member)
-					.queue(m -> m.addReaction("U+1F44B").queue());
-		});
+		MatyBot.getInstance().getChannelIfPresent(MatyBot.getConfigForGuild(event.getGuild()).welcomeChannel,
+				(@Nonnull var welcomeChannel) -> MatyBot.getInstance().createMessage(welcomeChannel)
+						.addFile(makeJoinImage(member, font), "welcome.png")
+						.append(String.format("Everyone welcome %s!", member.getAsMention())).mention(member)
+						.queue(m -> m.addReaction("U+1F44B").queue()));
 	}
 
 	@Override

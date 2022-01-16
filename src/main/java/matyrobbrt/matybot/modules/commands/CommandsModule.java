@@ -184,7 +184,7 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 				}
 			}
 		} else {
-			MatyBot.instance.getBot().upsertCommand(cmd.buildCommandData()).queue();
+			MatyBot.getInstance().getJDA().upsertCommand(cmd.buildCommandData()).queue();
 		}
 	}
 
@@ -195,7 +195,7 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 	 */
 	public static void upsertContextMenu(final ContextMenu menu) {
 		if (menu.isGuildOnly()) {
-			for (var guild : MatyBot.instance.getBot().getGuilds()) {
+			for (var guild : MatyBot.getInstance().getJDA().getGuilds()) {
 				try {
 					guild.upsertCommand(menu.buildCommandData())
 							.queue(cmd1 -> cmd1.updatePrivileges(guild, menu.buildPrivileges()).queue());
@@ -204,7 +204,7 @@ public final class CommandsModule extends matyrobbrt.matybot.api.modules.Module 
 				}
 			}
 		} else {
-			MatyBot.instance.getBot().upsertCommand(menu.buildCommandData()).queue();
+			MatyBot.getInstance().getJDA().upsertCommand(menu.buildCommandData()).queue();
 		}
 	}
 

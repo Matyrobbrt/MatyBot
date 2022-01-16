@@ -20,55 +20,56 @@ public class StringTrick implements ITrick {
 
 	public static final Type TYPE = new Type();
 
-    private final List<String> names;
+	private final List<String> names;
 
-    private final String body;
+	private final String body;
 
-    public StringTrick(final List<String> names, final String body) {
-        this.names = names;
-        this.body = body;
-    }
+	public StringTrick(final List<String> names, final String body) {
+		this.names = names;
+		this.body = body;
+	}
 
-    @Override
-    public List<String> getNames() {
-        return names;
-    }
+	@Override
+	public List<String> getNames() {
+		return names;
+	}
 
-    @Override
-    public Message getMessage(final String[] args) {
-        return new MessageBuilder(String.format(getBody(), (Object[]) args)).setAllowedMentions(Set.of(Message.MentionType.CHANNEL, Message.MentionType.EMOTE)).build();
-    }
+	@Override
+	public Message getMessage(final String[] args) {
+		return new MessageBuilder(String.format(getBody(), (Object[]) args))
+				.setAllowedMentions(Set.of(Message.MentionType.CHANNEL, Message.MentionType.EMOTE)).build();
+	}
 
-    public String getBody() {
-        return body;
-    }
+	public String getBody() {
+		return body;
+	}
 
-    static class Type implements TrickType<StringTrick> {
+	static class Type implements TrickType<StringTrick> {
 
-        @Override
-        public Class<StringTrick> getTrickClass() {
-            return StringTrick.class;
-        }
+		@Override
+		public Class<StringTrick> getTrickClass() {
+			return StringTrick.class;
+		}
 
-        @Override
-        public StringTrick createFromArgs(final String args) {
-            String[] argsArray = args.split(" \\| ");
-            return new StringTrick(Arrays.asList(argsArray[0].split(" ")), argsArray[1]);
-        }
+		@Override
+		public StringTrick createFromArgs(final String args) {
+			String[] argsArray = args.split(" \\| ");
+			return new StringTrick(Arrays.asList(argsArray[0].split(" ")), argsArray[1]);
+		}
 
-        @Override
-        public List<OptionData> getArgs() {
-            return List.of(
-                new OptionData(OptionType.STRING, "names", "Name(s) for the trick. Separate with spaces.").setRequired(true),
-                new OptionData(OptionType.STRING, "content", "The content of the trick.").setRequired(true)
-            );
-        }
+		@Override
+		public List<OptionData> getArgs() {
+			return List.of(
+					new OptionData(OptionType.STRING, "names", "Name(s) for the trick. Separate with spaces.")
+							.setRequired(true),
+					new OptionData(OptionType.STRING, "content", "The content of the trick.").setRequired(true));
+		}
 
-        @Override
-        public StringTrick createFromCommand(final SlashCommandEvent event) {
+		@Override
+		public StringTrick createFromCommand(final SlashCommandEvent event) {
 			return new StringTrick(Arrays.asList(getArgumentOrEmpty(event, "names").split(" ")),
 					getArgumentOrEmpty(event, "content"));
-        }
+		}
 
 		@Override
 		public StringTrick fromNBT(CompoundNBT nbt) {
@@ -81,7 +82,7 @@ public class StringTrick implements ITrick {
 			return new NBTBuilder().put("names", NBTHelper.serializeStringList(trick.getNames()))
 					.putString("body", trick.getBody()).build();
 		}
-    }
+	}
 
 	@Override
 	public CompoundNBT serializeNBT() {
@@ -89,5 +90,7 @@ public class StringTrick implements ITrick {
 	}
 
 	@Override
-	public TrickType<?> getType() { return TYPE; }
+	public TrickType<?> getType() {
+		return TYPE;
+	}
 }

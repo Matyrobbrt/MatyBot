@@ -36,7 +36,7 @@ public class Emotes {
 	}
 
 	private static Emote getEmoteById(long id) {
-		return MatyBot.instance.getBot().getEmoteById(id);
+		return MatyBot.getInstance().getEmoteById(id);
 	}
 
 	public static CompletableFuture<Void> reactNoComplete(@Nonnull final Message message,

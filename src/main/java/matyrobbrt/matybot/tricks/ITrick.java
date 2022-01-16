@@ -17,8 +17,8 @@ public interface ITrick extends NBTSerializable<CompoundNBT> {
 	List<String> getNames();
 
 	/**
-	 * @param args the args
-	 * @return the message to send
+	 * @param  args the args
+	 * @return      the message to send
 	 */
 	Message getMessage(String[] args);
 
@@ -45,18 +45,20 @@ public interface ITrick extends NBTSerializable<CompoundNBT> {
 		Class<T> getTrickClass();
 
 		/**
-		 * @return the argument argument names
+		 * @return     the argument argument names
 		 * @deprecated use slash commands where possible
 		 */
 		@Deprecated(forRemoval = false)
-		default List<String> getArgNames() { return getArgs().stream().map(OptionData::getName).toList(); }
+		default List<String> getArgNames() {
+			return getArgs().stream().map(OptionData::getName).toList();
+		}
 
 		/**
 		 * Create a trick from string arguments.
 		 *
-		 * @param args the args as a single string
-		 * @return the trick
-		 * @deprecated use slash commands when possible
+		 * @param      args the args as a single string
+		 * @return          the trick
+		 * @deprecated      use slash commands when possible
 		 */
 		@Deprecated(forRemoval = false)
 		T createFromArgs(String args);
@@ -69,8 +71,8 @@ public interface ITrick extends NBTSerializable<CompoundNBT> {
 		/**
 		 * Create from args t.
 		 *
-		 * @param event the command event
-		 * @return the trick
+		 * @param  event the command event
+		 * @return       the trick
 		 */
 		T createFromCommand(SlashCommandEvent event);
 

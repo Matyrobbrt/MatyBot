@@ -35,7 +35,7 @@ public class UnBanSlashCommand extends GuildSpecificSlashCommand {
 
 	public static MessageEmbed unmuteMember(final Guild guild, final Member unmuter, final long memberId)
 			throws Throwable {
-		final var member = MatyBot.instance.getBot().retrieveUserById(memberId).complete();
+		final var member = MatyBot.getInstance().getJDA().retrieveUserById(memberId).complete();
 		final var loggingChannel = LoggingModule.getLoggingChannel(guild);
 
 		final var error = new AtomicReference<Throwable>(null);

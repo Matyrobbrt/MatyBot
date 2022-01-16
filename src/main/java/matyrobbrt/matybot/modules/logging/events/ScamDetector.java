@@ -19,7 +19,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import matyrobbrt.matybot.MatyBot;
-import matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -98,7 +97,7 @@ public class ScamDetector extends ListenerAdapter {
 	}
 
 	private static void executeInLoggingChannel(final Guild guild, Consumer<TextChannel> channel) {
-		BotUtils.getChannelIfPresent(MatyBot.getConfigForGuild(guild).loggingChannel, channel);
+		MatyBot.getInstance().getChannelIfPresent(MatyBot.getConfigForGuild(guild).loggingChannel, channel);
 	}
 
 	public static boolean containsScam(final Message message) {

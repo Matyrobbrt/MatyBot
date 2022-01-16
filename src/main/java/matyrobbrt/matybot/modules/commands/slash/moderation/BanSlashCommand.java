@@ -50,7 +50,7 @@ public class BanSlashCommand extends GuildSpecificSlashCommand {
 			final String reason, final int deleteDaysCount, final long time, final TimeUnit timeUnit) {
 		final var loggingChannel = LoggingModule.getLoggingChannel(guild);
 
-		final User member = MatyBot.instance.getBot().retrieveUserById(memberID).complete();
+		final User member = MatyBot.getInstance().getJDA().retrieveUserById(memberID).complete();
 
 		final var banEmbed = new EmbedBuilder().setColor(Color.DARK_GRAY)
 				.setTitle(member.getName() + " has been banned!"

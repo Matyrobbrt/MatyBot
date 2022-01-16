@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimerTask;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,11 +22,7 @@ import matyrobbrt.matybot.MatyBot;
 import matyrobbrt.matybot.util.database.dao.StickyRoles;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
-import net.dv8tion.jda.internal.requests.restaction.MessageActionImpl;
 
 public class BotUtils {
 
@@ -40,7 +35,7 @@ public class BotUtils {
 	public static String getGithubToken() { return DOT_ENV.get("GITHUB_TOKEN"); }
 
 	public static boolean isUserSelf(long userId) {
-		return userId == MatyBot.instance.getBot().getSelfUser().getIdLong();
+		return userId == MatyBot.getInstance().getJDA().getSelfUser().getIdLong();
 	}
 
 	/**
@@ -90,33 +85,6 @@ public class BotUtils {
 
 	public static int getIntArgumentOr(SlashCommandEvent event, String name, int orElse) {
 		return getOptionOr(event.getOption(name), m -> (int) m.getAsDouble(), orElse);
-	}
-
-	/**
-	 * Calls the given consumer only if the text channel with the given ID is known
-	 * to the bot.
-	 *
-	 * @param channelID The channel ID
-	 * @param consumer  The consumer of the text channel
-	 * @see             net.dv8tion.jda.api.JDA#getTextChannelById(long)
-	 */
-	public static void getChannelIfPresent(final long channelID, final Consumer<TextChannel> consumer) {
-		final var channel = MatyBot.instance.getBot().getTextChannelById(channelID);
-		if (channel != null) {
-			consumer.accept(channel);
-		}
-	}
-
-	/**
-	 * Creates a message that should be sent in the provided {@code channel}
-	 * 
-	 * @param  channel the channel in which the message will be sent when
-	 *                 {@link RestAction#queue()} will be called
-	 * 
-	 * @return         the created message
-	 */
-	public static MessageAction createMessage(final TextChannel channel) {
-		return new MessageActionImpl(MatyBot.getJDA(), null, channel);
 	}
 
 	public static void scheduleTask(Runnable task, long delay) {

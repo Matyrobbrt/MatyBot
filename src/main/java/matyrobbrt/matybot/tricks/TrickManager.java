@@ -54,7 +54,9 @@ public final class TrickManager {
 	 * @return a map where the values are the trick types and the keys are their
 	 *         names
 	 */
-	public static Map<String, ITrick.TrickType<?>> getTrickTypes() { return new HashMap<>(TRICK_TYPES); }
+	public static Map<String, ITrick.TrickType<?>> getTrickTypes() {
+		return new HashMap<>(TRICK_TYPES);
+	}
 
 	/**
 	 * Gets a trick type by name.

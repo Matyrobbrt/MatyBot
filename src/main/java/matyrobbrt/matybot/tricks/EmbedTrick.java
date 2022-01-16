@@ -22,99 +22,92 @@ public class EmbedTrick implements ITrick {
 
 	public static final Type TYPE = new Type();
 
-    private final List<String> names;
+	private final List<String> names;
 
-    private final String title;
+	private final String title;
 
-    private final String description;
+	private final String description;
 
-    private final int color;
+	private final int color;
 
 	private final OrderedNBTList<MessageEmbed.Field, CompoundNBT> fields;
 
-    public EmbedTrick(final List<String> names, final String title, final String description, final int color,
+	public EmbedTrick(final List<String> names, final String title, final String description, final int color,
 			final List<MessageEmbed.Field> fields) {
-        this.names = names;
-        this.title = title;
-        this.description = description;
-        this.color = color;
+		this.names = names;
+		this.title = title;
+		this.description = description;
+		this.color = color;
 		this.fields = new OrderedNBTList<>(NBTHelper::serializeEmbedField, NBTHelper::deserializeEmbedField, fields);
 	}
 
 	public EmbedTrick(final List<String> names, final String title, final String description, final int color,
 			final MessageEmbed.Field... fields) {
 		this(names, title, description, color, Arrays.asList(fields));
-    }
+	}
 
-    @Override
-    public List<String> getNames() {
-        return names;
-    }
+	@Override
+	public List<String> getNames() {
+		return names;
+	}
 
-    @Override
-    public Message getMessage(final String[] args) {
-        EmbedBuilder builder = new EmbedBuilder()
-            .setTitle(getTitle())
-            .setDescription(getDescription())
-            .setColor(color);
-        for (MessageEmbed.Field field : getFields()) {
-            builder.addField(field);
-        }
-        return new MessageBuilder(builder.build()).setAllowedMentions(Set.of(Message.MentionType.CHANNEL, Message.MentionType.EMOTE)).build();
-    }
+	@Override
+	public Message getMessage(final String[] args) {
+		EmbedBuilder builder = new EmbedBuilder().setTitle(getTitle()).setDescription(getDescription()).setColor(color);
+		for (MessageEmbed.Field field : getFields()) {
+			builder.addField(field);
+		}
+		return new MessageBuilder(builder.build())
+				.setAllowedMentions(Set.of(Message.MentionType.CHANNEL, Message.MentionType.EMOTE)).build();
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public int getColor() {
-        return color;
-    }
+	public int getColor() {
+		return color;
+	}
 
-    public List<MessageEmbed.Field> getFields() {
-        return fields;
-    }
+	public List<MessageEmbed.Field> getFields() {
+		return fields;
+	}
 
-    static class Type implements TrickType<EmbedTrick> {
+	static class Type implements TrickType<EmbedTrick> {
 
-        @Override
-        public Class<EmbedTrick> getTrickClass() {
-            return EmbedTrick.class;
-        }
+		@Override
+		public Class<EmbedTrick> getTrickClass() {
+			return EmbedTrick.class;
+		}
 
-        @Override
-        public EmbedTrick createFromArgs(final String args) {
-            String[] argsArray = args.split(" \\| ");
-            return new EmbedTrick(
-                Arrays.asList(argsArray[0].split(" ")),
-                argsArray[1],
-                argsArray[2],
-                Integer.parseInt(argsArray[3].replace("#", ""), 16)
-            );
-        }
+		@Override
+		public EmbedTrick createFromArgs(final String args) {
+			String[] argsArray = args.split(" \\| ");
+			return new EmbedTrick(Arrays.asList(argsArray[0].split(" ")), argsArray[1], argsArray[2],
+					Integer.parseInt(argsArray[3].replace("#", ""), 16));
+		}
 
-        @Override
-        public List<OptionData> getArgs() {
-            return List.of(
-                new OptionData(OptionType.STRING, "names", "Name(s) for the trick. Separate with spaces.").setRequired(true),
-                new OptionData(OptionType.STRING, "title", "Title of the embed.").setRequired(true),
-                new OptionData(OptionType.STRING, "description", "Description of the embed.").setRequired(true),
-                new OptionData(OptionType.STRING, "color", "Hex color string in #AABBCC format, used for the embed.").setRequired(true)
-            );
-        }
+		@Override
+		public List<OptionData> getArgs() {
+			return List.of(
+					new OptionData(OptionType.STRING, "names", "Name(s) for the trick. Separate with spaces.")
+							.setRequired(true),
+					new OptionData(OptionType.STRING, "title", "Title of the embed.").setRequired(true),
+					new OptionData(OptionType.STRING, "description", "Description of the embed.").setRequired(true),
+					new OptionData(OptionType.STRING, "color",
+							"Hex color string in #AABBCC format, used for the embed.").setRequired(true));
+		}
 
-        @Override
-        public EmbedTrick createFromCommand(final SlashCommandEvent event) {
-            return new EmbedTrick(
-					Arrays.asList(getArgumentOrEmpty(event, "names").split(" ")), getArgumentOrEmpty(event, "title"),
-					getArgumentOrEmpty(event, "description"),
-					Integer.parseInt(getArgumentOrEmpty(event, "color").replaceAll("#", ""), 16)
-            );
-        }
+		@Override
+		public EmbedTrick createFromCommand(final SlashCommandEvent event) {
+			return new EmbedTrick(Arrays.asList(getArgumentOrEmpty(event, "names").split(" ")),
+					getArgumentOrEmpty(event, "title"), getArgumentOrEmpty(event, "description"),
+					Integer.parseInt(getArgumentOrEmpty(event, "color").replaceAll("#", ""), 16));
+		}
 
 		@Override
 		public EmbedTrick fromNBT(CompoundNBT nbt) {
@@ -137,7 +130,7 @@ public class EmbedTrick implements ITrick {
 			nbt.put("fields", trick.fields);
 			return nbt;
 		}
-    }
+	}
 
 	@Override
 	public CompoundNBT serializeNBT() {
@@ -150,5 +143,7 @@ public class EmbedTrick implements ITrick {
 	}
 
 	@Override
-	public TrickType<?> getType() { return TYPE; }
+	public TrickType<?> getType() {
+		return TYPE;
+	}
 }

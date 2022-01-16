@@ -196,7 +196,7 @@ public final class GuildConfig {
 	}
 
 	public static void addExtraData(final CommentedFileConfig config, final long longGuildId) {
-		config.add("guild_name", MatyBot.instance.getBot().getGuildById(longGuildId).getName());
+		config.add("guild_name", MatyBot.getInstance().getJDA().getGuildById(longGuildId).getName());
 		config.setComment("guild_name",
 				"""
 						This is modified automatically in order to indicate the name of the guild, so it is easier to differentiate between multiple guild configs.
