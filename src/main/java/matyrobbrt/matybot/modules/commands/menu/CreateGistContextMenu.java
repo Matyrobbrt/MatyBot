@@ -49,9 +49,8 @@ public class CreateGistContextMenu extends matyrobbrt.matybot.api.command.slash.
 						.setFooter("Requester ID: " + event.getMember().getIdLong(),
 								event.getMember().getEffectiveAvatarUrl())
 						.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl())
-						.setDescription(
-								String.format("A gist has been created for the attachements of [this](%s) message.",
-										MarkdownUtils.createMessageLink(event.getTarget())))
+						.setDescription("A gist has been created for the attachements of [this](%s) message."
+								.formatted(MarkdownUtils.createMessageLink(event.getTarget())))
 						.addField("Gist Link", gist.getHtmlUrl(), false);
 				hook.editOriginalEmbeds(embed.build()).queue();
 			} catch (InterruptedException | ExecutionException | JaGistException e) {

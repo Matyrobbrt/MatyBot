@@ -88,7 +88,7 @@ public class LevellingHandler extends ListenerAdapter {
 	}
 
 	public static String getLevelupMessage(final Member member, final TextChannel channel, final int newLevel) {
-		return String.format(LEVELUP_MESSAGES[RANDOM.nextInt(LEVELUP_MESSAGES.length)], member.getAsMention(),
+		return LEVELUP_MESSAGES[RANDOM.nextInt(LEVELUP_MESSAGES.length)].formatted(member.getAsMention(),
 				newLevel);
 	}
 

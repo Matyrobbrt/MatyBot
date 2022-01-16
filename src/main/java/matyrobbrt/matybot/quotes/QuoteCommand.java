@@ -112,8 +112,8 @@ public class QuoteCommand extends SlashCommand {
 
 			final User quoter = MatyBot.getInstance().getJDA().getUserById(quote.getQuoter());
 
-			final String footer = quoter == null ? String.format("Quoter ID: %s", quote.getAuthor())
-					: String.format("Quoted by %s", quoter.getAsTag());
+			final String footer = quoter == null ? "Quoter ID: %s".formatted(quote.getAuthor())
+					: "Quoted by %s".formatted(quoter.getAsTag());
 
 			final String author = quote.getAuthorFormatter(event.getGuild(), false);
 

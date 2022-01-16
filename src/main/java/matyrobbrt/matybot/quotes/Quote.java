@@ -35,7 +35,7 @@ public class Quote implements NBTSerializable<CompoundNBT> {
 	public String getAuthorFormatter(final Guild guild, boolean asTag) {
 		if (asTag) {
 			final Member member = guild.getMemberById(getAuthor());
-			return member == null ? String.format("Author ID: %s", getAuthor()) : member.getUser().getAsTag();
+			return member == null ? "Author ID: %s".formatted(getAuthor()) : member.getUser().getAsTag();
 		} else {
 			return guild.getMemberById(getAuthor()) == null ? String.format("Author ID: %s", getAuthor())
 					: MentionHelper.user(getAuthor()).getAsMention();

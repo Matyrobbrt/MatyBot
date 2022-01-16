@@ -82,7 +82,7 @@ public class JDABot implements JDA {
 	 * @return         the created message
 	 */
 	public MessageAction createMessage(final TextChannel channel) {
-		return new MessageActionImpl(this, null, channel);
+		return new MessageActionImpl(getJDA(), null, channel);
 	}
 
 	@Override

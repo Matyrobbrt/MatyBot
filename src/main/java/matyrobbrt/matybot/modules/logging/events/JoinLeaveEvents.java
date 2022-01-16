@@ -104,7 +104,7 @@ public class JoinLeaveEvents extends AnnotationEventListener {
 		MatyBot.getInstance().getChannelIfPresent(MatyBot.getConfigForGuild(event.getGuild()).welcomeChannel,
 				(@Nonnull var welcomeChannel) -> MatyBot.getInstance().createMessage(welcomeChannel)
 						.addFile(makeJoinImage(member, font), "welcome.png")
-						.append(String.format("Everyone welcome %s!", member.getAsMention())).mention(member)
+						.append("Everyone welcome %s!".formatted(member.getAsMention()))
 						.queue(m -> m.addReaction("U+1F44B").queue()));
 	}
 

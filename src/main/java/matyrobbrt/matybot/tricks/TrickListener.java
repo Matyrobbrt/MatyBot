@@ -23,7 +23,9 @@ public class TrickListener extends ListenerAdapter {
 		final String trickName = args[0].substring(prefix.length());
 		TrickManager.getTricksForGuild(guildId).forEach(trick -> {
 			if (trick.getNames().contains(trickName)) {
-				event.getMessage().reply(trick.getMessage(args)).queue();
+				final String[] trickArgs = new String[args.length - 1];
+				System.arraycopy(args, 1, trickArgs, 0, trickArgs.length);
+				event.getMessage().reply(trick.getMessage(trickArgs)).queue();
 			}
 		});
 	}
