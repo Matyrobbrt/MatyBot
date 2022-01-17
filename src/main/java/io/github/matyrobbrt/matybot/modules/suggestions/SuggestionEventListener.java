@@ -99,7 +99,7 @@ public class SuggestionEventListener extends ListenerAdapter {
 												.addField("Denial reason", reason, false).setColor(Color.RED)
 												.setTimestamp(Instant.now()).build()).queue();
 									});
-								}, 12, TimeUnit.SECONDS, () -> {
+								}, 14, TimeUnit.MINUTES, () -> {
 									hook.editOriginal("You did not provide a reason! We will not complete the denial.")
 											.queue();
 									dm.sendMessage("You did not provide a reason! We will not complete the denial.")
