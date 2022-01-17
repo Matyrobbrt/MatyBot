@@ -12,32 +12,6 @@ configurations {
 	implementation.extendsFrom(shade)
 }
 
-sourceSets {
-	api {
-		java {
-			srcDir "$rootDir/src/api/java"
-		}
-		//The API has no resources
-		resources.srcDirs = []
-		compileClasspath += configurations.getByName("shade")
-	}
-
-	main {
-		java {
-			srcDirs = [
-				"$rootDir/src/main/java"
-			]
-		}
-		resources {
-			srcDirs = [
-				"$rootDir/src/main/resources"
-			]
-		}
-		compileClasspath += sourceSets.api.output
-		runtimeClasspath += sourceSets.api.output
-	}
-}
-
 repositories {
 	jcenter()
 	mavenCentral()
@@ -110,14 +84,12 @@ dependencies {
 
 shadowJar {
 	configurations = [project.configurations.shade]
-	from sourceSets.api.allSource
 	from sourceSets.main.allSource
 	classifier ''
 }
 
 jar {
 	from {
-		sourceSets.api.output
 		sourceSets.main.output
 	}
 	manifest {
