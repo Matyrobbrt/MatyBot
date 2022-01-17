@@ -1,16 +1,15 @@
 package io.github.matyrobbrt.matybot.modules.levelling;
 
+import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.MatyBot;
-import io.github.matyrobbrt.matybot.api.event.EventListenerWrapper;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 
-// TODO make this module actually work (a.k.a. implement levelling)
-public class LevellingModule extends io.github.matyrobbrt.matybot.api.modules.Module {
+public class LevellingModule extends io.github.matyrobbrt.jdautils.modules.Module {
 
 	public LevellingModule(final JDA bot) {
-		super(() -> MatyBot.generalConfig().isLevellingModuleEnabled(), bot);
+		super(() -> true, bot);
 	}
 
 	@Override

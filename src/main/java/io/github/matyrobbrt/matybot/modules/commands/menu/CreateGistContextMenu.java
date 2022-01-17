@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.util.BotUtils;
-import io.github.matyrobbrt.matybot.util.MarkdownUtils;
+import io.github.matyrobbrt.matybot.util.DiscordUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command.Type;
@@ -50,7 +50,7 @@ public class CreateGistContextMenu extends io.github.matyrobbrt.matybot.api.comm
 								event.getMember().getEffectiveAvatarUrl())
 						.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl())
 						.setDescription("A gist has been created for the attachements of [this](%s) message."
-								.formatted(MarkdownUtils.createMessageLink(event.getTarget())))
+								.formatted(DiscordUtils.createMessageLink(event.getTarget())))
 						.addField("Gist Link", gist.getHtmlUrl(), false);
 				hook.editOriginalEmbeds(embed.build()).queue();
 			} catch (InterruptedException | ExecutionException | JaGistException e) {

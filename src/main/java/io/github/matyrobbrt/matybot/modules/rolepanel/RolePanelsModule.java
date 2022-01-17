@@ -16,7 +16,7 @@ import com.google.gson.JsonElement;
 import io.github.matyrobbrt.matybot.MatyBot;
 import net.dv8tion.jda.api.JDA;
 
-public class RolePanelsModule extends io.github.matyrobbrt.matybot.api.modules.Module {
+public class RolePanelsModule extends io.github.matyrobbrt.jdautils.modules.Module {
 
 	public static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
 			.excludeFieldsWithoutExposeAnnotation().create();

@@ -3,8 +3,9 @@ package io.github.matyrobbrt.matybot.event;
 import java.awt.Color;
 import java.util.regex.Pattern;
 
-import io.github.matyrobbrt.matybot.MatyBot;
-import io.github.matyrobbrt.matybot.util.MarkdownUtils;
+import io.github.matyrobbrt.matybot.util.BotUtils;
+import io.github.matyrobbrt.matybot.util.DiscordUtils;
+import io.github.matyrobbrt.matybot.util.DiscordUtils.MessageLinkException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -31,24 +32,17 @@ public class QuotingListener extends ListenerAdapter {
 		final String[] msg = originalMsg.getContentRaw().split(" ");
 		if (msg.length < 1) { return; }
 
-		final var matcher = MESSAGE_LINK_PATTERN.matcher(msg[0]);
+		final var matcher = DiscordUtils.MESSAGE_LINK_PATTERN.matcher(msg[0]);
 		if (matcher.find()) {
 			try {
-				var origianlWithoutLink = matcher.replaceAll("");
-				final long guildId = Long.parseLong(origianlWithoutLink.substring(0, origianlWithoutLink.indexOf('/')));
-				origianlWithoutLink = origianlWithoutLink.substring(origianlWithoutLink.indexOf('/') + 1);
-				final long channelId = Long
-						.parseLong(origianlWithoutLink.substring(0, origianlWithoutLink.indexOf('/')));
-				origianlWithoutLink = origianlWithoutLink.substring(origianlWithoutLink.indexOf('/') + 1);
-				final long messageId = Long.parseLong(origianlWithoutLink);
-				MatyBot.getInstance().getJDA().getGuildById(guildId).getTextChannelById(channelId)
-						.retrieveMessageById(messageId).queue(message -> {
-							event.getChannel().sendMessageEmbeds(quote(message, event.getMember())).queue();
-							if (msg.length == 1) {
-								originalMsg.delete().reason("Quote successful").queue();
-							}
-						});
-			} catch (NumberFormatException e) {
+				final var message = BotUtils.getMessageByLink(msg[0]);
+				if (message != null) {
+					event.getChannel().sendMessageEmbeds(quote(message, event.getMember())).queue();
+					if (msg.length == 1) {
+						originalMsg.delete().reason("Quote successful").queue();
+					}
+				}
+			} catch (MessageLinkException e) {
 				// Do nothing
 			}
 		}
@@ -60,7 +54,7 @@ public class QuotingListener extends ListenerAdapter {
 	}
 
 	public static MessageEmbed quote(final Message message, final Member quoter) {
-		final var msgLink = MarkdownUtils.createMessageLink(message);
+		final var msgLink = DiscordUtils.createMessageLink(message);
 		final var embed = new EmbedBuilder().setTimestamp(message.getTimeCreated()).setColor(Color.DARK_GRAY)
 				.setAuthor(message.getAuthor().getAsTag(), msgLink, message.getAuthor().getEffectiveAvatarUrl());
 		if (!message.getContentRaw().isBlank()) {

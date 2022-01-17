@@ -4,21 +4,21 @@ import java.awt.Color;
 import java.time.Instant;
 
 import io.github.matyrobbrt.matybot.MatyBot;
-import io.github.matyrobbrt.matybot.api.event.AnnotationEventListener;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
-public class UserEvents extends AnnotationEventListener {
+public class UserEvents extends ListenerAdapter {
 
-	@Override
 	@SubscribeEvent
-	public void onEventHandleAnnotation(GenericEvent event) {
-		super.onEventHandleAnnotation(event);
+	@Override
+	public void onGenericEvent(GenericEvent event) {
+		super.onGenericEvent(event);
 	}
 
 	@Override

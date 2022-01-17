@@ -10,9 +10,9 @@ import io.github.matyrobbrt.javanbt.serialization.NBTSerializable;
 import io.github.matyrobbrt.javanbt.serialization.Serializers;
 import io.github.matyrobbrt.javanbt.util.NBTBuilder;
 import io.github.matyrobbrt.javanbt.util.NBTManager;
-import io.github.matyrobbrt.matybot.quotes.Quote;
-import io.github.matyrobbrt.matybot.tricks.ITrick;
-import io.github.matyrobbrt.matybot.tricks.TrickManager;
+import io.github.matyrobbrt.matybot.managers.quotes.Quote;
+import io.github.matyrobbrt.matybot.managers.tricks.ITrick;
+import io.github.matyrobbrt.matybot.managers.tricks.TrickManager;
 import io.github.matyrobbrt.matybot.util.nbt.NBTList;
 import io.github.matyrobbrt.matybot.util.nbt.OrderedNBTList;
 import io.github.matyrobbrt.matybot.util.nbt.SnowflakeSpecifcData;
@@ -41,10 +41,17 @@ public class GuildData implements NBTSerializable<CompoundNBT> {
 
 	public List<ITrick> getTricks() { return tricks; }
 
-	private final SnowflakeSpecifcData<LevelData, CompoundNBT> levels = createAndTrack("Levels",
+	private final Map<Long, LevelData> levels = createAndTrack("Levels",
 			new SnowflakeSpecifcData<>(LevelData::serializeNBT, LevelData.DESERIALIZER::fromNBT));
 
+	private final Map<Long, SuggestionData> suggestions = createAndTrack("Suggestions",
+			new SnowflakeSpecifcData<>(SuggestionData::serializeNBT, SuggestionData.DESERIALIZER::fromNBT));
+
 	public Map<Long, LevelData> getLevels() { return levels; }
+
+	public Map<Long, SuggestionData> getSuggestions() {
+		return suggestions;
+	}
 
 	public List<Long> getLeaderboardSorted() {
 		final List<Long> data = new ArrayList<>();

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.github.matyrobbrt.matybot.api.event.AnnotationEventListener;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.IMentionable;
@@ -16,14 +15,15 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.role.RoleCreateEvent;
 import net.dv8tion.jda.api.events.role.RoleDeleteEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
-public class RoleEvents extends AnnotationEventListener {
+public class RoleEvents extends ListenerAdapter {
 
-	@Override
 	@SubscribeEvent
-	public void onEventHandleAnnotation(GenericEvent event) {
-		super.onEventHandleAnnotation(event);
+	@Override
+	public void onGenericEvent(GenericEvent event) {
+		super.onGenericEvent(event);
 	}
 
 	@Override

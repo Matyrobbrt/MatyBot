@@ -1,4 +1,4 @@
-package io.github.matyrobbrt.matybot.tricks.commands;
+package io.github.matyrobbrt.matybot.managers.tricks.commands;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import io.github.matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
-import io.github.matyrobbrt.matybot.tricks.TrickManager;
+import io.github.matyrobbrt.matybot.managers.tricks.TrickManager;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 

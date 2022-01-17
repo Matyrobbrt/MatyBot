@@ -1,4 +1,4 @@
-package io.github.matyrobbrt.matybot.quotes;
+package io.github.matyrobbrt.matybot.managers.quotes;
 
 import com.google.gson.annotations.Expose;
 

@@ -1,4 +1,4 @@
-package io.github.matyrobbrt.matybot.tricks;
+package io.github.matyrobbrt.matybot.managers.tricks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.matyrobbrt.matybot.MatyBot;
-import io.github.matyrobbrt.matybot.tricks.ITrick.TrickType;
+import io.github.matyrobbrt.matybot.managers.tricks.ITrick.TrickType;
 
 /**
  * TODO: Migrate to a the database

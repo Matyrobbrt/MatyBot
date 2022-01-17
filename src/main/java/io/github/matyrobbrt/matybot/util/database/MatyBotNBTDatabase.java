@@ -3,9 +3,14 @@ package io.github.matyrobbrt.matybot.util.database;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import org.apache.commons.io.FileUtils;
 
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
@@ -23,6 +28,7 @@ import net.dv8tion.jda.api.entities.Guild;
 
 public class MatyBotNBTDatabase extends NBTDatabase {
 
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d-MM-uuuu_H-m-s");
 	private static final Timer TIMER = new Timer("DatabaseSaver");
 
 	public MatyBotNBTDatabase(File file) {
@@ -33,6 +39,9 @@ public class MatyBotNBTDatabase extends NBTDatabase {
 			} catch (IOException e) {}
 		}
 
+		// Don't make this very frequent since the DatabaseManager saves it once 15
+		// minutes already.. We should call setDirtyAndSave() when we need immediate
+		// saving!
 		TIMER.scheduleAtFixedRate(new TimerTask() {
 
 			@Override
@@ -40,7 +49,28 @@ public class MatyBotNBTDatabase extends NBTDatabase {
 				saveToDisk();
 				MatyBot.LOGGER.info(Markers.DATABASE, "Database has been automatically saved");
 			}
-		}, 0, 1000l * 60 * 5);
+		}, 0, 1000l * 60 * 10);
+
+		// Backup the database every hour
+		TIMER.scheduleAtFixedRate(new TimerTask() {
+
+			@Override
+			public void run() {
+				saveToDisk();
+				final StringBuilder backupName = new StringBuilder(getFile().getName().replaceAll(".dat", ""))
+						.append("_");
+				backupName.append(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+				backupName.append(".dat");
+				final var backupPath = Path.of("storage/backup").resolve(backupName.toString());
+				try {
+					FileUtils.copyFile(getFile(), backupPath.toFile());
+				} catch (IOException e) {
+					MatyBot.LOGGER.error(Markers.DATABASE, "Exception while trying to backup the database!", e);
+				} finally {
+					MatyBot.LOGGER.info(Markers.DATABASE, "Database has been automatically backed up!");
+				}
+			}
+		}, 0, 1000l * 60 * 60);
 	}
 
 	private final NBTManager nbtManager = new NBTManager();
@@ -48,7 +78,9 @@ public class MatyBotNBTDatabase extends NBTDatabase {
 	private List<Long> guildCache = createAndTrack("GuildCache",
 			new NBTList<Long, LongNBT>(LongNBT::valueOf, LongNBT::getAsLong));
 
-	public List<Long> getGuildCache() { return guildCache; }
+	public List<Long> getGuildCache() {
+		return guildCache;
+	}
 
 	private final SnowflakeSpecifcData<GuildData, CompoundNBT> guildData = createAndTrack("GuildData",
 			new SnowflakeSpecifcData<>(GuildData::serializeNBT, GuildData.DESERIALIZER::fromNBT));

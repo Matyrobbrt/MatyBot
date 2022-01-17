@@ -3,11 +3,15 @@ package io.github.matyrobbrt.jdautils;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
+import org.slf4j.Logger;
+
+import io.github.matyrobbrt.jdautils.modules.ModuleManager;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
@@ -49,13 +53,52 @@ import okhttp3.OkHttpClient;
 public class JDABot implements JDA {
 
 	private final JDA jda;
+	private final Logger logger;
+	private final ModuleManager moduleManager;
 
-	protected JDABot(final JDA jda) {
+	protected JDABot(final JDA jda, final Logger logger) {
 		this.jda = jda;
+		this.logger = logger;
+		this.moduleManager = new ModuleManager(jda, logger);
 	}
 
+	/**
+	 * @return the bot's {@link JDA}
+	 */
 	public final JDA getJDA() {
 		return jda;
+	}
+
+	/**
+	 * @return the logger
+	 */
+	public Logger getLogger() {
+		return logger;
+	}
+
+	/**
+	 * @return the {@link ModuleManager}
+	 */
+	public ModuleManager getModuleManager() {
+		return moduleManager;
+	}
+
+	/**
+	 * Calls the given consumer only if the text channel with the given ID is known
+	 * to the bot.
+	 *
+	 * @param channelID The channel ID
+	 * @param consumer  The consumer of the text channel
+	 * @param orElse    The runnable to run if the channel doesn't exist
+	 * @see             net.dv8tion.jda.api.JDA#getTextChannelById(long)
+	 */
+	public void getChannelIfPresent(final long channelID, final Consumer<TextChannel> consumer, Runnable orElse) {
+		final var channel = getTextChannelById(channelID);
+		if (channel != null) {
+			consumer.accept(channel);
+		} else {
+			orElse.run();
+		}
 	}
 
 	/**
@@ -67,10 +110,18 @@ public class JDABot implements JDA {
 	 * @see             net.dv8tion.jda.api.JDA#getTextChannelById(long)
 	 */
 	public void getChannelIfPresent(final long channelID, final Consumer<TextChannel> consumer) {
-		final var channel = getTextChannelById(channelID);
-		if (channel != null) {
-			consumer.accept(channel);
+		getChannelIfPresent(channelID, consumer, () -> {});
+	}
+
+	public void openDM(final long userId, Consumer<PrivateChannel> consumer, Runnable fail) {
+		final var user = getUserById(userId);
+		if (user != null) {
+			user.openPrivateChannel().queue(consumer, e -> fail.run());
 		}
+	}
+
+	public void openDM(final long userId, Consumer<PrivateChannel> consumer) {
+		openDM(userId, consumer, () -> {});
 	}
 
 	/**
@@ -83,6 +134,10 @@ public class JDABot implements JDA {
 	 */
 	public MessageAction createMessage(final TextChannel channel) {
 		return new MessageActionImpl(getJDA(), null, channel);
+	}
+
+	public java.util.Optional<Guild> getGuildOptional(final long guildId) {
+		return Optional.ofNullable(getGuildById(guildId));
 	}
 
 	@Override

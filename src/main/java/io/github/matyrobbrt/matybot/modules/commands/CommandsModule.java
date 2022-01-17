@@ -13,24 +13,24 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.SlashCommand;
 
+import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.api.annotation.RegisterCommand;
 import io.github.matyrobbrt.matybot.api.annotation.RegisterContextMenu;
 import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import io.github.matyrobbrt.matybot.api.command.slash.ContextMenu;
 import io.github.matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
-import io.github.matyrobbrt.matybot.api.event.EventListenerWrapper;
+import io.github.matyrobbrt.matybot.managers.quotes.QuoteCommand;
+import io.github.matyrobbrt.matybot.managers.tricks.TrickListener;
 import io.github.matyrobbrt.matybot.modules.commands.menu.CreateGistContextMenu;
 import io.github.matyrobbrt.matybot.modules.levelling.LeaderboardCommand;
-import io.github.matyrobbrt.matybot.quotes.QuoteCommand;
-import io.github.matyrobbrt.matybot.tricks.TrickListener;
 import io.github.matyrobbrt.matybot.util.ReflectionUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.hooks.EventListener;
 import ssynx.gist.GistUtils;
 
-public final class CommandsModule extends io.github.matyrobbrt.matybot.api.modules.Module {
+public final class CommandsModule extends io.github.matyrobbrt.jdautils.modules.Module {
 
 	private static CommandsModule instance;
 

@@ -32,6 +32,10 @@ public class NBTBuilder {
 		return new NBTBuilder(otherTag);
 	}
 
+	public static NBTBuilder of() {
+		return new NBTBuilder();
+	}
+
 	/**
 	 * Stores a new NBTTagString with the given string value into the map with the
 	 * given string key.

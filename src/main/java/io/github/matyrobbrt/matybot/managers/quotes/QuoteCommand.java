@@ -1,4 +1,4 @@
-package io.github.matyrobbrt.matybot.quotes;
+package io.github.matyrobbrt.matybot.managers.quotes;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -9,10 +9,10 @@ import java.util.Random;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
+import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import io.github.matyrobbrt.matybot.api.command.slash.PaginatedCommand;
-import io.github.matyrobbrt.matybot.api.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -136,7 +136,9 @@ public class QuoteCommand extends SlashCommand {
 			listener = new ButtonListener();
 		}
 
-		public static EventListenerWrapper getWrappedListener() { return new EventListenerWrapper(listener); }
+		public static EventListenerWrapper getWrappedListener() {
+			return new EventListenerWrapper(listener);
+		}
 
 		@Override
 		protected EmbedBuilder getEmbed(int start, final Guild guild) {

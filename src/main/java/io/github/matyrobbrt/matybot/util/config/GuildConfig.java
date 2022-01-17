@@ -208,10 +208,20 @@ public final class GuildConfig {
 	@ConfigEntry(name = "main", category = "general.prefixes", comments = "The prefix of the bot in the guild.")
 	public String prefix = "!";
 
+	@ConfigEntry(name = "suggestions_enabled", category = "general", comments = "If suggestions should be enabled in this guild.")
+	private boolean suggestionsEnabled = true;
+
+	public boolean areSuggestionsEnabled() {
+		return suggestionsEnabled;
+	}
+
 	/// CHANNELS ///
 
 	@ConfigEntry(name = "logging", category = "channels", comments = "The channel in which logs will be sent", commentDefaultValue = false)
 	public long loggingChannel;
+
+	@ConfigEntry(name = "suggestions", category = "channels", comments = "The channel in which suggestions will be sent. (Only if suggestionsEnabled is true)", commentDefaultValue = false)
+	public long suggestionsChannel;
 
 	@ConfigEntry(name = "welcome", category = "channels", comments = {
 			"The channel in which welcome messages will be sent.", "Supply 0 in order to disable welcome messages."
@@ -235,6 +245,9 @@ public final class GuildConfig {
 
 	@ConfigEntry(name = "join", category = "roles", comments = "The roles which will to members when they join.", commentDefaultValue = false)
 	public List<Long> joinRoles = Lists.newArrayList();
+
+	@ConfigEntry(name = "suggestion_approver", category = "roles", comments = "The roles which can approve suggestions.", commentDefaultValue = false)
+	public List<Long> suggestionApproverRoles = Lists.newArrayList();
 
 	@ConfigEntry(name = "enabled", category = "levels", comments = "If the levelling should be enabled in this guild.")
 	private boolean levellingEnabled = true;

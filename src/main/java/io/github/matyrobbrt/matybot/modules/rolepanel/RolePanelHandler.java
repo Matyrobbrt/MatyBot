@@ -2,20 +2,20 @@ package io.github.matyrobbrt.matybot.modules.rolepanel;
 
 import static io.github.matyrobbrt.matybot.modules.rolepanel.RolePanelsModule.getPanelForChannelAndMessage;
 
-import io.github.matyrobbrt.matybot.api.event.AnnotationEventListener;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
-public class RolePanelHandler extends AnnotationEventListener {
+public class RolePanelHandler extends ListenerAdapter {
 
-	@Override
 	@SubscribeEvent
-	public void onEventHandleAnnotation(GenericEvent event) {
-		super.onEventHandleAnnotation(event);
+	@Override
+	public void onGenericEvent(GenericEvent event) {
+		super.onGenericEvent(event);
 	}
 
 	@Override

@@ -13,7 +13,8 @@ import org.reflections.util.ConfigurationBuilder;
 public class ReflectionUtils {
 
 	public static final Reflections REFLECTIONS = new Reflections(
-			new ConfigurationBuilder().forPackage("matyrobbrt.matybot").setScanners(TypesAnnotated, FieldsAnnotated));
+			new ConfigurationBuilder().forPackage("io.github.matyrobbrt.matybot").setScanners(TypesAnnotated,
+					FieldsAnnotated));
 
 	public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotation) {
 		return REFLECTIONS.getTypesAnnotatedWith(annotation);

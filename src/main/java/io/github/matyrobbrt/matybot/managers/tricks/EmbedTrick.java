@@ -1,4 +1,4 @@
-package io.github.matyrobbrt.matybot.tricks;
+package io.github.matyrobbrt.matybot.managers.tricks;
 
 import static io.github.matyrobbrt.matybot.util.BotUtils.getArgumentOrEmpty;
 

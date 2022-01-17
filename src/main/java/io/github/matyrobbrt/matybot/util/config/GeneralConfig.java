@@ -236,11 +236,6 @@ public final class GeneralConfig {
 
 	public boolean isLoggingModuleEnabled() { return loggingModuleEnabled; }
 
-	@ConfigEntry(name = "enabled", category = "modules.levelling", comments = "If the levelling module should be enabled.")
-	private boolean levellingModuleEnabled = true;
-
-	public boolean isLevellingModuleEnabled() { return levellingModuleEnabled; }
-
 	/// EMOTES ///
 
 	@ConfigEntry(name = "pog", category = "emotes", commentDefaultValue = false)

@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 
 import io.github.matyrobbrt.matybot.MatyBot;
-import io.github.matyrobbrt.matybot.api.event.AnnotationEventListener;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import io.github.matyrobbrt.matybot.util.database.dao.StickyRoles;
@@ -39,17 +38,18 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.dv8tion.jda.api.utils.TimeFormat;
 
-public class JoinLeaveEvents extends AnnotationEventListener {
+public class JoinLeaveEvents extends ListenerAdapter {
 
 	public static final JoinLeaveEvents INSTANCE = new JoinLeaveEvents();
 
-	@Override
 	@SubscribeEvent
-	public void onEventHandleAnnotation(GenericEvent event) {
-		super.onEventHandleAnnotation(event);
+	@Override
+	public void onGenericEvent(GenericEvent event) {
+		super.onGenericEvent(event);
 	}
 
 	private Font font = null;

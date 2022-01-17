@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import com.jagrosh.jdautilities.command.CooldownScope;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
+import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import io.github.matyrobbrt.matybot.api.command.slash.PaginatedCommand;
-import io.github.matyrobbrt.matybot.api.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;

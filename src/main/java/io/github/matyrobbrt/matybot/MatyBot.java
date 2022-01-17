@@ -6,10 +6,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
@@ -17,15 +15,15 @@ import org.slf4j.LoggerFactory;
 
 import io.github.matyrobbrt.javanbt.db.NBTDatabaseManager;
 import io.github.matyrobbrt.jdautils.JDABot;
+import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.api.annotation.EventSubscriber;
-import io.github.matyrobbrt.matybot.api.event.EventListenerWrapper;
-import io.github.matyrobbrt.matybot.api.modules.ModuleManager;
 import io.github.matyrobbrt.matybot.event.MiscEvents;
 import io.github.matyrobbrt.matybot.event.QuotingListener;
 import io.github.matyrobbrt.matybot.modules.commands.CommandsModule;
 import io.github.matyrobbrt.matybot.modules.levelling.LevellingModule;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import io.github.matyrobbrt.matybot.modules.rolepanel.RolePanelsModule;
+import io.github.matyrobbrt.matybot.modules.suggestions.SuggestionsModule;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import io.github.matyrobbrt.matybot.util.Constants;
 import io.github.matyrobbrt.matybot.util.Emotes;
@@ -53,8 +51,7 @@ public class MatyBot extends JDABot {
 	private static MatyBot instance;
 	private static DatabaseManager database;
 	private static GeneralConfig generalConfig;
-	private static ModuleManager moduleManager;
-	private static final Map<Long, GuildConfig> GUILD_CONFIGS = Collections.synchronizedMap(new HashMap<>());
+	private static final ConcurrentHashMap<Long, GuildConfig> GUILD_CONFIGS = new ConcurrentHashMap<>();
 
 	public static void main(String[] args) {
 		try {
@@ -74,12 +71,13 @@ public class MatyBot extends JDABot {
 		bot.addEventListener(new EventListenerWrapper(Constants.EVENT_WAITER),
 				new EventListenerWrapper(new QuotingListener()));
 
-		moduleManager = new ModuleManager(bot);
+		final var moduleManager = bot.getModuleManager();
 
 		moduleManager.addModule(new LevellingModule(bot));
 		moduleManager.addModule(CommandsModule.setUpInstance(bot));
 		moduleManager.addModule(new LoggingModule(bot));
 		moduleManager.addModule(new RolePanelsModule(bot));
+		moduleManager.addModule(new SuggestionsModule(bot));
 
 		moduleManager.register();
 
@@ -117,10 +115,11 @@ public class MatyBot extends JDABot {
 	private static void generateFolders() throws IOException {
 		Files.createDirectories(Paths.get("configs"));
 		Files.createDirectories(Paths.get("configs/server"));
+		Files.createDirectories(Paths.get("storage/backup"));
 	}
 
 	private MatyBot(final JDA bot) {
-		super(bot);
+		super(bot, LOGGER);
 
 		if (generalConfig().isNewlyGenerated()) {
 			LOGGER.warn("A new config file has been generated! Please configure it.");

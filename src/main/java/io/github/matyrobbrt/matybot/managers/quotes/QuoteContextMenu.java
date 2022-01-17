@@ -1,4 +1,4 @@
-package io.github.matyrobbrt.matybot.quotes;
+package io.github.matyrobbrt.matybot.managers.quotes;
 
 import io.github.matyrobbrt.matybot.api.annotation.RegisterContextMenu;
 import io.github.matyrobbrt.matybot.api.command.slash.ContextMenu;

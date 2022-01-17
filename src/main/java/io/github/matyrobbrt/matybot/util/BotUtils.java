@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +20,11 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.matyrobbrt.matybot.MatyBot;
+import io.github.matyrobbrt.matybot.util.DiscordUtils.MessageLinkException;
 import io.github.matyrobbrt.matybot.util.database.dao.StickyRoles;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -30,9 +34,13 @@ public class BotUtils {
 
 	public static final Dotenv DOT_ENV = Dotenv.load();
 
-	public static String getBotToken() { return DOT_ENV.get("BOT_TOKEN"); }
+	public static String getBotToken() {
+		return DOT_ENV.get("BOT_TOKEN");
+	}
 
-	public static String getGithubToken() { return DOT_ENV.get("GITHUB_TOKEN"); }
+	public static String getGithubToken() {
+		return DOT_ENV.get("GITHUB_TOKEN");
+	}
 
 	public static boolean isUserSelf(long userId) {
 		return userId == MatyBot.getInstance().getJDA().getSelfUser().getIdLong();
@@ -102,6 +110,23 @@ public class BotUtils {
 		final var green = Constants.RANDOM.nextFloat();
 		final var blue = Constants.RANDOM.nextFloat();
 		return new Color(red, green, blue);
+	}
+
+	public static Message getMessageByLink(final String link) throws MessageLinkException {
+		final AtomicReference<Message> returnAtomic = new AtomicReference<>(null);
+		DiscordUtils.decodeMessageLink(link, (guildId, channelId, messageId) -> {
+			MatyBot.getInstance().getGuildOptional(guildId).ifPresent(guild -> {
+				final var channel = guild.getTextChannelById(channelId);
+				if (channel != null) {
+					returnAtomic.set(channel.retrieveMessageById(messageId).complete());
+				}
+			});
+		});
+		return returnAtomic.get();
+	}
+
+	public static boolean memberHasRole(final Member member, List<Long> roles) {
+		return member.getRoles().stream().anyMatch(role -> roles.contains(role.getIdLong()));
 	}
 
 	public static final Joiner LINE_JOINER = Joiner.on("\n");
