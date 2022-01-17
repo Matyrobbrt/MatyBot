@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import matyrobbrt.matybot.util.BotUtils;
+import io.github.matyrobbrt.matybot.util.BotUtils;
 
 public class GistUtils {
 

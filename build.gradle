@@ -64,7 +64,7 @@ repositories {
 
 dependencies {
 	// shade fileTree(include: ['*.jar'], dir: 'libs')
-	
+
 	testImplementation 'junit:junit:latest.release'
 
 	shade group: 'pw.chew', name: 'jda-chewtils', version: '2.0-interactions-SNAPSHOT'
@@ -73,7 +73,7 @@ dependencies {
 	// JDA is not published anywhere, as it is a dev branch
 	// shade group: 'net.dv8tion', name: 'JDA', version: 'latest.release'
 	shade ":JDA-5.0.0-alpha.4_DEV"
-	
+
 	shade group: 'io.vavr', name: 'vavr', version: 'latest.release'
 	shade group: 'io.github.cdimascio', name:'dotenv-java', version: 'latest.release'
 	shade group: 'com.vdurmont', name: 'emoji-java', version: 'latest.release'
@@ -88,10 +88,10 @@ dependencies {
 	shade group: 'org.xerial', name: 'sqlite-jdbc', version: 'latest.release'
 	shade group: 'com.electronwill.night-config', name: 'toml', version: 'latest.release'
 	shade group: 'org.jooq', name: 'joor', version: 'latest.release'
-	
+
 	// https://github.com/StefanoBelli/JaGist
 	shade ":jsgist-0.4.1"
-	
+
 	shade group: 'io.github.matyrobbrt', name: 'javanbt', version: 'latest.release'
 
 	// Apache
@@ -122,7 +122,7 @@ jar {
 	}
 	manifest {
 		attributes(
-				'Main-Class': "matyrobbrt.matybot.MatyBot"
+				'Main-Class': "io.github.matyrobbrt.matybot.MatyBot"
 				)
 	}
 }
