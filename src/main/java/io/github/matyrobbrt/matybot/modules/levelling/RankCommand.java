@@ -53,7 +53,6 @@ public class RankCommand extends SlashCommand {
 						"Member to get the rank card for. Mutually exclusive with member_by_rank.", false),
 				new OptionData(OptionType.INTEGER, "member_by_rank",
 						"This will get the data of the member at the specified rank position. Mutually exclusive with member."));
-		guildOnly = true;
 		try {
 			final var graphicsEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			this.usedFont = Font
@@ -89,6 +88,10 @@ public class RankCommand extends SlashCommand {
 
 	@Override
 	public void execute(final SlashCommandEvent event) {
+		if (!event.isFromGuild()) {
+			event.deferReply(true).setContent("This command only works in guilds!").queue();
+			return;
+		}
 		if (!LevellingModule.isLevellingEnabled(event.getGuild())) {
 			event.deferReply().setContent("Levelling is not enabled on this server!").setEphemeral(true).queue();
 			return;

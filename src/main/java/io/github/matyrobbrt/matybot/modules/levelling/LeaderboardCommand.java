@@ -32,6 +32,10 @@ public class LeaderboardCommand extends PaginatedCommand {
 
 	@Override
 	protected void execute(SlashCommandEvent event) {
+		if (!event.isFromGuild()) {
+			event.deferReply(true).setContent("This command only works in guilds!").queue();
+			return;
+		}
 		if (!LevellingModule.isLevellingEnabled(event.getGuild())) {
 			event.deferReply().setContent("Levelling is not enabled on this server!").setEphemeral(true).queue();
 			return;

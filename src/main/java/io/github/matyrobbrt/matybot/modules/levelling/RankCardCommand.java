@@ -45,7 +45,6 @@ public class RankCardCommand extends SlashCommand {
 
 	public RankCardCommand() {
 		name = "rank-card";
-		guildOnly = true;
 		cooldown = 20;
 		help = "Configures your rank card";
 		cooldownScope = CooldownScope.USER_GUILD;
@@ -56,6 +55,11 @@ public class RankCardCommand extends SlashCommand {
 
 	@Override
 	protected void execute(SlashCommandEvent event) {
+		if (!event.isFromGuild()) {
+			// TODO global rankcard customisation?
+			event.deferReply(true).setContent("This command only works in guilds!").queue();
+			return;
+		}
 		if (!LevellingModule.isLevellingEnabled(event.getGuild())) {
 			event.deferReply().setContent("Levelling is not enabled on this server!").setEphemeral(true).queue();
 			return;
