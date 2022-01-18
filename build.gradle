@@ -89,6 +89,8 @@ shadowJar {
 	classifier ''
 }
 
+compileJava.options.encoding = "UTF-8"
+
 jar {
 	from {
 		sourceSets.main.output

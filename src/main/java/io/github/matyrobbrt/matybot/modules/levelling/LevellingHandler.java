@@ -14,6 +14,7 @@ import java.util.TimerTask;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.util.Constants;
 import io.github.matyrobbrt.matybot.util.Emotes;
+import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -23,9 +24,10 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class LevellingHandler extends ListenerAdapter {
 
 	private static final String[] LEVELUP_MESSAGES = new String[] {
-			"Congrats, %s, you levelled up to level: %s! 🎉",
+			"Congrats, %s, you levelled up to level: %s! " + Emoji.fromMarkdown("U+1F389").getAsMention(),
 			"Poggers, %s, you are now level: %s! " + Emotes.EmoteType.POG.get().getAsMention(),
-			"%s Yooooo! You are now level: %s!", "GG, %s. You are now level: %s! 😎"
+			"%s Yooooo! You are now level: %s!",
+			"GG, %s. You are now level: %s! " + Emoji.fromMarkdown("U+1F60E").getAsMention()
 	};
 
 	private static final Random RANDOM = new Random();
