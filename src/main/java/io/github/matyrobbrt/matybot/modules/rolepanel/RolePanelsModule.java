@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
+import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.MatyBot;
 import net.dv8tion.jda.api.JDA;
 
@@ -52,7 +53,7 @@ public class RolePanelsModule extends io.github.matyrobbrt.jdautils.modules.Modu
 	public void register() {
 		super.register();
 
-		bot.addEventListener(new RolePanelHandler());
+		bot.addEventListener(new EventListenerWrapper(new RolePanelHandler()));
 	}
 
 	public static RolePanel getPanelForChannelAndMessage(long channelId, long messageId) {
