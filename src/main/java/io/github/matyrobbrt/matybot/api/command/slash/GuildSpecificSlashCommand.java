@@ -2,7 +2,7 @@ package io.github.matyrobbrt.matybot.api.command.slash;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.LongFunction;
 
 import com.jagrosh.jdautilities.command.SlashCommand;
 
@@ -11,13 +11,17 @@ import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 public abstract class GuildSpecificSlashCommand extends SlashCommand {
 
-	protected Function<Long, String[]> enabledRolesGetter = g -> new String[0];
-	protected Function<Long, String[]> enabledUsersGetter = g -> new String[0];
+	protected LongFunction<String[]> enabledRolesGetter = g -> new String[0];
+	protected LongFunction<String[]> enabledUsersGetter = g -> new String[0];
 
 	protected GuildSpecificSlashCommand(String doNothing) {
 		// just to be on the safe side, configure it from the start
 		guildOnly = true;
 		defaultEnabled = false;
+	}
+
+	public static String[] convertLongListToStringArray(final List<Long> list) {
+		return list.stream().map(String::valueOf).toArray(String[]::new);
 	}
 
 	public void buildAndUpsert(final JDA bot) {

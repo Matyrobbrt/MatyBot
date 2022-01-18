@@ -10,16 +10,23 @@ public class SuggestionData implements NBTSerializable<CompoundNBT> {
 
 	public static final Deserializer<CompoundNBT, SuggestionData> DESERIALIZER = Serializers
 			.registerDeserializer(SuggestionData.class, nbt -> {
-				final SuggestionData data = new SuggestionData(nbt.getLong("OwnerID"));
+				final SuggestionData data = new SuggestionData(nbt.getLong("OwnerID"), nbt.getLong("ChannelID"));
 				data.deserializeNBT(nbt);
 				return data;
 			});
 
-	public SuggestionData(final long ownerId) {
+	public SuggestionData(final long ownerId, final long channelId) {
 		this.ownerId = ownerId;
+		this.channelId = channelId;
 	}
 
 	private final long ownerId;
+	private final long channelId;
+
+	public long getChannelId() {
+		return channelId;
+	}
+
 	private String denialReason = "";
 
 	public String getDenialReason() {
@@ -50,7 +57,8 @@ public class SuggestionData implements NBTSerializable<CompoundNBT> {
 		if (!denialReason.isBlank() && status == SuggestionStatus.DENIED) {
 			nbt.putString("DenialReason", denialReason);
 		}
-		return NBTBuilder.of(nbt).putLong("OwnerID", ownerId).putString("Status", status.toString()).build();
+		return NBTBuilder.of(nbt).putLong("OwnerID", ownerId).putLong("ChannelID", channelId)
+				.putString("Status", status.toString()).build();
 	}
 
 	@Override

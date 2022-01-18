@@ -5,18 +5,14 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
-import io.github.matyrobbrt.matybot.api.annotation.EventSubscriber;
 import io.github.matyrobbrt.matybot.util.Emotes;
 import io.github.matyrobbrt.matybot.util.Emotes.EmoteType;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
-@EventSubscriber(createInstance = true)
 public class EmoteReactionEventHandler extends ListenerAdapter {
 
 	private static final Random RAND = new Random();
@@ -30,15 +26,9 @@ public class EmoteReactionEventHandler extends ListenerAdapter {
 		atEveryoneEmotes.addAll(Lists.newArrayList(Emotes.EmoteType.ANIMATED_BAN_BOLB));
 	}
 
-	@SubscribeEvent
-	@Override
-	public void onGenericEvent(GenericEvent event) {
-		super.onGenericEvent(event);
-	}
-
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		if (event.isWebhookMessage() || !event.isFromGuild()) { return; }
+		if (event.isWebhookMessage() || !event.isFromGuild() || event.getAuthor().isBot()) { return; }
 		final Message message = event.getMessage();
 		final Member member = event.getMember();
 

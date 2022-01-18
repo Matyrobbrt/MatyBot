@@ -17,6 +17,7 @@ import io.github.matyrobbrt.javanbt.db.NBTDatabaseManager;
 import io.github.matyrobbrt.jdautils.JDABot;
 import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.api.annotation.EventSubscriber;
+import io.github.matyrobbrt.matybot.event.EmoteReactionEventHandler;
 import io.github.matyrobbrt.matybot.event.MiscEvents;
 import io.github.matyrobbrt.matybot.event.QuotingListener;
 import io.github.matyrobbrt.matybot.modules.commands.CommandsModule;
@@ -38,6 +39,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
+import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.AllowedMentions;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -52,6 +54,7 @@ public class MatyBot extends JDABot {
 	private static DatabaseManager database;
 	private static GeneralConfig generalConfig;
 	private static final ConcurrentHashMap<Long, GuildConfig> GUILD_CONFIGS = new ConcurrentHashMap<>();
+	private static final NBTDatabaseManager NBT_DATABASE_MANAGER = new NBTDatabaseManager(0);
 
 	public static void main(String[] args) {
 		try {
@@ -64,12 +67,12 @@ public class MatyBot extends JDABot {
 		Emotes.register();
 		database = new DatabaseManager(
 				DatabaseManager.connectSQLite("jdbc:sqlite:" + generalConfig().getDatabaseName()),
-				NBTDatabaseManager.DEFAULT.computeIfAbsent(MatyBotNBTDatabase::new,
+				NBT_DATABASE_MANAGER.computeIfAbsent(MatyBotNBTDatabase::new,
 						new File(generalConfig().getNBTDatabaseName())));
 
 		final var bot = getInstance();
 		bot.addEventListener(new EventListenerWrapper(Constants.EVENT_WAITER),
-				new EventListenerWrapper(new QuotingListener()));
+				new EventListenerWrapper(new QuotingListener()), wrap(new EmoteReactionEventHandler()));
 
 		final var moduleManager = bot.getModuleManager();
 
@@ -85,6 +88,10 @@ public class MatyBot extends JDABot {
 		nbtDatabase().getGuildCache().addAll(bot.getGuilds().stream().map(Guild::getIdLong).toList());
 		nbtDatabase().setDirty(true);
 		nbtDatabase().saveToDisk();
+	}
+
+	private static EventListenerWrapper wrap(EventListener listener) {
+		return new EventListenerWrapper(listener);
 	}
 
 	public static Jdbi database() {

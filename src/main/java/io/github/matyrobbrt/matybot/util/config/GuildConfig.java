@@ -10,6 +10,10 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -201,6 +205,12 @@ public final class GuildConfig {
 				"""
 						This is modified automatically in order to indicate the name of the guild, so it is easier to differentiate between multiple guild configs.
 						This value does NOTHING if changed, it is purely visual!""");
+		config.setComment("channels.suggestions",
+				"""
+						Only if suggestionsEnabled is true!
+						This category holds the channels IDs for different suggestion types.
+						For example, the channel for suggestions of the type `test` would be configured like so: `test = channelId`
+						The general channel is for suggestions whose type is invalid or is not specified.""");
 	}
 
 	// GENERAL STUFF //
@@ -220,13 +230,23 @@ public final class GuildConfig {
 	@ConfigEntry(name = "logging", category = "channels", comments = "The channel in which logs will be sent", commentDefaultValue = false)
 	public long loggingChannel;
 
-	@ConfigEntry(name = "suggestions", category = "channels", comments = "The channel in which suggestions will be sent. (Only if suggestionsEnabled is true)", commentDefaultValue = false)
-	public long suggestionsChannel;
-
 	@ConfigEntry(name = "welcome", category = "channels", comments = {
 			"The channel in which welcome messages will be sent.", "Supply 0 in order to disable welcome messages."
 	}, commentDefaultValue = false)
 	public long welcomeChannel;
+
+	@ConfigEntry(name = "general", category = "channels.suggestions", comments = "The channel in which general suggestions (or suggestions whose type is not specified or invalid) will be sent.", commentDefaultValue = false)
+	public long generalSuggestionsChannel;
+
+	public long getSuggestionChannel(@Nullable final String type) {
+		return config.getLongOrElse(
+				"channels.suggestions." + (type == null ? "general" : type.toLowerCase(Locale.ROOT)),
+				generalSuggestionsChannel);
+	}
+
+	public boolean hasSuggestionType(@Nonnull final String type) {
+		return config.contains("channels.suggestions." + type.toLowerCase(Locale.ROOT));
+	}
 
 	/// ROLES ///
 
@@ -248,6 +268,9 @@ public final class GuildConfig {
 
 	@ConfigEntry(name = "suggestion_approver", category = "roles", comments = "The roles which can approve suggestions.", commentDefaultValue = false)
 	public List<Long> suggestionApproverRoles = Lists.newArrayList();
+
+	@ConfigEntry(name = "afk", category = "roles", comments = "The roles which can set AFK statuses for themselves.", commentDefaultValue = false)
+	public List<Long> afkRoles = Lists.newArrayList();
 
 	@ConfigEntry(name = "enabled", category = "levels", comments = "If the levelling should be enabled in this guild.")
 	private boolean levellingEnabled = true;

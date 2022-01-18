@@ -9,6 +9,7 @@ import io.github.matyrobbrt.matybot.modules.logging.events.UserEvents;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.hooks.EventListener;
 
 public class LoggingModule extends io.github.matyrobbrt.jdautils.modules.Module {
 
@@ -19,8 +20,12 @@ public class LoggingModule extends io.github.matyrobbrt.jdautils.modules.Module 
 	@Override
 	public void register() {
 		super.register();
-		bot.addEventListener(JoinLeaveEvents.INSTANCE, new RoleEvents(), new UserEvents(),
-				new EventListenerWrapper(new ScamDetector()));
+		bot.addEventListener(wrap(JoinLeaveEvents.INSTANCE), wrap(new RoleEvents()), wrap(new UserEvents()),
+				wrap(new ScamDetector()));
+	}
+
+	private static EventListenerWrapper wrap(EventListener listener) {
+		return new EventListenerWrapper(listener);
 	}
 
 	public static TextChannel getLoggingChannel(final Guild guild) {

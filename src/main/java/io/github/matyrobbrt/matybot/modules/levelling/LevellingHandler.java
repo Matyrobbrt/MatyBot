@@ -88,7 +88,9 @@ public class LevellingHandler extends ListenerAdapter {
 	}
 
 	public static String getLevelupMessage(final Member member, final TextChannel channel, final int newLevel) {
-		return LEVELUP_MESSAGES[RANDOM.nextInt(LEVELUP_MESSAGES.length)].formatted(member.getAsMention(),
+		final var userSettings = MatyBot.nbtDatabase().getSettingsForUser(member);
+		return LEVELUP_MESSAGES[RANDOM.nextInt(LEVELUP_MESSAGES.length)].formatted(
+				userSettings.doesLevelUpPing() ? member.getAsMention() : member.getUser().getAsTag(),
 				newLevel);
 	}
 

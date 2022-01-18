@@ -46,6 +46,7 @@ public class RankCommand extends SlashCommand {
 	private Font usedFont = null;
 
 	private RankCommand() {
+		guildOnly = false;
 		name = "rank";
 		help = "Get the rank card of yourself or another user.";
 		options = List.of(

@@ -35,22 +35,14 @@ import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.dv8tion.jda.api.utils.TimeFormat;
 
 public class JoinLeaveEvents extends ListenerAdapter {
 
 	public static final JoinLeaveEvents INSTANCE = new JoinLeaveEvents();
-
-	@SubscribeEvent
-	@Override
-	public void onGenericEvent(GenericEvent event) {
-		super.onGenericEvent(event);
-	}
 
 	private Font font = null;
 

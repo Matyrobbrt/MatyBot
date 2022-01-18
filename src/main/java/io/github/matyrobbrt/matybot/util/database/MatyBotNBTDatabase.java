@@ -22,9 +22,11 @@ import io.github.matyrobbrt.javanbt.util.NBTManager;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.util.BotUtils.Markers;
 import io.github.matyrobbrt.matybot.util.database.dao.nbt.GuildData;
+import io.github.matyrobbrt.matybot.util.database.dao.nbt.UserSettings;
 import io.github.matyrobbrt.matybot.util.nbt.NBTList;
 import io.github.matyrobbrt.matybot.util.nbt.SnowflakeSpecifcData;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 
 public class MatyBotNBTDatabase extends NBTDatabase {
 
@@ -95,6 +97,21 @@ public class MatyBotNBTDatabase extends NBTDatabase {
 
 	public GuildData getDataForGuild(final SlashCommandEvent event) {
 		return getDataForGuild(event.getGuild());
+	}
+
+	private final SnowflakeSpecifcData<UserSettings, CompoundNBT> userSettings = createAndTrack("UserSettings",
+			new SnowflakeSpecifcData<>(UserSettings::serializeNBT, UserSettings.DESERIALIZER::fromNBT));
+
+	public UserSettings getSettingsForUser(final long userId) {
+		return userSettings.computeIfAbsent(userId, k -> new UserSettings());
+	}
+
+	public UserSettings getSettingsForUser(final User user) {
+		return getSettingsForUser(user.getIdLong());
+	}
+
+	public UserSettings getSettingsForUser(final net.dv8tion.jda.api.entities.Member member) {
+		return getSettingsForUser(member.getIdLong());
 	}
 
 	@Override

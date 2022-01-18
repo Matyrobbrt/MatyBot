@@ -44,14 +44,7 @@ public class GuildData implements NBTSerializable<CompoundNBT> {
 	private final Map<Long, LevelData> levels = createAndTrack("Levels",
 			new SnowflakeSpecifcData<>(LevelData::serializeNBT, LevelData.DESERIALIZER::fromNBT));
 
-	private final Map<Long, SuggestionData> suggestions = createAndTrack("Suggestions",
-			new SnowflakeSpecifcData<>(SuggestionData::serializeNBT, SuggestionData.DESERIALIZER::fromNBT));
-
 	public Map<Long, LevelData> getLevels() { return levels; }
-
-	public Map<Long, SuggestionData> getSuggestions() {
-		return suggestions;
-	}
 
 	public List<Long> getLeaderboardSorted() {
 		final List<Long> data = new ArrayList<>();
@@ -67,6 +60,13 @@ public class GuildData implements NBTSerializable<CompoundNBT> {
 
 	public LevelData getLevelDataForUser(final Member member) {
 		return getLevelDataForUser(member.getIdLong());
+	}
+
+	private final Map<Long, SuggestionData> suggestions = createAndTrack("Suggestions",
+			new SnowflakeSpecifcData<>(SuggestionData::serializeNBT, SuggestionData.DESERIALIZER::fromNBT));
+
+	public Map<Long, SuggestionData> getSuggestions() {
+		return suggestions;
 	}
 
 	@Override

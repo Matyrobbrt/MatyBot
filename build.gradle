@@ -48,20 +48,21 @@ dependencies {
 	// shade group: 'net.dv8tion', name: 'JDA', version: 'latest.release'
 	shade ":JDA-5.0.0-alpha.4_DEV"
 
-	shade group: 'io.vavr', name: 'vavr', version: 'latest.release'
+	// shade group: 'io.vavr', name: 'vavr', version: 'latest.release'
 	shade group: 'io.github.cdimascio', name:'dotenv-java', version: 'latest.release'
 	shade group: 'com.vdurmont', name: 'emoji-java', version: 'latest.release'
-	shade group: 'com.github.natanbc', name: 'lavadsp', version: 'latest.release'
-	shade group: 'net.dean.jraw', name: 'JRAW', version: 'latest.release'
+	// shade group: 'com.github.natanbc', name: 'lavadsp', version: 'latest.release'
+	// Redit stuff
+	// shade group: 'net.dean.jraw', name: 'JRAW', version: 'latest.release'
 	shade group: 'com.graphql-java', name: 'graphql-java', version: 'latest.release'
 	shade group: 'org.reflections', name: 'reflections', version: 'latest.release'
 	shade group: 'com.jhlabs', name: 'filters', version: 'latest.release'
-	shade group: 'com.object-refinery', name: 'orsoncharts', version: 'latest.release'
+	// shade group: 'com.object-refinery', name: 'orsoncharts', version: 'latest.release'
 	shade group: 'org.jetbrains', name: 'annotations', version: 'latest.release'
 	shade group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 	shade group: 'org.xerial', name: 'sqlite-jdbc', version: 'latest.release'
 	shade group: 'com.electronwill.night-config', name: 'toml', version: 'latest.release'
-	shade group: 'org.jooq', name: 'joor', version: 'latest.release'
+	// shade group: 'org.jooq', name: 'joor', version: 'latest.release'
 
 	// https://github.com/StefanoBelli/JaGist
 	shade ":jsgist-0.4.1"

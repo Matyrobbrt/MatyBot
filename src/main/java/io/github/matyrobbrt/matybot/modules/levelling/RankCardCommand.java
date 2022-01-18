@@ -51,6 +51,7 @@ public class RankCardCommand extends SlashCommand {
 		options = List.of(new OptionData(OptionType.STRING, "key", "The rank card configuration option")
 				.setRequired(false).addChoices(CHOICES),
 				new OptionData(OptionType.STRING, "new_value", "The value to set"));
+		guildOnly = false;
 	}
 
 	@Override

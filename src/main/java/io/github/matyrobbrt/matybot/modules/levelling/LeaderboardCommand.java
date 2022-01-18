@@ -28,6 +28,7 @@ public class LeaderboardCommand extends PaginatedCommand {
 		cooldown = 30;
 		cooldownScope = CooldownScope.GUILD;
 		listener = new ButtonListener();
+		guildOnly = false;
 	}
 
 	@Override
