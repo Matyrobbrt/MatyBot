@@ -23,7 +23,7 @@ public class MessageData implements NBTSerializable<CompoundNBT> {
 
 	private final long authorId;
 	private TemporalAccessor timeCreated;
-	private String content;
+	private String content = "";
 
 	public MessageData(long authorId, final TemporalAccessor timeCreated) {
 		this.authorId = authorId;
