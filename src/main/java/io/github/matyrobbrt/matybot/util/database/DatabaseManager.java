@@ -24,6 +24,8 @@ public class DatabaseManager {
 	 */
 	private final MatyBotNBTDatabase nbtDatabase;
 
+	private final MessageCache messageCacheDatbase;
+
 	/**
 	 * The JDBI instance linked to the {@linkplain #dataSource database}.
 	 */
@@ -55,10 +57,12 @@ public class DatabaseManager {
 	 *
 	 * @param dataSource the SQL data source
 	 */
-	public DatabaseManager(final DataSource dataSource, final MatyBotNBTDatabase nbtDatabase) {
+	public DatabaseManager(final DataSource dataSource, final MatyBotNBTDatabase nbtDatabase,
+			final MessageCache messageCache) {
 		this.dataSource = dataSource;
 		this.jdbi = Jdbi.create(dataSource);
 		this.nbtDatabase = nbtDatabase;
+		this.messageCacheDatbase = messageCache;
 
 		// Install the SQL Objects and Guava plugins
 		jdbi.installPlugin(new SqlObjectPlugin());
@@ -94,6 +98,10 @@ public class DatabaseManager {
 	public DataSource getDataSource() { return dataSource; }
 
 	public MatyBotNBTDatabase getNbtDatabase() { return nbtDatabase; }
+
+	public MessageCache getMessageCache() {
+		return messageCacheDatbase;
+	}
 
 	/**
 	 * {@return the JDBI instance linked to the database this manager is connected

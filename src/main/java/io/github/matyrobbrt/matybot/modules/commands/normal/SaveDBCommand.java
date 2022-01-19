@@ -22,7 +22,7 @@ public class SaveDBCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		MatyBot.nbtDatabase().setDirtyAndSave();
+		MatyBot.NBT_DATABASE_MANAGER.setDirtyAndSave();
 		event.getMessage().reply("Database has been saved!").queue();
 	}
 

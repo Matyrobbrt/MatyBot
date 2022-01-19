@@ -9,12 +9,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.apache.commons.io.FileUtils;
 
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import io.github.matyrobbrt.javanbt.db.NBTDatabase;
+import io.github.matyrobbrt.javanbt.db.NBTDatabaseManager;
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
 import io.github.matyrobbrt.javanbt.nbt.LongNBT;
 import io.github.matyrobbrt.javanbt.serialization.NBTSerializable;
@@ -30,8 +33,8 @@ import net.dv8tion.jda.api.entities.User;
 
 public class MatyBotNBTDatabase extends NBTDatabase {
 
-	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d-MM-uuuu_H-m-s");
-	private static final Timer TIMER = new Timer("DatabaseSaver");
+	public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d-MM-uuuu_HH-mm-ss");
+	public static final Timer TIMER = new Timer("DatabaseSaver");
 
 	public MatyBotNBTDatabase(File file) {
 		super(file, 0);
@@ -40,39 +43,6 @@ public class MatyBotNBTDatabase extends NBTDatabase {
 				Files.createFile(file.toPath());
 			} catch (IOException e) {}
 		}
-
-		// Don't make this very frequent since the DatabaseManager saves it once 15
-		// minutes already.. We should call setDirtyAndSave() when we need immediate
-		// saving!
-		TIMER.scheduleAtFixedRate(new TimerTask() {
-
-			@Override
-			public void run() {
-				saveToDisk();
-				MatyBot.LOGGER.info(Markers.DATABASE, "Database has been automatically saved");
-			}
-		}, 0, 1000l * 60 * 10);
-
-		// Backup the database every hour
-		TIMER.scheduleAtFixedRate(new TimerTask() {
-
-			@Override
-			public void run() {
-				saveToDisk();
-				final StringBuilder backupName = new StringBuilder(getFile().getName().replaceAll(".dat", ""))
-						.append("_");
-				backupName.append(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
-				backupName.append(".dat");
-				final var backupPath = Path.of("storage/backup").resolve(backupName.toString());
-				try {
-					FileUtils.copyFile(getFile(), backupPath.toFile());
-				} catch (IOException e) {
-					MatyBot.LOGGER.error(Markers.DATABASE, "Exception while trying to backup the database!", e);
-				} finally {
-					MatyBot.LOGGER.info(Markers.DATABASE, "Database has been automatically backed up!");
-				}
-			}
-		}, 0, 1000l * 60 * 60);
 	}
 
 	private final NBTManager nbtManager = new NBTManager();
@@ -132,6 +102,78 @@ public class MatyBotNBTDatabase extends NBTDatabase {
 	public void setDirtyAndSave() {
 		setDirty();
 		saveToDisk();
+	}
+
+	public static final TimerTask createBackupTask(final NBTDatabase database) {
+		return createBackupTask(database,
+				e -> MatyBot.LOGGER.error(Markers.DATABASE, "Exception while trying to backup the database {}! {}",
+						database.getFile().getName(), e),
+				() -> MatyBot.LOGGER.info(Markers.DATABASE, "The database {} has been automatically backed up!",
+						database.getFile().getName()));
+	}
+
+	public static final TimerTask createBackupTask(final NBTDatabase database, final Consumer<Throwable> onException,
+			Runnable finnaly) {
+		return new TimerTask() {
+
+			@Override
+			public void run() {
+				database.saveToDisk();
+				final StringBuilder backupName = new StringBuilder();
+				backupName.append(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+				backupName.append(".dat");
+				final var backupPath = Path.of("storage/backup/" + database.getFile().getName().replaceAll(".dat", ""))
+						.resolve(backupName.toString());
+				try {
+					Files.createDirectories(
+							Path.of("storage/backup/" + database.getFile().getName().replaceAll(".dat", "")));
+				} catch (IOException e1) {}
+				try {
+					FileUtils.copyFile(database.getFile(), backupPath.toFile());
+				} catch (IOException e) {
+					onException.accept(e);
+				} finally {
+
+					finnaly.run();
+				}
+			}
+		};
+	}
+
+	public static final class Manager extends NBTDatabaseManager {
+
+		public Manager() {
+			super(0);
+
+			TIMER.scheduleAtFixedRate(new TimerTask() {
+
+				@Override
+				public void run() {
+					Manager.super.save();
+					MatyBot.LOGGER.info(Markers.DATABASE, "Databases have been automatically saved");
+				}
+			}, 0, 1000l * 60 * 10);
+		}
+
+		@Override
+		public <T extends NBTDatabase> T computeIfAbsent(Function<File, T> creator, File storageFile) {
+			T database = super.computeIfAbsent(creator, storageFile);
+			TIMER.scheduleAtFixedRate(createBackupTask(database, e -> {
+				MatyBot.LOGGER.error(Markers.DATABASE,
+						"Exception while trying to backup the database {}. A new backup will be scheduled in 2 minutes!",
+						database.getFile().getName(), e);
+				TIMER.schedule(createBackupTask(database), 1000l * 60 * 2);
+			}, () -> MatyBot.LOGGER.info(Markers.DATABASE, "The database {} has been automatically backed up!",
+					database.getFile().getName())), 0, 1000l * 60 * 60);
+			return database;
+		}
+
+		public void setDirtyAndSave() {
+			databases.values().forEach(db -> {
+				db.setDirty();
+				db.saveToDisk();
+			});
+		}
 	}
 
 }

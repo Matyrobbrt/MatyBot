@@ -21,8 +21,9 @@ public class LevellingModule extends io.github.matyrobbrt.jdautils.modules.Modul
 		return MatyBot.getConfigForGuild(guild).isLevellingEnabled();
 	}
 
+	// TODO working multipliers
 	public static int getLevelForXP(final int xp, final int multiplier) {
-		return (int) Math.sqrt((xp - 15 * multiplier) / multiplier);
+		return (int) ((-25 + Math.sqrt(5 * (120 + xp))) / 5);
 	}
 
 	public static int getLevelForXP(final int xp, final Guild guild) {
@@ -30,7 +31,7 @@ public class LevellingModule extends io.github.matyrobbrt.jdautils.modules.Modul
 	}
 
 	public static int getXPForLevel(final int level, final int multiplier) {
-		return (int) (multiplier * Math.pow(level, 2) + 15 * multiplier);
+		return (int) (5 * Math.pow(level, 2) + 50 * level + 5);
 	}
 
 	public static int getXPForLevel(final int level, final Guild guild) {

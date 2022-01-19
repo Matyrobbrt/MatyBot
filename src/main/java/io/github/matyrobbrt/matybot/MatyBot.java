@@ -13,7 +13,6 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.matyrobbrt.javanbt.db.NBTDatabaseManager;
 import io.github.matyrobbrt.jdautils.JDABot;
 import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.api.annotation.EventSubscriber;
@@ -33,6 +32,8 @@ import io.github.matyrobbrt.matybot.util.config.GeneralConfig;
 import io.github.matyrobbrt.matybot.util.config.GuildConfig;
 import io.github.matyrobbrt.matybot.util.database.DatabaseManager;
 import io.github.matyrobbrt.matybot.util.database.MatyBotNBTDatabase;
+import io.github.matyrobbrt.matybot.util.database.MatyBotNBTDatabase.Manager;
+import io.github.matyrobbrt.matybot.util.database.MessageCache;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -54,7 +55,7 @@ public class MatyBot extends JDABot {
 	private static DatabaseManager database;
 	private static GeneralConfig generalConfig;
 	private static final ConcurrentHashMap<Long, GuildConfig> GUILD_CONFIGS = new ConcurrentHashMap<>();
-	private static final NBTDatabaseManager NBT_DATABASE_MANAGER = new NBTDatabaseManager(0);
+	public static final Manager NBT_DATABASE_MANAGER = new Manager();
 
 	public static void main(String[] args) {
 		try {
@@ -68,7 +69,10 @@ public class MatyBot extends JDABot {
 		database = new DatabaseManager(
 				DatabaseManager.connectSQLite("jdbc:sqlite:" + generalConfig().getDatabaseName()),
 				NBT_DATABASE_MANAGER.computeIfAbsent(MatyBotNBTDatabase::new,
-						new File(generalConfig().getNBTDatabaseName())));
+						new File(generalConfig().getNBTDatabaseName())),
+				NBT_DATABASE_MANAGER.computeIfAbsent(MessageCache::new, new File("storage/message_cache.dat")));
+
+		Runtime.getRuntime().addShutdownHook(new Thread(NBT_DATABASE_MANAGER::setDirtyAndSave, "DatabaseSaver"));
 
 		final var bot = getInstance();
 		bot.addEventListener(new EventListenerWrapper(Constants.EVENT_WAITER),
@@ -100,6 +104,10 @@ public class MatyBot extends JDABot {
 
 	public static MatyBotNBTDatabase nbtDatabase() {
 		return database.getNbtDatabase();
+	}
+
+	public static MessageCache messageCache() {
+		return database.getMessageCache();
 	}
 
 	public static GeneralConfig generalConfig() {

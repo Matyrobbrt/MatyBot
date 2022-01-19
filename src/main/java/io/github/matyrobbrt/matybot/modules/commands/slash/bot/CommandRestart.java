@@ -31,7 +31,7 @@ public class CommandRestart extends SlashCommand {
 
 	@Override
 	protected void execute(SlashCommandEvent event) {
-		MatyBot.nbtDatabase().setDirtyAndSave();
+		MatyBot.NBT_DATABASE_MANAGER.setDirtyAndSave();
 		if (Boolean.TRUE.equals(
 				BotUtils.getOptionOr(event.getOption("clear_guild_commands"), OptionMapping::getAsBoolean, false))) {
 			try {

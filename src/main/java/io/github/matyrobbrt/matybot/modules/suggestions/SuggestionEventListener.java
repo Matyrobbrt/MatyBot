@@ -91,6 +91,7 @@ public class SuggestionEventListener extends ListenerAdapter {
 									final var reason = e.getMessage().getContentRaw();
 									suggestionData.setStatus(SuggestionStatus.DENIED);
 									suggestionData.setDenialReason(reason);
+									MatyBot.nbtDatabase().setDirty();
 									suggestionMessage.editMessage("** **")
 											.setEmbeds(new EmbedBuilder(suggestionMessage.getEmbeds().get(0))
 													.addField("Denied by", event.getMember().getUser().getAsTag(), true)
@@ -142,6 +143,7 @@ public class SuggestionEventListener extends ListenerAdapter {
 			suggestionChannel.retrieveMessageById(messageId).queue(suggestionMessage -> {
 				if (suggestionMessage != null) {
 					suggestionData.setStatus(SuggestionStatus.CONSIDERED);
+					MatyBot.nbtDatabase().setDirty();
 					suggestionMessage.editMessage("** **")
 							.setEmbeds(new EmbedBuilder(suggestionMessage.getEmbeds().get(0))
 									.addField("Taken into consideration by", event.getMember().getUser().getAsTag(),
@@ -177,6 +179,7 @@ public class SuggestionEventListener extends ListenerAdapter {
 			suggestionChannel.retrieveMessageById(messageId).queue(suggestionMessage -> {
 				if (suggestionMessage != null) {
 					suggestionData.setStatus(SuggestionStatus.APPROVED);
+					MatyBot.nbtDatabase().setDirty();
 					MatyBot.nbtDatabase().setDirtyAndSave();
 					suggestionMessage.editMessage("** **")
 							.setEmbeds(new EmbedBuilder(suggestionMessage.getEmbeds().get(0))

@@ -5,12 +5,6 @@ import java.util.List;
 import io.github.matyrobbrt.matybot.MatyBot;
 import net.dv8tion.jda.api.entities.Guild;
 
-/**
- * TODO move to a database
- * 
- * @author matyrobbrt
- *
- */
 public class QuoteManager {
 
 	public static List<Quote> getQuotesForGuild(long guidId) {

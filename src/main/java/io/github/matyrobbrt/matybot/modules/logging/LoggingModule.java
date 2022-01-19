@@ -1,8 +1,11 @@
 package io.github.matyrobbrt.matybot.modules.logging;
 
+import java.util.function.Consumer;
+
 import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.modules.logging.events.JoinLeaveEvents;
+import io.github.matyrobbrt.matybot.modules.logging.events.MessageLoggingEvents;
 import io.github.matyrobbrt.matybot.modules.logging.events.RoleEvents;
 import io.github.matyrobbrt.matybot.modules.logging.events.ScamDetector;
 import io.github.matyrobbrt.matybot.modules.logging.events.UserEvents;
@@ -21,7 +24,7 @@ public class LoggingModule extends io.github.matyrobbrt.jdautils.modules.Module 
 	public void register() {
 		super.register();
 		bot.addEventListener(wrap(JoinLeaveEvents.INSTANCE), wrap(new RoleEvents()), wrap(new UserEvents()),
-				wrap(new ScamDetector()));
+				wrap(new ScamDetector()), wrap(new MessageLoggingEvents()));
 	}
 
 	private static EventListenerWrapper wrap(EventListener listener) {
@@ -30,6 +33,10 @@ public class LoggingModule extends io.github.matyrobbrt.jdautils.modules.Module 
 
 	public static TextChannel getLoggingChannel(final Guild guild) {
 		return guild.getTextChannelById(MatyBot.getConfigForGuild(guild.getIdLong()).loggingChannel);
+	}
+
+	public static void inLoggingChannel(final Guild guild, Consumer<TextChannel> consumer) {
+		MatyBot.getInstance().getChannelIfPresent(MatyBot.getConfigForGuild(guild).loggingChannel, consumer);
 	}
 
 }

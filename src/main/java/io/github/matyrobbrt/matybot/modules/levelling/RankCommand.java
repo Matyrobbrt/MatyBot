@@ -23,18 +23,17 @@ import java.util.List;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 
-import com.jagrosh.jdautilities.command.SlashCommand;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
-
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
+import io.github.matyrobbrt.matybot.reimpl.BetterMember;
+import io.github.matyrobbrt.matybot.reimpl.BetterMemberImpl;
+import io.github.matyrobbrt.matybot.reimpl.MatyBotSlashCommand;
 import io.github.matyrobbrt.matybot.util.database.dao.nbt.LevelData;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public class RankCommand extends SlashCommand {
+public class RankCommand extends MatyBotSlashCommand {
 
 	@RegisterSlashCommand
 	private static final RankCommand CMD = new RankCommand();
@@ -88,7 +87,7 @@ public class RankCommand extends SlashCommand {
 	}
 
 	@Override
-	public void execute(final SlashCommandEvent event) {
+	public void execute(final io.github.matyrobbrt.matybot.reimpl.SlashCommandEvent event) {
 		if (!event.isFromGuild()) {
 			event.deferReply(true).setContent("This command only works in guilds!").queue();
 			return;
@@ -100,14 +99,15 @@ public class RankCommand extends SlashCommand {
 
 		final OptionMapping memberOption = event.getOption("member");
 		final OptionMapping memberByRankOption = event.getOption("member_by_rank");
-		Member member = null;
+		BetterMember member = null;
 		if (memberOption == null && memberByRankOption == null) {
 			member = event.getMember();
 		} else {
 			if (memberByRankOption == null) {
-				member = memberOption.getAsMember() == null ? event.getMember() : memberOption.getAsMember();
+				member = memberOption.getAsMember() == null ? event.getMember()
+						: new BetterMemberImpl(memberOption.getAsMember());
 			} else {
-				final var orderedLb = MatyBot.nbtDatabase().getDataForGuild(event.getGuild()).getLeaderboardSorted();
+				final var orderedLb = event.getGuild().getData().getLeaderboardSorted();
 				final int pos = (int) memberByRankOption.getAsDouble() - 1;
 				if (pos >= orderedLb.size()) {
 					member = event.getMember();
@@ -122,13 +122,13 @@ public class RankCommand extends SlashCommand {
 	}
 
 	@Nullable
-	private File makeRankCard(final Member member) {
+	private File makeRankCard(final BetterMember member) {
 		final var location = Paths.get("levels/cards/" + member.getIdLong() + ".png").toFile();
 		final var guild = member.getGuild();
-		final var guildData = MatyBot.nbtDatabase().getDataForGuild(guild);
+		final var guildData = member.getBetterGuild().getData();
 
 		try {
-			final LevelData levelData = guildData.getLevelDataForUser(member);
+			final LevelData levelData = member.getLevelData();
 			final BufferedImage base = ImageIO.read(MatyBot.class.getResourceAsStream("/levels/background.png"));
 			final BufferedImage outline = ImageIO.read(MatyBot.class.getResourceAsStream("/levels/outline.png"));
 			final var rankCardBuffer = new BufferedImage(base.getWidth(), base.getHeight(),

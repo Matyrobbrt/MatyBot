@@ -31,7 +31,7 @@ public final class CommandShutdown extends SlashCommand {
 	protected void execute(final SlashCommandEvent event) {
 		event.reply("Shutting down the bot!").queue();
 		event.getJDA().shutdown();
-		MatyBot.nbtDatabase().setDirtyAndSave();
+		MatyBot.NBT_DATABASE_MANAGER.setDirtyAndSave();
 		MatyBot.LOGGER.warn("Shutting down the bot by request of {} via Discord!", event.getUser().getName());
 		BotUtils.scheduleTask(() -> System.exit(0), 2000);
 	}
@@ -54,7 +54,7 @@ public final class CommandShutdown extends SlashCommand {
 						confirm -> {
 							m.editMessage("Shutting down the bot!").queue();
 							event.getJDA().shutdown();
-							MatyBot.nbtDatabase().setDirtyAndSave();
+							MatyBot.NBT_DATABASE_MANAGER.setDirtyAndSave();
 							MatyBot.LOGGER.warn("Shutting down the bot by request of {} via Discord!",
 									event.getMessage().getMember().getUser().getName());
 							BotUtils.scheduleTask(() -> System.exit(0), 2000);

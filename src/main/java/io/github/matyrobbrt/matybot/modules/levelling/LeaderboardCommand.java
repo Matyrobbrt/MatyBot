@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 import com.jagrosh.jdautilities.command.CooldownScope;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import io.github.matyrobbrt.jdautils.event.EventListenerWrapper;
 import io.github.matyrobbrt.matybot.MatyBot;
@@ -32,7 +31,7 @@ public class LeaderboardCommand extends PaginatedCommand {
 	}
 
 	@Override
-	protected void execute(SlashCommandEvent event) {
+	protected void execute(io.github.matyrobbrt.matybot.reimpl.SlashCommandEvent event) {
 		if (!event.isFromGuild()) {
 			event.deferReply(true).setContent("This command only works in guilds!").queue();
 			return;
@@ -41,7 +40,7 @@ public class LeaderboardCommand extends PaginatedCommand {
 			event.deferReply().setContent("Levelling is not enabled on this server!").setEphemeral(true).queue();
 			return;
 		}
-		updateMaximum(MatyBot.nbtDatabase().getDataForGuild(event).getLeaderboardSorted().size() - 1);
+		updateMaximum(event.getGuild().getData().getLeaderboardSorted().size() - 1);
 		sendPaginatedMessage(event);
 	}
 

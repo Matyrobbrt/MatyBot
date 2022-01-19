@@ -67,7 +67,7 @@ dependencies {
 	// https://github.com/StefanoBelli/JaGist
 	shade ":jsgist-0.4.1"
 
-	shade group: 'io.github.matyrobbrt', name: 'javanbt', version: 'latest.release'
+	shade group: 'io.github.matyrobbrt', name: 'javanbt', version: '0.0.3'
 
 	// Apache
 	shade group: 'org.apache.commons', name: 'commons-io', version: 'latest.release'

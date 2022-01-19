@@ -12,6 +12,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import io.github.matyrobbrt.matybot.MatyBot;
+import io.github.matyrobbrt.matybot.reimpl.BetterMember;
+import io.github.matyrobbrt.matybot.reimpl.BetterMemberImpl;
 import io.github.matyrobbrt.matybot.util.Constants;
 import io.github.matyrobbrt.matybot.util.Emotes;
 import net.dv8tion.jda.api.entities.Emoji;
@@ -31,7 +33,6 @@ public class LevellingHandler extends ListenerAdapter {
 	};
 
 	private static final Random RANDOM = new Random();
-	private static final long COOLDOWN = 30 * 1000L;
 
 	private final List<Long> cooldowns = new ArrayList<>();
 	private final Timer timer = new Timer("LevellingCooldown", true);
@@ -40,11 +41,11 @@ public class LevellingHandler extends ListenerAdapter {
 	public void onMessageReceived(MessageReceivedEvent event) {
 		if (!event.isFromGuild() || event.getAuthor().isBot() || event.getAuthor().isSystem()) { return; }
 		if (!isOnCooldown(event.getMember())) {
-			awardXp(event.getMessage(), event.getMember());
+			awardXp(event.getMessage(), new BetterMemberImpl(event.getMember()));
 		}
 	}
 
-	public void awardXp(final Message message, final Member member) {
+	public void awardXp(final Message message, final BetterMember member) {
 		float messageMultiplier = message.getContentRaw().length() > 128 ? 1.5f : 1f;
 		if (message.getContentRaw().length() <= 0) {
 			messageMultiplier = 0f;
@@ -65,7 +66,8 @@ public class LevellingHandler extends ListenerAdapter {
 		final int oldXp = getUserXP(member);
 		final int oldLevel = getLevelForXP(oldXp, guild);
 		setUserXP(member, oldXp + Math.round((RANDOM.nextInt(10) + 5) * boostMultiplier * messageMultiplier));
-		final int newLevel = getLevelForXP(getUserXP(member), guild);
+		final int newXp = getUserXP(member);
+		final int newLevel = getLevelForXP(newXp, guild);
 		if (newLevel > oldLevel) {
 			message.getChannel().sendMessage(getLevelupMessage(member, message.getTextChannel(), newLevel)).queue();
 
@@ -82,7 +84,7 @@ public class LevellingHandler extends ListenerAdapter {
 			public void run() {
 				cooldowns.remove(member.getIdLong());
 			}
-		}, COOLDOWN);
+		}, member.getBetterGuild().getConfig().levellingCooldown * 1000l);
 	}
 
 	public boolean isOnCooldown(final Member member) {

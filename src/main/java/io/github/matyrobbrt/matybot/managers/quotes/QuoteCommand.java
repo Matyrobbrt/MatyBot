@@ -171,8 +171,8 @@ public class QuoteCommand extends SlashCommand {
 		}
 
 		@Override
-		protected void execute(SlashCommandEvent event) {
-			updateMaximum(QuoteManager.getQuotesForGuild(event.getGuild()).size() - 1);
+		protected void execute(io.github.matyrobbrt.matybot.reimpl.SlashCommandEvent event) {
+			updateMaximum(event.getGuild().getQuotes().size() - 1);
 			sendPaginatedMessage(event);
 		}
 

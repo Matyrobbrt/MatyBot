@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
+import io.github.matyrobbrt.matybot.reimpl.MatyBotSlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Guild;
@@ -30,7 +30,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
  * {@link #sendPaginatedMessage(SlashCommandEvent)} in the execute method when a
  * paginated embed is wanted.
  */
-public abstract class PaginatedCommand extends SlashCommand {
+public abstract class PaginatedCommand extends MatyBotSlashCommand {
 
 	// How many items should be sent per individual page. Defaults to the maximum
 	// field count for an Embed, 25.

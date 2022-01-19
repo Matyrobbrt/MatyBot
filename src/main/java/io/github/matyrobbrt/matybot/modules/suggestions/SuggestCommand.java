@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.Locale;
 
 import com.jagrosh.jdautilities.command.CooldownScope;
-import com.jagrosh.jdautilities.command.SlashCommand;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
+import io.github.matyrobbrt.matybot.reimpl.MatyBotSlashCommand;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import io.github.matyrobbrt.matybot.util.DiscordUtils;
 import io.github.matyrobbrt.matybot.util.database.dao.nbt.SuggestionData;
@@ -23,7 +22,7 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 
-public class SuggestCommand extends SlashCommand {
+public class SuggestCommand extends MatyBotSlashCommand {
 
 	@RegisterSlashCommand
 	private static final SuggestCommand CMD = new SuggestCommand();
@@ -43,7 +42,7 @@ public class SuggestCommand extends SlashCommand {
 	}
 
 	@Override
-	protected void execute(SlashCommandEvent event) {
+	protected void execute(io.github.matyrobbrt.matybot.reimpl.SlashCommandEvent event) {
 		if (!event.isFromGuild()) {
 			event.deferReply(true).setContent("This command only works in guilds!").queue();
 			return;
@@ -52,13 +51,13 @@ public class SuggestCommand extends SlashCommand {
 			event.reply("Suggestions are disabled in this guild!").setEphemeral(true).queue();
 			return;
 		}
+		final var guild = event.getGuild();
 		final var suggestion = BotUtils.getArgumentOrEmpty(event, "suggestion");
 		final var mediaLink = BotUtils.getArgumentOrEmpty(event, "media_link");
 		final var suggestionType = BotUtils.getOptionOr(event.getOption("type"), OptionMapping::getAsString, "general")
 				.toLowerCase(Locale.ROOT);
 		final var author = event.getMember();
-		MatyBot.getInstance().getChannelIfPresent(
-				MatyBot.getConfigForGuild(event.getGuild()).getSuggestionChannel(suggestionType),
+		MatyBot.getInstance().getChannelIfPresent(guild.getConfig().getSuggestionChannel(suggestionType),
 				suggestionsChannel -> {
 					final var embed = new EmbedBuilder();
 					embed.setTitle("Sugestion");
@@ -85,8 +84,9 @@ public class SuggestCommand extends SlashCommand {
 												Emoji.fromMarkdown("🤔")),
 										Button.danger("deny_suggestion_" + m.getIdLong(), Emoji.fromMarkdown("✖"))))
 								.queue();
-						MatyBot.nbtDatabase().getDataForGuild(event).getSuggestions().computeIfAbsent(m.getIdLong(),
+						guild.getData().getSuggestions().computeIfAbsent(m.getIdLong(),
 								k -> new SuggestionData(author.getIdLong(), suggestionsChannel.getIdLong()));
+						MatyBot.nbtDatabase().setDirty();
 						final var responseEmbed = new EmbedBuilder();
 						responseEmbed.setTitle("Your suggestion has been added!");
 						responseEmbed.setDescription(

@@ -47,10 +47,13 @@ public final class CommandsModule extends io.github.matyrobbrt.jdautils.modules.
 		super(MatyBot.generalConfig()::isCommandsModuleEnabled, bot);
 
 		var builder = new CommandClientBuilder().setOwnerId(MatyBot.generalConfig().getBotOwner()).useHelpBuilder(false)
-				.setManualUpsert(true).setPrefix(MatyBot.generalConfig().mainPrefix)
+				.setManualUpsert(true)
+				.setPrefix(
+						bot.getSelfUser().getIdLong() == 933352802468651018l ? "?" : MatyBot.generalConfig().mainPrefix)
 				.setPrefixes(MatyBot.generalConfig().alternativePrefixes.toArray(new String[] {}));
 
 		builder.setPrefixFunction(event -> {
+			if (event.getJDA().getSelfUser().getIdLong() == 933352802468651018l) { return "?"; }
 			if (!event.isFromGuild()) { return MatyBot.generalConfig().mainPrefix; }
 			return MatyBot.getConfigForGuild(event.getGuild().getIdLong()).prefix;
 		});

@@ -106,16 +106,22 @@ public final class GuildConfig {
 	 *
 	 * @return If the config file was newly generated
 	 */
-	public boolean isNewlyGenerated() { return newlyGenerated; }
+	public boolean isNewlyGenerated() {
+		return newlyGenerated;
+	}
 
 	/**
 	 * Returns the raw {@link CommentedFileConfig} object.
 	 *
 	 * @return The raw config object
 	 */
-	public CommentedFileConfig getConfig() { return config; }
+	public CommentedFileConfig getConfig() {
+		return config;
+	}
 
-	public long getGuildID() { return guildId; }
+	public long getGuildID() {
+		return guildId;
+	}
 
 	/// UTIL STUFF ///
 
@@ -275,13 +281,18 @@ public final class GuildConfig {
 	@ConfigEntry(name = "enabled", category = "levels", comments = "If the levelling should be enabled in this guild.")
 	private boolean levellingEnabled = true;
 
-	public boolean isLevellingEnabled() { return levellingEnabled; }
+	public boolean isLevellingEnabled() {
+		return levellingEnabled;
+	}
 
 	@ConfigEntry(name = "multiplier", category = "levels", comments = {
-			"The multiplier applied to the amount of XP needed per level.",
+			"CURRENTLY, THIS DOES NOTHING", "The multiplier applied to the amount of XP needed per level.",
 			"The formula for calculating the multiplier is:", "xpForLevel = (multiplier * level ^ 2 + 15 * multiplier)"
 	})
 	public int xpMultiplier = 8;
+
+	@ConfigEntry(name = "cooldown", category = "levels", comments = "The time (in seconds) before a member can receive XP again.")
+	public int levellingCooldown = 30;
 
 	public long getRoleForLevel(final int level) {
 		return config.getLongOrElse("levels.level_roles." + level, () -> 0);
