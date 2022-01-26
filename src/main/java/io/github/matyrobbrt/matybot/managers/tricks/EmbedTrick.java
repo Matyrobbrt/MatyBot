@@ -2,9 +2,12 @@ package io.github.matyrobbrt.matybot.managers.tricks;
 
 import static io.github.matyrobbrt.matybot.util.BotUtils.getArgumentOrEmpty;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.text.StrBuilder;
 
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
@@ -15,9 +18,11 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+@SuppressWarnings("deprecation")
 public class EmbedTrick implements ITrick {
 
 	public static final Type TYPE = new Type();
@@ -87,8 +92,26 @@ public class EmbedTrick implements ITrick {
 		@Override
 		public EmbedTrick createFromArgs(final String args) {
 			String[] argsArray = args.split(" \\| ");
-			return new EmbedTrick(Arrays.asList(argsArray[0].split(" ")), argsArray[1], argsArray[2],
-					Integer.parseInt(argsArray[3].replace("#", ""), 16));
+			if (argsArray.length == 3) {
+				return new EmbedTrick(Arrays.asList(argsArray[0].split(" ")), argsArray[1], argsArray[2],
+						Integer.parseInt(argsArray[3].replace("#", ""), 16));
+			} else {
+				final String[] fieldArgsArray = argsArray[3].split(" \\~ ");
+				final List<Field> fields = new ArrayList<>();
+				for (var field : fieldArgsArray) {
+					fields.add(fieldFromArgs(field));
+				}
+				return new EmbedTrick(Arrays.asList(argsArray[0].split(" ")), argsArray[1], argsArray[2],
+						Integer.parseInt(argsArray[4].replace("#", ""), 16), fields);
+			}
+		}
+
+		private static Field fieldFromArgs(final String args) {
+			final String[] argsArray = args.split(" \\¬ ");
+			final var title = argsArray[0];
+			final var name = argsArray[1];
+			final boolean inline = Boolean.parseBoolean(argsArray.length == 2 ? "false" : argsArray[2]);
+			return new Field(title, name, inline);
 		}
 
 		@Override
@@ -104,9 +127,14 @@ public class EmbedTrick implements ITrick {
 
 		@Override
 		public EmbedTrick createFromCommand(final SlashCommandEvent event) {
+			final var stringBuilder = new StrBuilder(0);
+			final var description = getArgumentOrEmpty(event, "description").split("\n");
+			for (var line : description) {
+				stringBuilder.appendln(line);
+			}
 			return new EmbedTrick(Arrays.asList(getArgumentOrEmpty(event, "names").split(" ")),
-					getArgumentOrEmpty(event, "title"), getArgumentOrEmpty(event, "description"),
-					Integer.parseInt(getArgumentOrEmpty(event, "color").replaceAll("#", ""), 16));
+					getArgumentOrEmpty(event, "title"), stringBuilder.toString(),
+					Integer.parseInt(getArgumentOrEmpty(event, "color").replaceAll("#", "").replaceAll("0x", ""), 16));
 		}
 
 		@Override

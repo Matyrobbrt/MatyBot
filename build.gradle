@@ -81,6 +81,11 @@ dependencies {
 	shade group: 'org.jdbi', name: 'jdbi3-core', version: 'latest.release'
 	shade group: 'org.jdbi', name: 'jdbi3-sqlobject', version: 'latest.release'
 	shade group: 'org.flywaydb', name: 'flyway-core', version: 'latest.release'
+	
+	
+	shade "org.ow2.asm:asm-tree:9.2"
+	shade "org.ow2.asm:asm-commons:9.2"
+	shade "org.ow2.asm:asm-util:9.2"
 }
 
 shadowJar {

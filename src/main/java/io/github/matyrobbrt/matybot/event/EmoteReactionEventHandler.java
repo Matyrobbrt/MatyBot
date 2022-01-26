@@ -44,6 +44,10 @@ public class EmoteReactionEventHandler extends ListenerAdapter {
 			Emotes.react(message, EmoteType.CONCERN);
 		}
 
+		if (contentRawLowerCase.startsWith("<:harold:")) {
+			Emotes.react(message, EmoteType.HAROLD);
+		}
+
 		if (contentRawLowerCase.startsWith("<:stabolb:") || contentRawLowerCase.contains("stabby")) {
 			Emotes.react(message, EmoteType.STABBY);
 		}

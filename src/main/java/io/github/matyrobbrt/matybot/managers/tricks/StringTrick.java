@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.text.StrBuilder;
+
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
@@ -16,6 +18,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+@SuppressWarnings("deprecation")
 public class StringTrick implements ITrick {
 
 	public static final Type TYPE = new Type();
@@ -67,14 +70,24 @@ public class StringTrick implements ITrick {
 
 		@Override
 		public StringTrick createFromCommand(final SlashCommandEvent event) {
+			final var stringBuilder = new StrBuilder();
+			final var description = getArgumentOrEmpty(event, "content").split("\n");
+			for (var line : description) {
+				stringBuilder.appendln(line);
+			}
 			return new StringTrick(Arrays.asList(getArgumentOrEmpty(event, "names").split(" ")),
-					getArgumentOrEmpty(event, "content"));
+					stringBuilder.toString());
 		}
 
 		@Override
 		public StringTrick fromNBT(CompoundNBT nbt) {
 			final List<String> names = NBTHelper.deserializeStringList(nbt.getList("names", 8));
-			return new StringTrick(names, nbt.getString("body"));
+			final var stringBuilder = new StrBuilder();
+			final var body = nbt.getString("body").split("\n");
+			for (var line : body) {
+				stringBuilder.appendln(line);
+			}
+			return new StringTrick(names, stringBuilder.toString());
 		}
 
 		@Override

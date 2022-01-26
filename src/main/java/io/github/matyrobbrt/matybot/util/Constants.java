@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.Timer;
 
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import io.github.matyrobbrt.jdautils.event.BetterEventWaiter;
 
 public class Constants {
 
@@ -28,7 +28,7 @@ public class Constants {
 	public static final long MONTH_TO_MILLI = (long) 2.628e+9;
 	public static final long YEAR_TO_MILLI = (long) 3.154e+10;
 
-	public static final EventWaiter EVENT_WAITER = new EventWaiter();
+	public static final BetterEventWaiter EVENT_WAITER = new BetterEventWaiter();
 
 	public static final Random RANDOM = new Random();
 

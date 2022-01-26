@@ -250,6 +250,9 @@ public final class GeneralConfig {
 	@ConfigEntry(name = "pogchamp", category = "emotes", commentDefaultValue = false)
 	public long pogchampEmoteID = 0l;
 
+	@ConfigEntry(name = "harold", category = "emotes", commentDefaultValue = false)
+	public long haroldEmoteID = 0l;
+
 	@ConfigEntry(name = "animated_ban_bolb", category = "emotes", commentDefaultValue = false)
 	public long animatedBanBolbEmoteID = 0l;
 

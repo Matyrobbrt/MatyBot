@@ -12,9 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.managers.tricks.ITrick.TrickType;
 
-/**
- * TODO: Migrate to a the database
- */
 public final class TrickManager {
 
 	private static final Map<String, TrickType<?>> TRICK_TYPES = new HashMap<>();

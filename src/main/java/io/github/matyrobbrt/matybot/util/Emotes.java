@@ -18,6 +18,7 @@ public class Emotes {
 	private static Emote concern = null;
 	private static Emote pog = null;
 	private static Emote pogchamp = null;
+	private static Emote harold = null;
 
 	// Animated
 	private static Emote animatedBanBolb = null;
@@ -28,6 +29,7 @@ public class Emotes {
 		concern = getEmoteById(MatyBot.generalConfig().concernEmoteID);
 		pog = getEmoteById(MatyBot.generalConfig().pogEmoteID);
 		pogchamp = getEmoteById(MatyBot.generalConfig().pogchampEmoteID);
+		harold = getEmoteById(MatyBot.generalConfig().haroldEmoteID);
 
 		animatedBanBolb = getEmoteById(MatyBot.generalConfig().animatedBanBolbEmoteID);
 		stabby = getEmoteById(MatyBot.generalConfig().stabbyEmoteID);
@@ -54,7 +56,7 @@ public class Emotes {
 
 	public enum EmoteType implements Supplier<Emote> {
 
-		STABOLB(() -> stabolb), CONCERN(() -> concern), POG(() -> pog), POGCHAMP(() -> pogchamp),
+		STABOLB(() -> stabolb), CONCERN(() -> concern), POG(() -> pog), POGCHAMP(() -> pogchamp), HAROLD(() -> harold),
 		ANIMATED_BAN_BOLB(() -> animatedBanBolb), STABBY(() -> stabby);
 
 		private final Supplier<Emote> emote;

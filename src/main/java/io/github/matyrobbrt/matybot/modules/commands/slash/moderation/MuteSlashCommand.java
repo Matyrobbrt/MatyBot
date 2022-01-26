@@ -54,7 +54,9 @@ public class MuteSlashCommand extends GuildSpecificSlashCommand {
 
 		if (isTimeout) {
 			final long actualTime = time == -1 ? 28 : time;
-			muteTimeStr.set(" for 28 days");
+			if (time == -1) {
+				muteTimeStr.set(" for 28 days");
+			}
 			guild.timeoutFor(member, actualTime, timeUnit).reason(reason).queue();
 		} else {
 			guild.addRoleToMember(member, mutedRole).reason("Muted with the reason: " + reason).queue();
