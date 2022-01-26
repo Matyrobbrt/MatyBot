@@ -1,5 +1,7 @@
 package io.github.matyrobbrt.matybot.managers.quotes;
 
+import java.util.concurrent.ExecutionException;
+
 import com.google.gson.annotations.Expose;
 
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
@@ -9,7 +11,6 @@ import io.github.matyrobbrt.javanbt.serialization.Serializers;
 import io.github.matyrobbrt.javanbt.util.NBTBuilder;
 import io.github.matyrobbrt.matybot.util.helper.MentionHelper;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 
 public class Quote implements NBTSerializable<CompoundNBT> {
 
@@ -32,10 +33,15 @@ public class Quote implements NBTSerializable<CompoundNBT> {
 
 	public long getQuoter() { return quoter; }
 
-	public String getAuthorFormatter(final Guild guild, boolean asTag) {
+	public String getAuthorFormatted(final Guild guild, boolean asTag) {
 		if (asTag) {
-			final Member member = guild.getMemberById(getAuthor());
-			return member == null ? "Author ID: %s".formatted(getAuthor()) : member.getUser().getAsTag();
+			try {
+				final var member = guild.retrieveMemberById(getAuthor()).submit().get();
+				return member == null ? "Author ID: %s".formatted(getAuthor()) : member.getUser().getAsTag();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+			return "Author ID: %s".formatted(getAuthor());
 		} else {
 			return guild.getMemberById(getAuthor()) == null ? String.format("Author ID: %s", getAuthor())
 					: MentionHelper.user(getAuthor()).getAsMention();

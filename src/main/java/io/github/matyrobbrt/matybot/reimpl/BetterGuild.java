@@ -27,24 +27,31 @@ public interface BetterGuild extends Guild {
 	@Override
 	BetterMember getMember(final User user);
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	default BetterMember getMemberById(long userId) {
-		return new BetterMemberImpl(Guild.super.getMemberById(userId));
+		final var member = Guild.super.getMemberById(userId);
+		return member == null ? null : new BetterMemberImpl(member);
 	}
 
 	@Override
 	default BetterMember getMemberById(String userId) {
-		return new BetterMemberImpl(Guild.super.getMemberById(userId));
+		final var member = Guild.super.getMemberById(userId);
+		return member == null ? null : new BetterMemberImpl(member);
 	}
 
 	@Override
 	default BetterMember getMemberByTag(String tag) {
-		return new BetterMemberImpl(Guild.super.getMemberByTag(tag));
+		final var member = Guild.super.getMemberByTag(tag);
+		return member == null ? null : new BetterMemberImpl(member);
 	}
 
 	@Override
 	default BetterMember getMemberByTag(String username, String discriminator) {
-		return new BetterMemberImpl(Guild.super.getMemberByTag(username, discriminator));
+		final var member = Guild.super.getMemberByTag(username, discriminator);
+		return member == null ? null : new BetterMemberImpl(member);
 	}
 
 }

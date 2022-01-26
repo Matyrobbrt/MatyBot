@@ -115,7 +115,7 @@ public class QuoteCommand extends SlashCommand {
 			final String footer = quoter == null ? "Quoter ID: %s".formatted(quote.getAuthor())
 					: "Quoted by %s".formatted(quoter.getAsTag());
 
-			final String author = quote.getAuthorFormatter(event.getGuild(), false);
+			final String author = quote.getAuthorFormatted(event.getGuild(), false);
 
 			final EmbedBuilder embed = new EmbedBuilder().setColor(new Color((int) (Math.random() * 0x1000000)))
 					.setTitle("Quote #" + quoteIndex).addField("Content", "> " + quote.getQuote(), false)
@@ -143,7 +143,7 @@ public class QuoteCommand extends SlashCommand {
 		@Override
 		protected EmbedBuilder getEmbed(int start, final Guild guild) {
 			EmbedBuilder embed;
-			final var randomColour = new Color((int) (Math.random() * 0x1000000));
+			final var randomColour = BotUtils.generateRandomColor();
 			final var quotes = QuoteManager.getQuotesForGuild(guild);
 			if (quotes.isEmpty()) {
 				embed = new EmbedBuilder().setColor(randomColour)
@@ -163,7 +163,7 @@ public class QuoteCommand extends SlashCommand {
 
 				embed.addField(String.valueOf(x + 1),
 						fetchedQuote == null ? "Quote does not exist."
-								: fetchedQuote.getQuote() + " - " + fetchedQuote.getAuthorFormatter(guild, true),
+								: fetchedQuote.getQuote() + " - " + fetchedQuote.getAuthorFormatted(guild, true),
 						false);
 			}
 

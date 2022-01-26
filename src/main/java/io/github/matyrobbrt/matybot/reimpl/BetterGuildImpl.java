@@ -17,7 +17,8 @@ public class BetterGuildImpl extends GuildImpl implements BetterGuild {
 
 	@Override
 	public BetterMember getMember(User user) {
-		return new BetterMemberImpl(super.getMember(user));
+		final var member = super.getMember(user);
+		return member == null ? null : new BetterMemberImpl(super.getMember(user));
 	}
 
 }

@@ -74,12 +74,14 @@ public abstract class PaginatedCommand extends MatyBotSlashCommand {
 	 * @param event the active SlashCommandEvent.
 	 */
 	protected void sendPaginatedMessage(SlashCommandEvent event) {
-		var reply = event.replyEmbeds(getEmbed(0, event.getGuild()).build());
-		Button[] buttons = createScrollButtons(0);
-		if (buttons.length > 0) {
-			reply.addActionRows(ActionRow.of(Arrays.asList(buttons)));
-		}
-		reply.queue();
+		event.deferReply().queue(hook -> {
+			final var reply = hook.editOriginalEmbeds(getEmbed(0, event.getGuild()).build());
+			Button[] buttons = createScrollButtons(0);
+			if (buttons.length > 0) {
+				reply.setActionRows(ActionRow.of(Arrays.asList(buttons)));
+			}
+			reply.queue();
+		});
 	}
 
 	/**
