@@ -22,12 +22,15 @@ import io.github.cdimascio.dotenv.Dotenv;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.util.DiscordUtils.MessageLinkException;
 import io.github.matyrobbrt.matybot.util.database.dao.StickyRoles;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
+@UtilityClass
 public class BotUtils {
 
 	public static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
@@ -129,8 +132,14 @@ public class BotUtils {
 		return member.getRoles().stream().anyMatch(role -> roles.contains(role.getIdLong()));
 	}
 
+	public static <T extends Thread> T setDaemon(@NonNull final T thread) {
+		thread.setDaemon(true);
+		return thread;
+	}
+
 	public static final Joiner LINE_JOINER = Joiner.on("\n");
 
+	@UtilityClass
 	public static final class Markers {
 
 		public static final Marker EVENTS = MarkerFactory.getMarker("Events");

@@ -28,6 +28,7 @@ import io.github.matyrobbrt.matybot.util.database.dao.nbt.GuildData;
 import io.github.matyrobbrt.matybot.util.database.dao.nbt.UserSettings;
 import io.github.matyrobbrt.matybot.util.nbt.NBTList;
 import io.github.matyrobbrt.matybot.util.nbt.SnowflakeSpecifcData;
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 
@@ -47,12 +48,9 @@ public class MatyBotNBTDatabase extends NBTDatabase {
 
 	private final NBTManager nbtManager = new NBTManager();
 
-	private List<Long> guildCache = createAndTrack("GuildCache",
+	@Getter
+	private final List<Long> guildCache = createAndTrack("GuildCache",
 			new NBTList<Long, LongNBT>(LongNBT::valueOf, LongNBT::getAsLong));
-
-	public List<Long> getGuildCache() {
-		return guildCache;
-	}
 
 	private final SnowflakeSpecifcData<GuildData, CompoundNBT> guildData = createAndTrack("GuildData",
 			new SnowflakeSpecifcData<>(GuildData::serializeNBT, GuildData.DESERIALIZER::fromNBT));

@@ -1,7 +1,9 @@
 package io.github.matyrobbrt.matybot.util.helper;
 
+import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.IMentionable;
 
+@UtilityClass
 public class MentionHelper {
 
 	public static IMentionable user(final long userId) {

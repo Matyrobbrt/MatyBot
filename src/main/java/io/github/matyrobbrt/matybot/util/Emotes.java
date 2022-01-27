@@ -8,9 +8,11 @@ import javax.annotation.Nonnull;
 
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.event.EmoteReactionEventHandler;
+import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
 
+@UtilityClass
 public class Emotes {
 
 	// Normal

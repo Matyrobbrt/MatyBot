@@ -14,6 +14,7 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
 import io.github.matyrobbrt.matybot.util.helper.NBTHelper;
 import io.github.matyrobbrt.matybot.util.nbt.OrderedNBTList;
+import lombok.Data;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -22,6 +23,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+@Data
 @SuppressWarnings("deprecation")
 public class EmbedTrick implements ITrick {
 
@@ -33,7 +35,7 @@ public class EmbedTrick implements ITrick {
 
 	private final String description;
 
-	private final int color;
+	private final int colour;
 
 	private final OrderedNBTList<MessageEmbed.Field, CompoundNBT> fields;
 
@@ -42,7 +44,7 @@ public class EmbedTrick implements ITrick {
 		this.names = names;
 		this.title = title;
 		this.description = description;
-		this.color = color;
+		this.colour = color;
 		this.fields = new OrderedNBTList<>(NBTHelper::serializeEmbedField, NBTHelper::deserializeEmbedField, fields);
 	}
 
@@ -52,34 +54,14 @@ public class EmbedTrick implements ITrick {
 	}
 
 	@Override
-	public List<String> getNames() {
-		return names;
-	}
-
-	@Override
 	public Message getMessage(final String[] args) {
-		EmbedBuilder builder = new EmbedBuilder().setTitle(getTitle()).setDescription(getDescription()).setColor(color);
+		EmbedBuilder builder = new EmbedBuilder().setTitle(getTitle()).setDescription(getDescription())
+				.setColor(colour);
 		for (MessageEmbed.Field field : getFields()) {
 			builder.addField(field);
 		}
 		return new MessageBuilder(builder.build())
 				.setAllowedMentions(Set.of(Message.MentionType.CHANNEL, Message.MentionType.EMOTE)).build();
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public int getColor() {
-		return color;
-	}
-
-	public List<MessageEmbed.Field> getFields() {
-		return fields;
 	}
 
 	static class Type implements TrickType<EmbedTrick> {
@@ -154,7 +136,7 @@ public class EmbedTrick implements ITrick {
 			nbt.put("names", NBTHelper.serializeStringList(trick.getNames()));
 			nbt.putString("title", trick.getTitle());
 			nbt.putString("description", trick.getDescription());
-			nbt.putInt("color", trick.getColor());
+			nbt.putInt("color", trick.getColour());
 			nbt.put("fields", trick.fields);
 			return nbt;
 		}

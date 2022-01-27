@@ -6,8 +6,10 @@ import java.util.List;
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
 import io.github.matyrobbrt.javanbt.nbt.ListNBT;
 import io.github.matyrobbrt.javanbt.nbt.StringNBT;
+import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
+@UtilityClass
 public class NBTHelper {
 
 	public static ListNBT serializeStringList(final List<String> list) {

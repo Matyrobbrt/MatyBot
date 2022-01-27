@@ -5,17 +5,21 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
+import io.github.matyrobbrt.javanbt.nbt.ListNBT;
 import io.github.matyrobbrt.javanbt.serialization.Deserializer;
 import io.github.matyrobbrt.javanbt.serialization.NBTSerializable;
 import io.github.matyrobbrt.javanbt.serialization.Serializers;
 import io.github.matyrobbrt.javanbt.util.NBTBuilder;
 import io.github.matyrobbrt.javanbt.util.NBTManager;
+import io.github.matyrobbrt.matybot.managers.CustomPingManager.CustomPing;
 import io.github.matyrobbrt.matybot.managers.quotes.Quote;
 import io.github.matyrobbrt.matybot.managers.tricks.ITrick;
 import io.github.matyrobbrt.matybot.managers.tricks.TrickManager;
 import io.github.matyrobbrt.matybot.util.nbt.NBTList;
 import io.github.matyrobbrt.matybot.util.nbt.OrderedNBTList;
 import io.github.matyrobbrt.matybot.util.nbt.SnowflakeSpecifcData;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
 
 public class GuildData implements NBTSerializable<CompoundNBT> {
@@ -29,22 +33,19 @@ public class GuildData implements NBTSerializable<CompoundNBT> {
 
 	private final NBTManager nbtManager = new NBTManager();
 
+	@Getter
 	private final List<Quote> quotes = createAndTrack("Quotes",
 			new OrderedNBTList<>(Quote::serializeNBT, Quote.DESERIALIZER::fromNBT));
 
-	public List<Quote> getQuotes() { return quotes; }
-
+	@Getter
 	private final List<ITrick> tricks = createAndTrack("Tricks", new NBTList<ITrick, CompoundNBT>(trick -> {
 		return new NBTBuilder().putString("type", TrickManager.getTrickTypeName(trick.getType()))
 				.put("value", trick.serializeNBT()).build();
 	}, nbt -> TrickManager.getTrickType(nbt.getString("type")).fromNBT(nbt.getCompound("value"))));
 
-	public List<ITrick> getTricks() { return tricks; }
-
+	@Getter
 	private final Map<Long, LevelData> levels = createAndTrack("Levels",
 			new SnowflakeSpecifcData<>(LevelData::serializeNBT, LevelData.DESERIALIZER::fromNBT));
-
-	public Map<Long, LevelData> getLevels() { return levels; }
 
 	public List<Long> getLeaderboardSorted() {
 		final List<Long> data = new ArrayList<>();
@@ -62,11 +63,30 @@ public class GuildData implements NBTSerializable<CompoundNBT> {
 		return getLevelDataForUser(member.getIdLong());
 	}
 
+	@Getter
 	private final Map<Long, SuggestionData> suggestions = createAndTrack("Suggestions",
 			new SnowflakeSpecifcData<>(SuggestionData::serializeNBT, SuggestionData.DESERIALIZER::fromNBT));
 
-	public Map<Long, SuggestionData> getSuggestions() {
-		return suggestions;
+	@NonNull
+	private final Map<Long, NBTList<CustomPing, CompoundNBT>> customPings = createAndTrack("CustomPings",
+			new SnowflakeSpecifcData<NBTList<CustomPing, CompoundNBT>, ListNBT>(NBTList::serializeNBT, n -> {
+				final var list = new NBTList<>(CustomPing::serializeNBT, CustomPing.DESERIALIZER::fromNBT);
+				list.deserializeNBT(n);
+				return list;
+			}));
+
+	@NonNull
+	public Map<Long, NBTList<CustomPing, CompoundNBT>> getAllCustomPings() {
+		return customPings;
+	}
+
+	public List<CustomPing> getCustomPings(final long memberId) {
+		return customPings.computeIfAbsent(memberId,
+				k -> new NBTList<>(CustomPing::serializeNBT, CustomPing.DESERIALIZER::fromNBT));
+	}
+
+	public List<CustomPing> getCustomPings(final Member member) {
+		return getCustomPings(member.getIdLong());
 	}
 
 	@Override

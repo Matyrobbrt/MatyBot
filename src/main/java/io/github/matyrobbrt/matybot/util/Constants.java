@@ -6,8 +6,13 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.Timer;
 
-import io.github.matyrobbrt.jdautils.event.BetterEventWaiter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import io.github.matyrobbrt.jdautils.event.BetterEventWaiter;
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Constants {
 
 	public static final Path STORAGE_PATH;
@@ -29,9 +34,8 @@ public class Constants {
 	public static final long YEAR_TO_MILLI = (long) 3.154e+10;
 
 	public static final BetterEventWaiter EVENT_WAITER = new BetterEventWaiter();
-
 	public static final Random RANDOM = new Random();
-
 	public static final Timer TIMER = new Timer();
+	public static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
 }

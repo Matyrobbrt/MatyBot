@@ -1,11 +1,16 @@
 plugins {
 	id 'java-library'
 	id 'com.github.johnrengelman.shadow' version '7.1.1'
+	id "io.freefair.lombok" version "6.3.0"
 }
 
 apply plugin: 'java'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+
+compileJava {
+	options.release = 16
+}
 
 configurations {
 	shade
@@ -82,16 +87,16 @@ dependencies {
 	shade group: 'org.jdbi', name: 'jdbi3-sqlobject', version: 'latest.release'
 	shade group: 'org.flywaydb', name: 'flyway-core', version: 'latest.release'
 	
-	
-	shade "org.ow2.asm:asm-tree:9.2"
-	shade "org.ow2.asm:asm-commons:9.2"
-	shade "org.ow2.asm:asm-util:9.2"
+	compileOnly 'org.projectlombok:lombok:1.18.22'
 }
 
 shadowJar {
 	configurations = [project.configurations.shade]
-	from sourceSets.main.allSource
+	mergeServiceFiles()
 	classifier ''
+	dependencies {
+		exclude dependency('org.projectlombok:lombok')
+	}
 }
 
 compileJava.options.encoding = "UTF-8"

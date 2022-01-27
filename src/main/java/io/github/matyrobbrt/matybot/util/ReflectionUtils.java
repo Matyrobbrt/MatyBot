@@ -10,6 +10,9 @@ import java.util.Set;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class ReflectionUtils {
 
 	public static final Reflections REFLECTIONS = new Reflections(

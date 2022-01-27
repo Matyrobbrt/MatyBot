@@ -2,8 +2,10 @@ package io.github.matyrobbrt.matybot.util;
 
 import java.util.regex.Pattern;
 
+import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Message;
 
+@UtilityClass
 public class DiscordUtils {
 
 	public static final Pattern MESSAGE_LINK_PATTERN = Pattern.compile("https://discord.com/channels/");

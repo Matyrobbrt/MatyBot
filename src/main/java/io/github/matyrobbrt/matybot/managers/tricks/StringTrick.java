@@ -13,38 +13,25 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
 import io.github.matyrobbrt.javanbt.util.NBTBuilder;
 import io.github.matyrobbrt.matybot.util.helper.NBTHelper;
+import lombok.Data;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+@Data
 @SuppressWarnings("deprecation")
 public class StringTrick implements ITrick {
 
 	public static final Type TYPE = new Type();
 
 	private final List<String> names;
-
 	private final String body;
-
-	public StringTrick(final List<String> names, final String body) {
-		this.names = names;
-		this.body = body;
-	}
-
-	@Override
-	public List<String> getNames() {
-		return names;
-	}
 
 	@Override
 	public Message getMessage(final String[] args) {
 		return new MessageBuilder(String.format(getBody(), (Object[]) args))
 				.setAllowedMentions(Set.of(Message.MentionType.CHANNEL, Message.MentionType.EMOTE)).build();
-	}
-
-	public String getBody() {
-		return body;
 	}
 
 	static class Type implements TrickType<StringTrick> {

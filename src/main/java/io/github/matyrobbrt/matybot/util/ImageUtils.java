@@ -20,9 +20,11 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
+@UtilityClass
 public final class ImageUtils {
 
 	/**
