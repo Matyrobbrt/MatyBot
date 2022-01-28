@@ -14,6 +14,7 @@ import io.github.matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -32,6 +33,9 @@ public class BanSlashCommand extends GuildSpecificSlashCommand {
 		name = "ban";
 		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
 				.toArray(String[]::new);
+		botPermissions = new Permission[] {
+				Permission.BAN_MEMBERS
+		};
 		help = "Banns a member";
 		OptionData time = new OptionData(OptionType.INTEGER, "time",
 				"The amount of time to ban for. Indefinitely if not specified.").setRequired(false);

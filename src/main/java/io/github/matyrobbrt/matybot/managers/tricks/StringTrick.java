@@ -13,6 +13,7 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
 import io.github.matyrobbrt.javanbt.util.NBTBuilder;
 import io.github.matyrobbrt.matybot.util.helper.NBTHelper;
+import lombok.Builder;
 import lombok.Data;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -20,6 +21,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Data
+@Builder
 @SuppressWarnings("deprecation")
 public class StringTrick implements ITrick {
 
@@ -62,8 +64,8 @@ public class StringTrick implements ITrick {
 			for (var line : description) {
 				stringBuilder.appendln(line);
 			}
-			return new StringTrick(Arrays.asList(getArgumentOrEmpty(event, "names").split(" ")),
-					stringBuilder.toString());
+			return StringTrick.builder().names(Arrays.asList(getArgumentOrEmpty(event, "names").split(" ")))
+					.body(stringBuilder.toString()).build();
 		}
 
 		@Override
@@ -74,7 +76,7 @@ public class StringTrick implements ITrick {
 			for (var line : body) {
 				stringBuilder.appendln(line);
 			}
-			return new StringTrick(names, stringBuilder.toString());
+			return builder().names(names).body(stringBuilder.toString()).build();
 		}
 
 		@Override

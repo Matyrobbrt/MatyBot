@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import io.github.matyrobbrt.matybot.util.BotUtils;
+import io.github.matyrobbrt.matybot.util.console.Markers;
 import io.github.matyrobbrt.matybot.util.database.dao.StickyRoles;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.IMentionable;
@@ -123,7 +124,7 @@ public class JoinLeaveEvents extends ListenerAdapter {
 		if (roles != null && !roles.isEmpty()) {
 			embed.addField("Roles:", roles.stream().map(IMentionable::getAsMention).collect(Collectors.joining()),
 					true);
-			LOGGER.info(BotUtils.Markers.EVENTS, "User {} had the following roles before leaving: {}", user, roles);
+			LOGGER.info(Markers.EVENTS, "User {} had the following roles before leaving: {}", user, roles);
 		} else if (roles == null) {
 			embed.addField("Roles:", "_Could not obtain user's roles._", true);
 		}

@@ -23,7 +23,7 @@ import io.github.matyrobbrt.javanbt.nbt.LongNBT;
 import io.github.matyrobbrt.javanbt.serialization.NBTSerializable;
 import io.github.matyrobbrt.javanbt.util.NBTManager;
 import io.github.matyrobbrt.matybot.MatyBot;
-import io.github.matyrobbrt.matybot.util.BotUtils.Markers;
+import io.github.matyrobbrt.matybot.util.console.Markers;
 import io.github.matyrobbrt.matybot.util.database.dao.nbt.GuildData;
 import io.github.matyrobbrt.matybot.util.database.dao.nbt.UserSettings;
 import io.github.matyrobbrt.matybot.util.nbt.NBTList;

@@ -12,6 +12,7 @@ import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import io.github.matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -28,6 +29,9 @@ public class UnBanSlashCommand extends GuildSpecificSlashCommand {
 		super("");
 		name = "unban";
 		help = "Unbans a member";
+		botPermissions = new Permission[] {
+				Permission.BAN_MEMBERS
+		};
 		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
 				.toArray(String[]::new);
 		options = List.of(new OptionData(OptionType.USER, "user", "User to unban", true));

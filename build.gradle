@@ -1,3 +1,14 @@
+buildscript {
+	repositories {
+		flatDir {
+			dirs 'libs'
+		}
+	}
+	dependencies {
+		classpath ":JDA-5.0.0-alpha.4_DEV"
+	}
+}
+
 plugins {
 	id 'java-library'
 	id 'com.github.johnrengelman.shadow' version '7.1.1'
@@ -5,16 +16,47 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: 'eclipse'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(16)
-
-compileJava {
-	options.release = 16
-}
 
 configurations {
 	shade
 	implementation.extendsFrom(shade)
+
+	shadeD4J
+	d4jImplementation.extendsFrom(shadeD4J)
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = [
+				"$rootDir/src/main/java"
+			]
+		}
+		resources {
+			srcDirs = [
+				"$rootDir/src/main/resources"
+			]
+		}
+	}
+	d4j {
+		java {
+			srcDirs = [
+				"$rootDir/src/d4j/java"
+			]
+		}
+		compileClasspath += configurations.getByName("shade")
+		runtimeClasspath += configurations.getByName("shade")
+		
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+compileJava {
+	options.release = 16
 }
 
 repositories {
@@ -52,6 +94,7 @@ dependencies {
 	// JDA is not published anywhere, as it is a dev branch
 	// shade group: 'net.dv8tion', name: 'JDA', version: 'latest.release'
 	shade ":JDA-5.0.0-alpha.4_DEV"
+	shadeD4J group: "com.discord4j", name: "discord4j-core", version: "latest.release"
 
 	// shade group: 'io.vavr', name: 'vavr', version: 'latest.release'
 	shade group: 'io.github.cdimascio', name:'dotenv-java', version: 'latest.release'
@@ -64,7 +107,11 @@ dependencies {
 	shade group: 'com.jhlabs', name: 'filters', version: 'latest.release'
 	// shade group: 'com.object-refinery', name: 'orsoncharts', version: 'latest.release'
 	shade group: 'org.jetbrains', name: 'annotations', version: 'latest.release'
-	shade group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
+	shade group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+	shade group: 'ch.qos.logback', name: 'logback-core', version: '1.2.10'
+	shade group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.10'
+
 	shade group: 'org.xerial', name: 'sqlite-jdbc', version: 'latest.release'
 	shade group: 'com.electronwill.night-config', name: 'toml', version: 'latest.release'
 	// shade group: 'org.jooq', name: 'joor', version: 'latest.release'
@@ -85,13 +132,19 @@ dependencies {
 	// Jdbi
 	shade group: 'org.jdbi', name: 'jdbi3-core', version: 'latest.release'
 	shade group: 'org.jdbi', name: 'jdbi3-sqlobject', version: 'latest.release'
-	shade group: 'org.flywaydb', name: 'flyway-core', version: 'latest.release'
-	
+	// shade group: 'org.flywaydb', name: 'flyway-core', version: 'latest.release'
+
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 }
 
 shadowJar {
-	configurations = [project.configurations.shade]
+	configurations = [
+		project.configurations.shade,
+		project.configurations.shadeD4J
+	]
+	from {
+		sourceSets.d4j.output
+	}
 	mergeServiceFiles()
 	classifier ''
 	dependencies {
@@ -104,6 +157,7 @@ compileJava.options.encoding = "UTF-8"
 jar {
 	from {
 		sourceSets.main.output
+		sourceSets.d4j.output
 	}
 	manifest {
 		attributes(

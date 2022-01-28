@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
 import com.google.gson.Gson;
@@ -19,18 +18,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import io.github.matyrobbrt.matybot.MatyBot;
+import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
+import lombok.experimental.ExtensionMethod;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 
+@ExtensionMethod(LoggingModule.class)
 public class ScamDetector extends ListenerAdapter {
 
 	public static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
@@ -55,7 +56,7 @@ public class ScamDetector extends ListenerAdapter {
 			final var guild = msg.getGuild();
 			final var embed = getLoggingEmbed(msg, "");
 			msg.delete().reason("Scam link").queue($ -> {
-				executeInLoggingChannel(event.getGuild(), channel -> channel.sendMessageEmbeds(embed).queue());
+				event.getGuild().inLoggingChannel(channel -> channel.sendMessageEmbeds(embed).queue());
 				mute(guild, member);
 			});
 		}
@@ -74,7 +75,7 @@ public class ScamDetector extends ListenerAdapter {
 			final var guild = msg.getGuild();
 			final var embed = getLoggingEmbed(msg, ", by editing an old message");
 			msg.delete().reason("Scam link").queue($ -> {
-				executeInLoggingChannel(event.getGuild(), channel -> channel.sendMessageEmbeds(embed).queue());
+				event.getGuild().inLoggingChannel(channel -> channel.sendMessageEmbeds(embed).queue());
 				mute(guild, member);
 			});
 		}
@@ -82,7 +83,14 @@ public class ScamDetector extends ListenerAdapter {
 
 	private static void mute(final Guild guild, final Member member) {
 		// Timeout for 14 days instead of muting
-		member.timeoutFor(Duration.ofDays(14)).reason("Sent a scam link!").queue();
+		member.timeoutFor(Duration.ofDays(14)).reason("Sent a scam link!").queue(v -> {}, e -> {
+			LoggingModule.logException(guild.getIdLong(),
+					"timing out %s for sending a scam link!".formatted(member.getAsMention()), e);
+			MatyBot.LOGGER.error(
+					"I could not timeout the user {} in guild {} for sending a scam link due to an exception.",
+					member.getUser().getAsTag(), member.getGuild().getName(), e);
+		});
+
 	}
 
 	private static MessageEmbed getLoggingEmbed(final Message message, final String extraDescription) {
@@ -94,10 +102,6 @@ public class ScamDetector extends ListenerAdapter {
 				.addField("Message Content", MarkdownUtil.codeblock(message.getContentRaw()), false).setColor(Color.RED)
 				.setTimestamp(Instant.now()).setFooter("User ID: " + member.getIdLong())
 				.setThumbnail(member.getEffectiveAvatarUrl()).build();
-	}
-
-	private static void executeInLoggingChannel(final Guild guild, Consumer<TextChannel> channel) {
-		MatyBot.getInstance().getChannelIfPresent(MatyBot.getConfigForGuild(guild).loggingChannel, channel);
 	}
 
 	public static boolean containsScam(final Message message) {

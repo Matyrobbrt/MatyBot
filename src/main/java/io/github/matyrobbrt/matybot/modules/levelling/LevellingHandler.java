@@ -4,6 +4,7 @@ import static io.github.matyrobbrt.matybot.modules.levelling.LevellingModule.get
 import static io.github.matyrobbrt.matybot.modules.levelling.LevellingModule.getUserXP;
 import static io.github.matyrobbrt.matybot.modules.levelling.LevellingModule.setUserXP;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import io.github.matyrobbrt.matybot.MatyBot;
+import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import io.github.matyrobbrt.matybot.reimpl.BetterMember;
 import io.github.matyrobbrt.matybot.reimpl.BetterMemberImpl;
 import io.github.matyrobbrt.matybot.util.Constants;
 import io.github.matyrobbrt.matybot.util.Emotes;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -73,7 +76,17 @@ public class LevellingHandler extends ListenerAdapter {
 
 			final var role = guild.getRoleById(MatyBot.getConfigForGuild(guild).getRoleForLevel(newLevel));
 			if (role != null) {
-				guild.addRoleToMember(member, role).reason("The member reached level " + newLevel).queue();
+				guild.addRoleToMember(member, role).reason("The member reached level " + newLevel).queue(v -> {}, e -> {
+					LoggingModule.inLoggingChannel(member.getGuild(), loggingChannel -> {
+						loggingChannel.sendMessageEmbeds(new EmbedBuilder().setTitle("Level-up Role Error")
+								.setColor(Color.RED)
+								.setDescription("I could not give level-up roles to %s due to an exception."
+										.formatted(member.getAsMention()))
+								.addField("Exception", e.getLocalizedMessage(), false).build()).queue();
+					});
+					MatyBot.LOGGER.error("I could not give level-up roles to {} in guild {} due to an exception.",
+							member.getUser().getAsTag(), member.getGuild().getName(), e);
+				});
 			}
 		}
 
@@ -94,8 +107,7 @@ public class LevellingHandler extends ListenerAdapter {
 	public static String getLevelupMessage(final Member member, final TextChannel channel, final int newLevel) {
 		final var userSettings = MatyBot.nbtDatabase().getSettingsForUser(member);
 		return LEVELUP_MESSAGES[RANDOM.nextInt(LEVELUP_MESSAGES.length)].formatted(
-				userSettings.doesLevelUpPing() ? member.getAsMention() : member.getUser().getAsTag(),
-				newLevel);
+				userSettings.doesLevelUpPing() ? member.getAsMention() : member.getUser().getAsTag(), newLevel);
 	}
 
 }

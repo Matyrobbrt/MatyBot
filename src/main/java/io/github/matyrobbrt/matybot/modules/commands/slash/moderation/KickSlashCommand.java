@@ -13,6 +13,7 @@ import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import io.github.matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -31,6 +32,9 @@ public class KickSlashCommand extends GuildSpecificSlashCommand {
 		name = "kick";
 		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
 				.toArray(String[]::new);
+		botPermissions = new Permission[] {
+				Permission.KICK_MEMBERS
+		};
 		help = "Kicks a member";
 		options = List.of(new OptionData(OptionType.USER, "user", "User to kick", true),
 				new OptionData(OptionType.STRING, "reason", "The reason to kick for").setRequired(true));

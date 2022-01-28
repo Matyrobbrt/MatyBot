@@ -98,14 +98,18 @@ public final class GeneralConfig {
 	 *
 	 * @return If the config file was newly generated
 	 */
-	public boolean isNewlyGenerated() { return newlyGenerated; }
+	public boolean isNewlyGenerated() {
+		return newlyGenerated;
+	}
 
 	/**
 	 * Returns the raw {@link CommentedFileConfig} object.
 	 *
 	 * @return The raw config object
 	 */
-	public CommentedFileConfig getConfig() { return config; }
+	public CommentedFileConfig getConfig() {
+		return config;
+	}
 
 	/// UTIL STUFF ///
 
@@ -196,7 +200,9 @@ public final class GeneralConfig {
 	@ConfigEntry(name = "botOwner", category = "general", comments = "The owner of the bot", commentDefaultValue = false)
 	private long botOwner;
 
-	public long getBotOwner() { return botOwner; }
+	public long getBotOwner() {
+		return botOwner;
+	}
 
 	@ConfigEntry(name = "databaseName", category = "general", comments = "The name of the database")
 	private String databaseName = "storage/database.db";
@@ -204,9 +210,13 @@ public final class GeneralConfig {
 	@ConfigEntry(name = "nbtDatabaseName", category = "general", comments = "The name of the nbt database")
 	private String nbtDatabaseName = "storage/database.dat";
 
-	public String getDatabaseName() { return databaseName; }
+	public String getDatabaseName() {
+		return databaseName;
+	}
 
-	public String getNBTDatabaseName() { return nbtDatabaseName; }
+	public String getNBTDatabaseName() {
+		return nbtDatabaseName;
+	}
 
 	@ConfigEntry(name = "main", category = "general.prefixes", comments = {
 			"The main prefix of the bot", "Any other prefix should be an alternative one"
@@ -216,7 +226,9 @@ public final class GeneralConfig {
 	@ConfigEntry(name = "type", category = "general.activity", comments = "The type of activity the bot has.")
 	private String activityType = "WATCHING";
 
-	public ActivityType getActivityType() { return ActivityType.valueOf(activityType); }
+	public ActivityType getActivityType() {
+		return ActivityType.valueOf(activityType);
+	}
 
 	@ConfigEntry(name = "name", category = "general.activity", comments = "The name of the activity the bot has.")
 	public String activityName = "naughty people!";
@@ -224,17 +236,24 @@ public final class GeneralConfig {
 	@ConfigEntry(name = "alternative", category = "general.prefixes", comments = "The alternative prefixes of the bot")
 	public List<String> alternativePrefixes = Lists.newArrayList();
 
+	@ConfigEntry(name = "consoleChannel", category = "general", comments = "The ID of the channel in which console logging messages will be sent.", commentDefaultValue = false)
+	public long consoleChannelId = 0l;
+
 	/// MODULES ///
 
 	@ConfigEntry(name = "enabled", category = "modules.commands", comments = "If the commands module should be enabled.")
 	private boolean commandsModuleEnabled = true;
 
-	public boolean isCommandsModuleEnabled() { return commandsModuleEnabled; }
+	public boolean isCommandsModuleEnabled() {
+		return commandsModuleEnabled;
+	}
 
 	@ConfigEntry(name = "enabled", category = "modules.logging", comments = "If the logging module should be enabled.")
 	private boolean loggingModuleEnabled = true;
 
-	public boolean isLoggingModuleEnabled() { return loggingModuleEnabled; }
+	public boolean isLoggingModuleEnabled() {
+		return loggingModuleEnabled;
+	}
 
 	/// EMOTES ///
 

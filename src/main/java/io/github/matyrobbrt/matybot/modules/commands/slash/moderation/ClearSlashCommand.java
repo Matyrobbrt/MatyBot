@@ -11,6 +11,7 @@ import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import io.github.matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -27,6 +28,9 @@ public class ClearSlashCommand extends GuildSpecificSlashCommand {
 		help = "Clears x amount of messages!";
 		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
 				.toArray(String[]::new);
+		botPermissions = new Permission[] {
+				Permission.MESSAGE_MANAGE
+		};
 		options.add(new OptionData(OptionType.NUMBER, "amount", "The amount of messages that should be deleted!")
 				.setRequired(true).setRequiredRange(1, 100));
 	}

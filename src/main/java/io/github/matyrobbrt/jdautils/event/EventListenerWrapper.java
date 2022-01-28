@@ -2,6 +2,7 @@ package io.github.matyrobbrt.jdautils.event;
 
 import java.util.function.Supplier;
 
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.hooks.EventListener;
@@ -14,6 +15,7 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
  * @author matyrobbrt
  *
  */
+@Slf4j
 public class EventListenerWrapper {
 
 	private final EventListener listener;
@@ -31,7 +33,11 @@ public class EventListenerWrapper {
 
 	@SubscribeEvent
 	public void genericEvent(final GenericEvent e) {
-		getListener().onEvent(e);
+		try {
+			getListener().onEvent(e);
+		} catch (Exception ex) {
+			log.error("Error while executing event!", ex);
+		}
 	}
 
 	public EventListener getListener() {

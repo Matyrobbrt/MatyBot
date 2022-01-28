@@ -54,9 +54,12 @@ public class QuotingListener extends ListenerAdapter {
 	}
 
 	public static MessageEmbed quote(final Message message, final Member quoter) {
+		final var hasAuthor = !message.isWebhookMessage();
 		final var msgLink = DiscordUtils.createMessageLink(message);
-		final var embed = new EmbedBuilder().setTimestamp(message.getTimeCreated()).setColor(Color.DARK_GRAY)
-				.setAuthor(message.getAuthor().getAsTag(), msgLink, message.getAuthor().getEffectiveAvatarUrl());
+		final var embed = new EmbedBuilder().setTimestamp(message.getTimeCreated()).setColor(Color.DARK_GRAY);
+		if (hasAuthor) {
+			embed.setAuthor(message.getAuthor().getAsTag(), msgLink, message.getAuthor().getEffectiveAvatarUrl());
+		}
 		if (!message.getContentRaw().isBlank()) {
 			embed.appendDescription(MarkdownUtil.maskedLink("Quote ➤ ", msgLink))
 					.appendDescription(message.getContentRaw());

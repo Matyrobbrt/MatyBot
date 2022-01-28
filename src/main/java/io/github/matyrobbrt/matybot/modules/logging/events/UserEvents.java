@@ -5,7 +5,7 @@ import java.time.Instant;
 
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
-import io.github.matyrobbrt.matybot.util.BotUtils;
+import io.github.matyrobbrt.matybot.util.console.Markers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
@@ -30,7 +30,7 @@ public class UserEvents extends ListenerAdapter {
 					embed.addField("User:", target.getAsMention() + " (" + target.getId() + ")", true);
 					embed.setTimestamp(Instant.now());
 					if (entry.getTargetIdLong() != target.getIdLong()) {
-						MatyBot.LOGGER.warn(BotUtils.Markers.EVENTS,
+						MatyBot.LOGGER.warn(Markers.EVENTS,
 								"Inconsistency between target of retrieved audit log "
 										+ "entry and actual nickname event target: retrieved is {}, but target is {}",
 								entry.getUser(), target);

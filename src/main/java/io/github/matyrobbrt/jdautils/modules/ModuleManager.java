@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.matyrobbrt.matybot.util.console.Markers;
 import net.dv8tion.jda.api.JDA;
 
 public class ModuleManager {
@@ -38,9 +39,9 @@ public class ModuleManager {
 		modules.forEach((clz, module) -> {
 			if (module.isEnabled()) {
 				module.register();
-				logger.info("The module {} is now up and running!", module.getClass().getSimpleName());
+				logger.info(Markers.MODULES, "The module {} is now up and running!", module.getClass().getSimpleName());
 			} else {
-				logger.warn("The module {} disabled! Its features will not be available.",
+				logger.warn(Markers.MODULES, "The module {} disabled! Its features will not be available.",
 						module.getClass().getSimpleName());
 			}
 		});

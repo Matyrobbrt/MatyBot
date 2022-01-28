@@ -12,6 +12,7 @@ import io.github.matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -28,6 +29,9 @@ public class UnMuteSlashCommand extends GuildSpecificSlashCommand {
 		super("");
 		name = "unmute";
 		help = "Unmutes a member";
+		botPermissions = new Permission[] {
+				Permission.MODERATE_MEMBERS
+		};
 		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
 				.toArray(String[]::new);
 		options = List.of(new OptionData(OptionType.USER, "user", "User to unmute", true), new OptionData(
@@ -91,8 +95,8 @@ public class UnMuteSlashCommand extends GuildSpecificSlashCommand {
 		}
 
 		final boolean isMuted = isTimeout ? toMute.isTimedOut()
-				: toMute.getRoles().contains(event.getGuild()
-						.getRoleById(MatyBot.getConfigForGuild(event.getGuild()).mutedRole));
+				: toMute.getRoles()
+						.contains(event.getGuild().getRoleById(MatyBot.getConfigForGuild(event.getGuild()).mutedRole));
 		if (!isMuted) {
 			event.deferReply(true).setContent("This user is not muted!").mentionRepliedUser(false).queue();
 			return;

@@ -15,6 +15,7 @@ import io.github.matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import io.github.matyrobbrt.matybot.modules.logging.LoggingModule;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -32,6 +33,9 @@ public class MuteSlashCommand extends GuildSpecificSlashCommand {
 		name = "mute";
 		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
 				.toArray(String[]::new);
+		botPermissions = new Permission[] {
+				Permission.MODERATE_MEMBERS
+		};
 		help = "Mutes a member";
 		OptionData time = new OptionData(OptionType.INTEGER, "time",
 				"The amount of time to mute for. Indefinitely if not specified.").setRequired(false);

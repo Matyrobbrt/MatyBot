@@ -26,6 +26,9 @@ public class AddEmoteCommand extends Command {
 		this.userPermissions = new Permission[] {
 				Permission.MANAGE_EMOTES_AND_STICKERS
 		};
+		this.botPermissions = new Permission[] {
+				Permission.MANAGE_EMOTES_AND_STICKERS
+		};
 		this.guildOnly = true;
 	}
 

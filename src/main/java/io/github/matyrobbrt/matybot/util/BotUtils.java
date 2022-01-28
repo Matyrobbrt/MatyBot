@@ -10,8 +10,6 @@ import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
@@ -138,14 +136,5 @@ public class BotUtils {
 	}
 
 	public static final Joiner LINE_JOINER = Joiner.on("\n");
-
-	@UtilityClass
-	public static final class Markers {
-
-		public static final Marker EVENTS = MarkerFactory.getMarker("Events");
-
-		public static final Marker DATABASE = MarkerFactory.getMarker("Database");
-
-	}
 
 }

@@ -24,8 +24,6 @@ public class DatabaseManager {
 	 */
 	private final MatyBotNBTDatabase nbtDatabase;
 
-	private final MessageCache messageCacheDatbase;
-
 	/**
 	 * The JDBI instance linked to the {@linkplain #dataSource database}.
 	 */
@@ -35,8 +33,9 @@ public class DatabaseManager {
 	 * Creates a {@code DatabaseManager} by creating a {@link SQLiteDataSource}
 	 * pointing at the SQLite database specified by the URL.
 	 *
-	 * @param url the url of the SQLite database to connect to
-	 * @return a database manager connected to the specifiedSQLite database
+	 * @param  url                      the url of the SQLite database to connect to
+	 * @return                          a database manager connected to the
+	 *                                  specifiedSQLite database
 	 * @throws IllegalArgumentException if the URL does not start with the
 	 *                                  {@code jdbc:sqlite:} prefix
 	 */
@@ -57,12 +56,10 @@ public class DatabaseManager {
 	 *
 	 * @param dataSource the SQL data source
 	 */
-	public DatabaseManager(final DataSource dataSource, final MatyBotNBTDatabase nbtDatabase,
-			final MessageCache messageCache) {
+	public DatabaseManager(final DataSource dataSource, final MatyBotNBTDatabase nbtDatabase) {
 		this.dataSource = dataSource;
 		this.jdbi = Jdbi.create(dataSource);
 		this.nbtDatabase = nbtDatabase;
-		this.messageCacheDatbase = messageCache;
 
 		// Install the SQL Objects and Guava plugins
 		jdbi.installPlugin(new SqlObjectPlugin());
@@ -95,12 +92,12 @@ public class DatabaseManager {
 	/**
 	 * {@return the SQL data source}
 	 */
-	public DataSource getDataSource() { return dataSource; }
+	public DataSource getDataSource() {
+		return dataSource;
+	}
 
-	public MatyBotNBTDatabase getNbtDatabase() { return nbtDatabase; }
-
-	public MessageCache getMessageCache() {
-		return messageCacheDatbase;
+	public MatyBotNBTDatabase getNbtDatabase() {
+		return nbtDatabase;
 	}
 
 	/**

@@ -11,6 +11,7 @@ import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import io.github.matyrobbrt.matybot.api.command.slash.GuildSpecificSlashCommand;
 import io.github.matyrobbrt.matybot.util.BotUtils;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.Icon.IconType;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -28,6 +29,9 @@ public class AddEmoteSlashCommand extends GuildSpecificSlashCommand {
 		help = "Adds an emote from the uuid of an already-exising emote ID";
 		enabledRolesGetter = guildId -> MatyBot.getConfigForGuild(guildId).moderatorRoles.stream().map(String::valueOf)
 				.toArray(String[]::new);
+		botPermissions = new Permission[] {
+				Permission.MANAGE_EMOTES_AND_STICKERS
+		};
 		options = List.of(
 				new OptionData(OptionType.STRING, "name", "The name of the emote to add", true),
 				new OptionData(OptionType.STRING, "emote_id", "The ID of the emote to add", true),

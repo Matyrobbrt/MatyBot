@@ -33,7 +33,6 @@ import io.github.matyrobbrt.matybot.util.config.GuildConfig;
 import io.github.matyrobbrt.matybot.util.database.DatabaseManager;
 import io.github.matyrobbrt.matybot.util.database.MatyBotNBTDatabase;
 import io.github.matyrobbrt.matybot.util.database.MatyBotNBTDatabase.Manager;
-import io.github.matyrobbrt.matybot.util.database.MessageCache;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -58,6 +57,14 @@ public class MatyBot extends JDABot {
 	public static final Manager NBT_DATABASE_MANAGER = new Manager();
 
 	public static void main(String[] args) {
+		if (instance == null) {
+			LOGGER.warn(
+					"""
+							<--------------------------------------------------------------------------------------------------------------------------------------------->
+							<-------------------------------------------------------- A new startup has happened! -------------------------------------------------------->
+							<--------------------------------------------------------------------------------------------------------------------------------------------->""");
+		}
+
 		try {
 			generateFolders();
 		} catch (IOException e) {}
@@ -67,12 +74,24 @@ public class MatyBot extends JDABot {
 		instance = create(BotUtils.getBotToken());
 		Emotes.register();
 		database = new DatabaseManager(
-				DatabaseManager.connectSQLite("jdbc:sqlite:" + generalConfig().getDatabaseName()),
-				NBT_DATABASE_MANAGER.computeIfAbsent(MatyBotNBTDatabase::new,
-						new File(generalConfig().getNBTDatabaseName())),
-				NBT_DATABASE_MANAGER.computeIfAbsent(MessageCache::new, new File("storage/message_cache.dat")));
+				DatabaseManager.connectSQLite("jdbc:sqlite:" + generalConfig().getDatabaseName()), NBT_DATABASE_MANAGER
+						.computeIfAbsent(MatyBotNBTDatabase::new, new File(generalConfig().getNBTDatabaseName())));
 
 		Runtime.getRuntime().addShutdownHook(new Thread(NBT_DATABASE_MANAGER::setDirtyAndSave, "DatabaseSaver"));
+
+		// The D4J version is for logging
+
+		try {
+			final var clazz = Class.forName("io.github.matyrobbrt.matybot.d4j.D4JBridgeImpl");
+			final var invokeMethod = clazz.getMethod("setupInstance");
+			invokeMethod.invoke(null);
+		} catch (Exception e) {}
+
+		if (D4JBridge.instance == null) {
+			LOGGER.warn("The D4J Bridge could not be found! Some features might not work as expected");
+		}
+
+		D4JBridge.executeOnInstance(bridge -> bridge.executeMain(args));
 
 		final var bot = getInstance();
 		bot.addEventListener(new EventListenerWrapper(Constants.EVENT_WAITER),
@@ -104,10 +123,6 @@ public class MatyBot extends JDABot {
 
 	public static MatyBotNBTDatabase nbtDatabase() {
 		return database.getNbtDatabase();
-	}
-
-	public static MessageCache messageCache() {
-		return database.getMessageCache();
 	}
 
 	public static GeneralConfig generalConfig() {
