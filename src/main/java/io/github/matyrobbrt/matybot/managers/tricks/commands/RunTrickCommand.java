@@ -9,7 +9,6 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import io.github.matyrobbrt.matybot.api.annotation.RegisterSlashCommand;
 import io.github.matyrobbrt.matybot.managers.tricks.ITrick;
-import io.github.matyrobbrt.matybot.managers.tricks.TrickContext;
 import io.github.matyrobbrt.matybot.managers.tricks.TrickManager;
 import io.github.matyrobbrt.matybot.util.BotUtils;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -68,8 +67,7 @@ public final class RunTrickCommand extends Command {
 		protected void execute(SlashCommandEvent event) {
 			final String args = BotUtils.getArgumentOrEmpty(event, "args");
 			TrickManager.getTrick(event.getGuild().getIdLong(), event.getOption("name").getAsString()).ifPresentOrElse(
-					trick -> event.reply(trick.getMessageSlash(new TrickContext.Slash(event, args.split(" "))))
-							.setEphemeral(false).queue(),
+					trick -> event.reply(trick.getMessage(args.split(" "))).setEphemeral(false).queue(),
 					() -> event.reply("A trick with that name could not be found.").setEphemeral(true).queue());
 		}
 

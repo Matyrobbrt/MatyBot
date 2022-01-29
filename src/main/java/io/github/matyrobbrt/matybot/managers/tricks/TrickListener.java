@@ -21,11 +21,12 @@ public class TrickListener extends ListenerAdapter {
 		if (args.length < 1) { return; }
 		final String prefix = getPrefix(event);
 		final String trickName = args[0].substring(prefix.length());
-		TrickManager.getTrick(guildId, trickName).ifPresent(trick -> {
-			final String[] trickArgs = new String[args.length - 1];
-			System.arraycopy(args, 1, trickArgs, 0, trickArgs.length);
-			event.getMessage().reply(trick.getMessagePrefix(new TrickContext.Prefix(event.getMessage(), trickArgs)))
-					.queue();
+		TrickManager.getTricksForGuild(guildId).forEach(trick -> {
+			if (trick.getNames().contains(trickName)) {
+				final String[] trickArgs = new String[args.length - 1];
+				System.arraycopy(args, 1, trickArgs, 0, trickArgs.length);
+				event.getMessage().reply(trick.getMessage(trickArgs)).queue();
+			}
 		});
 	}
 
