@@ -107,7 +107,8 @@ dependencies {
 	shade group: 'com.jhlabs', name: 'filters', version: 'latest.release'
 	// shade group: 'com.object-refinery', name: 'orsoncharts', version: 'latest.release'
 	shade group: 'org.jetbrains', name: 'annotations', version: 'latest.release'
-
+	shade group: 'net.jodah', name: 'typetools', version: 'latest.release'
+	
 	shade group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 	shade group: 'ch.qos.logback', name: 'logback-core', version: '1.2.10'
 	shade group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.10'
@@ -133,7 +134,11 @@ dependencies {
 	shade group: 'org.jdbi', name: 'jdbi3-core', version: 'latest.release'
 	shade group: 'org.jdbi', name: 'jdbi3-sqlobject', version: 'latest.release'
 	// shade group: 'org.flywaydb', name: 'flyway-core', version: 'latest.release'
-
+	
+	// Clojure
+	shade 'org.clojure:clojure:1.7.0'
+	shade 'org.clojure:math.numeric-tower:0.0.4'
+	
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 }
 

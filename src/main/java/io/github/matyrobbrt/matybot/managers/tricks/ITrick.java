@@ -22,6 +22,18 @@ public interface ITrick extends NBTSerializable<CompoundNBT> {
 	 */
 	Message getMessage(String[] args);
 
+	default Message getMessage(TrickContext context) {
+		return getMessage(context.getArgs());
+	}
+
+	default Message getMessageSlash(TrickContext.Slash slashContext) {
+		return getMessage(slashContext);
+	}
+
+	default Message getMessagePrefix(TrickContext.Prefix prefixContext) {
+		return getMessage(prefixContext);
+	}
+
 	/**
 	 * @return the type of this trick
 	 */

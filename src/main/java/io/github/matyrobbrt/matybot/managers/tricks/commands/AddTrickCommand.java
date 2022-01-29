@@ -60,7 +60,7 @@ public final class AddTrickCommand extends GuildSpecificSlashCommand {
 				TrickManager.addTrick(event.getGuild().getIdLong(), trickType.createFromCommand(event));
 				event.reply("Added trick!").mentionRepliedUser(false).setEphemeral(true).queue();
 			} catch (IllegalArgumentException e) {
-				event.reply("A command with that name already exists!").mentionRepliedUser(false).setEphemeral(true)
+				event.reply("Failure adding trick!").mentionRepliedUser(false).setEphemeral(true)
 						.queue();
 				MatyBot.LOGGER.warn("Failure adding trick: {}", e.getMessage());
 			}

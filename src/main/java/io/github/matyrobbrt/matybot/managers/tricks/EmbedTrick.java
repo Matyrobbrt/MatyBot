@@ -9,11 +9,13 @@ import java.util.Set;
 
 import org.apache.commons.lang3.text.StrBuilder;
 
+import com.google.common.collect.Lists;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import io.github.matyrobbrt.javanbt.nbt.CompoundNBT;
 import io.github.matyrobbrt.matybot.util.helper.NBTHelper;
 import io.github.matyrobbrt.matybot.util.nbt.OrderedNBTList;
+import lombok.Builder;
 import lombok.Data;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -23,6 +25,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+@Builder
 @Data
 @SuppressWarnings("deprecation")
 public class EmbedTrick implements ITrick {
@@ -30,22 +33,27 @@ public class EmbedTrick implements ITrick {
 	public static final Type TYPE = new Type();
 
 	private final List<String> names;
-
 	private final String title;
-
 	private final String description;
-
 	private final int colour;
+	private final String imageUrl;
 
 	private final OrderedNBTList<MessageEmbed.Field, CompoundNBT> fields;
 
 	public EmbedTrick(final List<String> names, final String title, final String description, final int color,
+			final String imageUrl,
 			final List<MessageEmbed.Field> fields) {
 		this.names = names;
 		this.title = title;
 		this.description = description;
 		this.colour = color;
 		this.fields = new OrderedNBTList<>(NBTHelper::serializeEmbedField, NBTHelper::deserializeEmbedField, fields);
+		this.imageUrl = imageUrl;
+	}
+
+	public EmbedTrick(final List<String> names, final String title, final String description, final int color,
+			final List<MessageEmbed.Field> fields) {
+		this(names, title, description, color, null, fields);
 	}
 
 	public EmbedTrick(final List<String> names, final String title, final String description, final int color,
@@ -57,6 +65,9 @@ public class EmbedTrick implements ITrick {
 	public Message getMessage(final String[] args) {
 		EmbedBuilder builder = new EmbedBuilder().setTitle(getTitle()).setDescription(getDescription())
 				.setColor(colour);
+		if (imageUrl != null) {
+			builder.setImage(imageUrl);
+		}
 		for (MessageEmbed.Field field : getFields()) {
 			builder.addField(field);
 		}
@@ -125,7 +136,8 @@ public class EmbedTrick implements ITrick {
 			final String title = nbt.getString("title");
 			final String description = nbt.getString("description");
 			final int colour = nbt.getInt("color");
-			final EmbedTrick trick = new EmbedTrick(names, title, description, colour);
+			final var image = nbt.contains("image") ? nbt.getString("image") : null;
+			final EmbedTrick trick = new EmbedTrick(names, title, description, colour, image, Lists.newArrayList());
 			trick.fields.deserializeNBT(nbt.getCompound("fields"));
 			return trick;
 		}
@@ -138,6 +150,9 @@ public class EmbedTrick implements ITrick {
 			nbt.putString("description", trick.getDescription());
 			nbt.putInt("color", trick.getColour());
 			nbt.put("fields", trick.fields);
+			if (trick.getImageUrl() != null) {
+				nbt.putString("image", trick.imageUrl);
+			}
 			return nbt;
 		}
 	}
@@ -156,4 +171,21 @@ public class EmbedTrick implements ITrick {
 	public TrickType<?> getType() {
 		return TYPE;
 	}
+
+	public static final class EmbedTrickBuilder {
+
+		private final List<Field> fields = new ArrayList<>();
+
+		@SuppressWarnings("unused")
+		private EmbedTrickBuilder fields(List<Field> fields) {
+			return this;
+		}
+
+		public EmbedTrickBuilder addField(final Field field) {
+			this.fields.add(field);
+			return this;
+		}
+
+	}
+
 }

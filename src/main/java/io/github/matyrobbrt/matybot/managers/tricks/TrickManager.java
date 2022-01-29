@@ -1,6 +1,7 @@
 package io.github.matyrobbrt.matybot.managers.tricks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,21 +12,34 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.matyrobbrt.matybot.MatyBot;
 import io.github.matyrobbrt.matybot.managers.tricks.ITrick.TrickType;
+import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 
 public final class TrickManager {
 
 	private static final Map<String, TrickType<?>> TRICK_TYPES = new HashMap<>();
 
-	private static final List<ITrick> GLOBAL_TRICKS = new ArrayList<>();
+	private static final List<ITrick> GLOBAL_TRICKS;
 
 	static {
 		TrickManager.registerTrickType("string", StringTrick.TYPE);
 		TrickManager.registerTrickType("embed", EmbedTrick.TYPE);
+		TrickManager.registerTrickType("scipt", ScriptTrick.TYPE);
+
+		final var globalTricks = new ArrayList<ITrick>();
+
+		//@formatter:off
+		globalTricks.add(EmbedTrick.builder().names(Arrays.asList("pings", "reply-pings", "replypings"))
+				.colour(0xba56fb).title("Please disable pings when replying to others")
+				.description("So you don't accidentally annoy others, make sure to turn off pings when replying to others. Discord currently turns this on every time you start a reply, so please be vigilant. __However, you can shift-click the reply button to turn this off on PC only.__ Thank you.")
+				.addField(new Field("", "Go vote on [Discord Feedback](https://support.discord.com/hc/en-us/community/posts/360052518273-Replies-remember-setting) so they make changes.", false))
+				.imageUrl("https://i.imgur.com/7YCb3AN.png")
+				.build());
+
+		//@formatter:on
+		GLOBAL_TRICKS = List.copyOf(globalTricks);
 	}
 
 	public static Optional<ITrick> getTrick(final long guildId, final String name) {
-		// return getTricksForGuild(guildId).stream().filter(trick ->
-		// trick.getNames().contains(name)).findAny();
 		return MatyBot.nbtDatabase().getDataForGuild(guildId).getTricks().stream()
 				.filter(trick -> trick.getNames().contains(name)).findAny()
 				.or(() -> GLOBAL_TRICKS.stream().filter(trick -> trick.getNames().contains(name)).findAny());
